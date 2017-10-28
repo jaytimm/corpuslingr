@@ -21,10 +21,10 @@ GetSearchFreqs <- function (x) {
       summarize(targ = paste(token, collapse= " ")) %>%
       mutate(targ=toupper(targ))%>%
       group_by(targ) %>%
-      mutate(docFreq=length(unique(doc_id)))%>%
-      group_by(targ,docFreq)%>%
-      summarize(textFreq=n()) %>%
-      arrange(desc(textFreq))  })}
+      mutate(termDocFreq=length(unique(doc_id)))%>%
+      group_by(targ,termDocFreq)%>%
+      summarize(termTextFreq=n()) %>%
+      arrange(desc(termTextFreq))  })}
 
 #' @export
 #' @rdname corpOutput
@@ -50,3 +50,13 @@ GetBOW <- function (x) {
       arrange(desc(n)) })} #Perhaps remove stops,punctuation.
 
 #GetKWIC <- function {} Need to add pre/post if LW/RW =0.
+
+
+#' @export
+#' @rdname corpOutput
+GetDocDesc <- function (x) {
+x %>%
+  bind_rows()%>%
+  filter(pos!= "PUNCT")%>%
+  group_by(doc_id)%>%
+  summarize(docN=n(),docType=length(unique(token)),docSent=length(unique(sid)))}
