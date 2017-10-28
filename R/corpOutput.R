@@ -24,7 +24,7 @@ GetSearchFreqs <- function (x) {
       mutate(docFreq=length(unique(doc_id)))%>%
       group_by(targ,docFreq)%>%
       summarize(textFreq=n()) %>%
-      arrange(desc(n))  })}
+      arrange(desc(textFreq))  })}
 
 #' @export
 #' @rdname corpOutput
