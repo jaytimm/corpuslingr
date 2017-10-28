@@ -2,6 +2,7 @@
 
 export(GetBOW)
 export(GetContexts)
+export(GetDocDesc)
 export(GetGoogleNewsMeta)
 export(GetKWIC)
 export(GetSearchFreqs)

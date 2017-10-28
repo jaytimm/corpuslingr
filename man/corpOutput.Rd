@@ -5,6 +5,7 @@
 \alias{GetSearchFreqs}
 \alias{GetKWIC}
 \alias{GetBOW}
+\alias{GetDocDesc}
 \title{Annotate a corpus of texts using the `spacyr` package}
 \usage{
 GetSearchFreqs(x)
@@ -12,6 +13,8 @@ GetSearchFreqs(x)
 GetKWIC(x)
 
 GetBOW(x)
+
+GetDocDesc(x)
 }
 \arguments{
 \item{charList}{A list of texts as character strings}
