@@ -33,7 +33,7 @@ annotation <- lapply(charList, function(y){
 
 if(is.null(names(annotation))) names(annotation) <- c(1:length(annotation))
 
-annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(names(annotation)), SIMPLIFY = FALSE)
+annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation)), SIMPLIFY = FALSE)
 
 return(annotation)
 }
