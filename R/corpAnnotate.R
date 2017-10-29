@@ -31,8 +31,6 @@ annotation <- lapply(charList, function(y){
   buildTuple()%>%
   rename(sid=sentence_id,tid=token_id)})
 
-if(is.null(names(annotation))) names(annotation) <- c(1:length(annotation))
-
 annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)
 
 return(annotation)
