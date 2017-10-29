@@ -46,6 +46,7 @@ GetWebTexts <- function(y) {
     gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",., perl=TRUE)%>%
     gsub("\\\n"," ",., perl=TRUE)})
 
-  output[!sapply(output, is.na)]
+  output <- output[!sapply(output, is.na)]
+  Filter(nchar,output)
 }
 
