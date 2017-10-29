@@ -45,5 +45,6 @@ GetWebTexts <- function(y) {
     lapply(z, boilerpipeR::DefaultExtractor)%>%
     gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",., perl=TRUE)%>%
     gsub("\\\n"," ",., perl=TRUE)})
+  Filter(nchar,output)
 }
 
