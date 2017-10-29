@@ -7,7 +7,7 @@
 #' @param RW Size of context in number of words to right of the target
 #' @param corp List of annotated texts to be searched
 #' @return A list of dataframes
-#' @import tidyverse
+#' @import tidyverse data.table
 
 
 buildSearch <- function(x){
@@ -70,8 +70,8 @@ GetContexts <- function(search,corp,LW,RW){
   lapply(1:length(searchTerms), function(x) {
     lapply(corp,extractContext,search=searchTerms[x],LW,RW)%>%
       compact()%>%
-      lapply(bind_rows,.id="id")%>%
-      bind_rows()%>%
+      lapply(.,rbindlist,idcol="id")%>%
+      rbindlist()%>%
       mutate(eg=group_indices(.,doc_id,id))%>%
       select(-id)%>%
       arrange(desc(eg))})
