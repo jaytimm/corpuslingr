@@ -2,17 +2,17 @@
 #'
 #' These functions modify the output of `spacyr'
 #' @name corpAnnotate
-#' @param charList A list of texts as character strings
+#' @param x A list of dataframes
 #' @return A list of dataframes
-#' @import spacyr tidyverse data.table
+#' @import tidyverse data.table
 #' @export
 #' @rdname corpAnnotate
 #'
 
 #' @export
 #' @rdname corpAnnotate
-buildTuple <- function(x){
-  x$tup <- paste("<",x$token,",",x$lemma,",",x$tag,">",sep="")
+buildTuple <- function(x,form,lem,POS){
+  x$tup <- paste("<",x$form,",",x$lem,",",x$POS,">",sep="")
   text <- paste(x$tup,collapse=" ")
   tup_bounds <- unlist(as.vector(gregexpr(pattern=" ", text)[[1]]))
   x$tupBeg <- append(1,tup_bounds+1)
@@ -22,14 +22,13 @@ buildTuple <- function(x){
 
 #' @export
 #' @rdname corpAnnotate
-SpacyrAnnotate <- function(charList){
+PrepAnnotation <- function(x,form,lem,POS){
 
-annotation <- lapply(charList, function(y){
-  spacyr::spacy_parse(y,tag=TRUE)%>%
-  mutate(token=gsub("\\s*","",token),lemma=gsub("^-|-$|\\s*","",lemma))%>%#Needs explanation.
-  mutate(lemma=ifelse(pos=="PROPN",token,lemma))%>%
-  buildTuple()%>%
-  rename(sid=sentence_id,tid=token_id)})
+annotation <- lapply(x, function(y){
+  annotation <- y %>%
+    mutate(token=gsub("\\s*","",token),lemma=gsub("^-|-$|\\s*","",lemma))%>%
+    mutate(lemma=ifelse(pos=="PROPN",token,lemma))%>%
+    buildTuple(form,lem,POS)})
 
 annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)
 

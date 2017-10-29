@@ -3,15 +3,15 @@
 \name{corpAnnotate}
 \alias{corpAnnotate}
 \alias{buildTuple}
-\alias{SpacyrAnnotate}
+\alias{PrepAnnotation}
 \title{Annotate a corpus of texts using the `spacyr` package}
 \usage{
-buildTuple(x)
+buildTuple(x, form, lem, POS)
 
-SpacyrAnnotate(charList)
+PrepAnnotation(x, form, lem, POS)
 }
 \arguments{
-\item{charList}{A list of texts as character strings}
+\item{x}{A list of dataframes}
 }
 \value{
 A list of dataframes
