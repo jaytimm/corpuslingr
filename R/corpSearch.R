@@ -37,6 +37,8 @@ CQLtoRegex <- function(x) {
     gsub(">","> ",.)}
 
 
+#' @export
+#' @rdname corpSearch
 extractContext <- function(x,search,LW,RW) {
   locations <- gregexpr(pattern= search, paste(x$tup, collapse=" "), ignore.case=TRUE)
   starts <- unlist(as.vector(locations[[1]]))

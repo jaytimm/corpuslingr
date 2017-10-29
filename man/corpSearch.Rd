@@ -6,6 +6,7 @@
 \alias{buildSearch}
 \alias{nounPhrase}
 \alias{keyPhrase}
+\alias{extractContext}
 \alias{GetContexts}
 \title{Get search in context}
 \format{An object of class \code{character} of length 1.}
@@ -16,16 +17,18 @@ nounPhrase
 
 keyPhrase
 
+extractContext(x, search, LW, RW)
+
 GetContexts(search, corp, LW, RW)
 }
 \arguments{
 \item{search}{Gram/lexical pattern to be searched for}
 
-\item{corp}{List of annotated texts to be searched}
-
 \item{LW}{Size of context in number of words to left of the target}
 
 \item{RW}{Size of context in number of words to right of the target}
+
+\item{corp}{List of annotated texts to be searched}
 }
 \value{
 A list of dataframes
