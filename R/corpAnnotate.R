@@ -12,7 +12,7 @@
 #' @export
 #' @rdname corpAnnotate
 buildTuple <- function(x,form,lem,POS){
-  x$tup <- paste("<",x$form,",",x$lem,",",x$POS,">",sep="")
+  x$tup <- paste("<",x[,form],",",x[,lem],",",x[,POS],">",sep="")
   text <- paste(x$tup,collapse=" ")
   tup_bounds <- unlist(as.vector(gregexpr(pattern=" ", text)[[1]]))
   x$tupBeg <- append(1,tup_bounds+1)
