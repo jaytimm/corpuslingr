@@ -38,12 +38,12 @@ GetWebTexts <- function(y) {
 
   raws <- sapply(y, function (x) {
     tryCatch(RCurl::getURL(x, .encoding='UTF-8', ssl.verifypeer = FALSE), error=function(e) NULL)})
+  names(raws) <- y
+  raws <- Filter(nchar,raws)
 
   output <- lapply(raws, function(z) {
     lapply(z, boilerpipeR::DefaultExtractor)%>%
     gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",., perl=TRUE)%>%
     gsub("\\\n"," ",., perl=TRUE)})
-
-  names(output) <- y
-  Filter(nchar,output)}
+}
 
