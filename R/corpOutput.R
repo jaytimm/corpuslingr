@@ -59,4 +59,4 @@ x %>%
   bind_rows()%>%
   filter(pos!= "PUNCT")%>%
   group_by(doc_id)%>%
-  summarize(docN=n(),docType=length(unique(token)),docSent=length(unique(sid)))}
+  summarize(docN=n(),docType=length(unique(token)),docSent=length(unique(sentence_id)))}
