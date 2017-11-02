@@ -1,0 +1,114 @@
+
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "README-")
+```
+
+##corpuslingr: 
+
+Corpus work flow.  
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(tidyverse)
+devtools::install_github("jaytimm/corpuslingr")
+library(corpuslingr)
+```
+
+```{r message=FALSE, warning=FALSE}
+library(spacyr)
+spacy_initialize()
+#spacy_initialize(python_executable = "C:\\Users\\jason\\AppData\\Local\\Programs\\Python\\Python36\\python.exe")
+```
+
+##Web-based functions --  super simple
+```{r}
+#dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico", n=5)
+dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
+
+head(dailyMeta)
+```
+
+
+```{r}
+txts <- dailyMeta$links  %>% 
+  GetWebTexts()
+
+substr(txts[1:5],1, 100)
+```
+
+
+Can be used to in a pipe laong with a corpus annotator, in this case `spacyr`...`GetWebTexts` a generic webscraping function
+
+
+
+
+
+```{r}
+annotations <- txts  %>%
+  lapply(spacyr::spacy_parse,tag=TRUE)%>%
+  corpuslingr::PrepAnnotation()
+```
+
+Output consists of a list of dataframes.  Distinct from `spacyr` output.
+
+```{r}
+head(annotations[[1]])
+```
+
+
+```{r}
+mm <- GetDocDesc(annotations)
+```
+
+
+##Search function and aggregate functions.
+
+```{r}
+x <- spacyr::entity_extract(annotations[[1]])
+
+gg <- lapply(annotations,function(x) {spacyr::entity_extract(x)}) %>%
+  bind_rows()
+
+
+```
+
+
+#GetSearchFreqs()
+#GetKWIC()
+#GetBOW()
+
+Allows for multiple search terms...
+
+```{r}
+
+```
+
+
+As a single pipe.
+```{r}
+library(knitr)
+dailyMeta$links  %>% 
+  corpuslingr::GetWebTexts()  %>%
+  lapply(spacyr::spacy_parse,tag=TRUE)%>%
+  corpuslingr::PrepAnnotation()%>%
+  corpuslingr::GetContexts(search="<_NXP> <_Vx>",corp=., LW=5, RW = 5)%>%
+  corpuslingr::GetKWIC()%>%
+  data.frame()%>%
+  select(cont)%>%
+  slice(1:5)%>%
+  kable("html") 
+
+```
+
+
+```{r}
+spacy_finalize()
+```
+
