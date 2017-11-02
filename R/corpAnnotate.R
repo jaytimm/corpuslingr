@@ -11,8 +11,8 @@
 
 #' @export
 #' @rdname corpAnnotate
-buildTuple <- function(x,form,lem,POS){
-  x$tup <- paste("<",x[,form],",",x[,lem],",",x[,POS],">",sep="")
+buildTuple <- function(x){
+  x$tup <- paste("<",x$token,",",x$lemma,",",x$tag">",sep="")
   text <- paste(x$tup,collapse=" ")
   tup_bounds <- unlist(as.vector(gregexpr(pattern=" ", text)[[1]]))
   x$tupBeg <- append(1,tup_bounds+1)
@@ -22,13 +22,13 @@ buildTuple <- function(x,form,lem,POS){
 
 #' @export
 #' @rdname corpAnnotate
-PrepAnnotation <- function(x,form,lem,POS){
+PrepAnnotation <- function(x){
 
 annotation <- lapply(x, function(y){
   annotation <- y %>%
     mutate(token=gsub("\\s*","",token),lemma=gsub("^-|-$|\\s*","",lemma))%>%
     mutate(lemma=ifelse(pos=="PROPN",token,lemma))%>%
-    buildTuple(form,lem,POS)
+    buildTuple()
 
   class(annotation) <- c("spacyr_parsed", class(annotation))})
 
