@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 Corpus work flow.  
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
-devtools::install_github("jaytimm/corpuslingr")
+#devtools::install_github("jaytimm/corpuslingr")
 library(corpuslingr)
 ```
 
@@ -32,7 +32,7 @@ spacy_initialize()
 #dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico", n=5)
 dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
 
-head(dailyMeta)
+head(dailyMeta[1:2])
 ```
 
 
@@ -64,7 +64,7 @@ head(annotations[[1]])
 
 
 ```{r}
-mm <- GetDocDesc(annotations)
+head(GetDocDesc(annotations))
 ```
 
 
@@ -75,40 +75,29 @@ x <- spacyr::entity_extract(annotations[[1]])
 
 gg <- lapply(annotations,function(x) {spacyr::entity_extract(x)}) %>%
   bind_rows()
-
-
 ```
 
 
-#GetSearchFreqs()
-#GetKWIC()
-#GetBOW()
+GetSearchFreqs()
+GetKWIC()
+GetBOW()
 
 Allows for multiple search terms...
 
-```{r}
-
-```
-
 
 As a single pipe.
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(knitr)
-dailyMeta$links  %>% 
-  corpuslingr::GetWebTexts()  %>%
-  lapply(spacyr::spacy_parse,tag=TRUE)%>%
-  corpuslingr::PrepAnnotation()%>%
+annotations%>%
   corpuslingr::GetContexts(search="<_NXP> <_Vx>",corp=., LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   data.frame()%>%
   select(cont)%>%
-  slice(1:5)%>%
-  kable("html") 
+  slice(1:10)%>%
+  kable("markdown") 
 
 ```
 
+render("C:\\Users\\jason\\Google Drive\\GitHub\\packages\\corpuslingr\\README.rmd")
 
-```{r}
-spacy_finalize()
-```
 
