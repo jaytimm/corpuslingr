@@ -28,7 +28,9 @@ annotation <- lapply(x, function(y){
   annotation <- y %>%
     mutate(token=gsub("\\s*","",token),lemma=gsub("^-|-$|\\s*","",lemma))%>%
     mutate(lemma=ifelse(pos=="PROPN",token,lemma))%>%
-    buildTuple(form,lem,POS)})
+    buildTuple(form,lem,POS)
+
+  class(annotation) <- c("spacyr_parsed", class(annotation)})
 
 annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)
 
