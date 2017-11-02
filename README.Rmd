@@ -83,15 +83,18 @@ Allows for multiple search terms...
 As a single pipe.
 ```{r message=FALSE, warning=FALSE}
 library(knitr)
+library(kableExtra)
 library(DT)
+
 annotations%>%
   corpuslingr::GetContexts(search="<_Jx> <and!> <_Jx>",corp=., LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   data.frame()%>%
   select(doc_id,cont)%>%
-  #slice(1:5)%>%
-  #kable("markdown",escape=TRUE) %>%
-  DT::datatable(class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
+  kable("markdown") %>%
+  kable_styling()
+
+ 
 
 ```
 
