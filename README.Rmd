@@ -91,10 +91,11 @@ annotations%>%
   corpuslingr::GetKWIC()%>%
   data.frame()%>%
   select(doc_id,cont)%>%
+  mutate(cont=gsub("<mark>|</mark>","||",cont))%>%
   kable("markdown") %>%
   kable_styling()
 
- 
+
 
 ```
 
