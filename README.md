@@ -26,18 +26,18 @@ dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
 head(dailyMeta[1:2])
 ##                            source
 ## 1 This RSS feed URL is deprecated
-## 2                             CNN
-## 3                 Washington Post
+## 2                  New York Times
+## 3                             CNN
 ## 4                 Washington Post
-## 5                  New York Times
-## 6                 Washington Post
+## 5                 Washington Post
+## 6                          SFGate
 ##                                                                                                           titles
 ## 1                                                                                This RSS feed URL is deprecated
-## 2                                                                 GOP leaders unveil key details in new tax plan
-## 3 Ex-DNC chair goes at the Clintons, alleging Hillary's campaign hijacked DNC during primary with Bernie Sanders
-## 4               Investigators probe New York attack suspect's communications while Trump calls for death penalty
-## 5                                                      When Astros Needed to Improvise, Charlie Morton Was Ready
-## 6           Sam Clovis withdraws his nomination for USDA's top scientist post after being linked to Russia probe
+## 2                                                           Republican Plan Delivers Permanent Corporate Tax Cut
+## 3                                       Terror suspect wanted to attack people on Brooklyn Bridge, documents say
+## 4     Post-ABC poll: Most Americans approve of Trump-Russia probe, and nearly half think Trump committed a crime
+## 5 Ex-DNC chair goes at the Clintons, alleging Hillary's campaign hijacked DNC during primary with Bernie Sanders
+## 6                                                     The Latest: Neighbors: Walmart suspect unfriendly, hostile
 ```
 
 ``` r
@@ -45,10 +45,10 @@ txts <- dailyMeta$links  %>%
   GetWebTexts()
 
 substr(txts[1:5],1, 100)
-## [1] "Updated 12:20 PM ET, Thu November 2, 2017 Chat with us in Facebook Messenger. Find out what's happen"
-## [2] "Analysis Analysis Interpretation of the news based on evidence, including data, as well as anticipat"
+## [1] "NYTimes.com no longer supports Internet Explorer 9 or earlier. Please upgrade your browser. LEARN MO"
+## [2] "Updated 12:49 PM ET, Thu November 2, 2017 Chat with us in Facebook Messenger. Find out what's happen"
 ## [3] "The inside track on Washington politics. Be the first to know about new stories from PowerPost. Sign"
-## [4] "Follow Stories Sam Clovis withdraws his nomination for USDA's top scientist post after being linked "
+## [4] "Analysis Analysis Interpretation of the news based on evidence, including data, as well as anticipat"
 ## [5] "Now Playing: A man nonchalantly walked into a Walmart about 10 miles north of Denver and immediately"
 ```
 
@@ -64,20 +64,20 @@ Output consists of a list of dataframes. Distinct from `spacyr` output.
 
 ``` r
 head(annotations[[1]])
-##   doc_id sentence_id token_id   token  lemma   pos tag entity
-## 1      1           1        1 Updated update  VERB VBN       
-## 2      1           1        2   12:20  12:20   NUM  CD TIME_B
-## 3      1           1        3      PM     pm  NOUN  NN TIME_I
-## 4      1           1        4      ET     ET PROPN NNP TIME_I
-## 5      1           1        5       ,      , PUNCT   ,       
-## 6      1           1        6     Thu    Thu PROPN NNP       
-##                    tup tupBeg tupEnd
-## 1 <Updated,update,VBN>      1     21
-## 2     <12:20,12:20,CD>     22     38
-## 3           <PM,pm,NN>     39     49
-## 4          <ET,ET,NNP>     50     61
-## 5              <,,,,,>     62     69
-## 6        <Thu,Thu,NNP>     70     83
+##   doc_id sentence_id token_id       token       lemma   pos tag entity
+## 1      1           1        1 NYTimes.com nytimes.com     X ADD       
+## 2      1           1        2          no          no   DET  DT       
+## 3      1           1        3      longer      longer   ADV RBR       
+## 4      1           1        4    supports     support  VERB VBZ       
+## 5      1           1        5    Internet    Internet PROPN NNP       
+## 6      1           1        6    Explorer    Explorer PROPN NNP       
+##                             tup tupBeg tupEnd
+## 1 <NYTimes.com,nytimes.com,ADD>      1     30
+## 2                    <no,no,DT>     31     41
+## 3           <longer,longer,RBR>     42     61
+## 4        <supports,support,VBZ>     62     84
+## 5       <Internet,Internet,NNP>     85    108
+## 6       <Explorer,Explorer,NNP>    109    132
 ```
 
 ``` r
@@ -85,12 +85,12 @@ head(GetDocDesc(annotations))
 ## # A tibble: 6 x 4
 ##   doc_id  docN docType docSent
 ##    <int> <int>   <int>   <int>
-## 1      1  1220     526      50
-## 2      2  1015     455      43
-## 3      3  1972     806      83
-## 4      4   965     474      38
-## 5      5  2570     418     100
-## 6      6  1293     466      56
+## 1      1  1932     740      84
+## 2      2  1329     562      60
+## 3      3  1116     475      46
+## 4      4  1045     463      44
+## 5      5  2569     418     100
+## 6      6  2154     854      93
 ```
 
 Search function and aggregate functions.
@@ -117,7 +117,7 @@ annotations%>%
   data.frame()%>%
   select(cont)%>%
   slice(1:10)%>%
-  kable("markdown") 
+  kable("markdown",escape=FALSE) 
 ```
 
 <table>
@@ -131,34 +131,34 @@ annotations%>%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">happening in the world as <mark> it unfolds </mark> . JUST WATCHED Story highlights</td>
+<td align="left">tax plan today . Mr. <mark> Brady said </mark> the bill is estimated to</td>
 </tr>
 <tr class="even">
-<td align="left">as it unfolds . JUST <mark> WATCHED Story highlights </mark> A new Republican tax plan</td>
+<td align="left">today . Mr. Brady said <mark> the bill is </mark> estimated to cost $ 1.51</td>
 </tr>
 <tr class="odd">
-<td align="left">. JUST WATCHED Story highlights <mark> A new Republican tax plan lowers </mark> the individual brackets from seven</td>
+<td align="left">New York Times WASHINGTON - <mark> Republican lawmakers unveiled </mark> a sweeping rewrite of the</td>
 </tr>
 <tr class="even">
-<td align="left">brackets from seven to four <mark> GOP Congress members hope </mark> party leaders have learned from</td>
+<td align="left">groups , special interests and <mark> Democrats began </mark> tearing into the text ahead</td>
 </tr>
 <tr class="odd">
-<td align="left">four GOP Congress members hope <mark> party leaders have </mark> learned from health care 's</td>
+<td align="left">a Republican sprint to get <mark> the legislation passed </mark> and to President Trump 's</td>
 </tr>
 <tr class="even">
-<td align="left">'s failure ( CNN ) <mark> House Republicans unveiled </mark> key details and the text</td>
+<td align="left">'s desk by Christmas . <mark> Lawmakers appeared </mark> unfazed by the blowback and</td>
 </tr>
 <tr class="odd">
-<td align="left">tax legislation Thursday , with <mark> House Speaker Paul Ryan pitching </mark> the plan as much -</td>
+<td align="left">&quot; With this plan , <mark> we are </mark> making pro growth reforms ,</td>
 </tr>
 <tr class="even">
-<td align="left">for the middle class . <mark> The Wisconsin Republican described </mark> the proposal to the public</td>
+<td align="left">Ryan of Wisconsin . But <mark> the bill includes </mark> several land mines that could</td>
 </tr>
 <tr class="odd">
-<td align="left">proposal to the public as <mark> a break aimed </mark> at helping most Americans .</td>
+<td align="left">states like New York and <mark> New Jersey said </mark> the bill will need to</td>
 </tr>
 <tr class="even">
-<td align="left">class tax cut , &quot; <mark> Ryan said </mark> in an interview with CNN</td>
+<td align="left">gain their support , while <mark> powerful trade groups representing </mark> the real estate industry and</td>
 </tr>
 </tbody>
 </table>
