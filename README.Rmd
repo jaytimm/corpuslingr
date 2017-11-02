@@ -94,7 +94,7 @@ annotations%>%
   data.frame()%>%
   select(cont)%>%
   slice(1:10)%>%
-  kable("markdown",escape=FALSE) 
+  kable("markdown",escape=TRUE) 
 
 ```
 
