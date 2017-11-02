@@ -25,12 +25,13 @@ buildTuple <- function(x){
 PrepAnnotation <- function(x){
 
 annotation <- lapply(x, function(y){
-  annotation <- y %>%
+  out <- y %>%
     mutate(token=gsub("\\s*","",token),lemma=gsub("^-|-$|\\s*","",lemma))%>%
     mutate(lemma=ifelse(pos=="PROPN",token,lemma))%>%
     buildTuple()
 
-  class(annotation) <- c("spacyr_parsed", class(annotation))})
+  class(out) <- c("spacyr_parsed", "data.frame")
+  return(out)})
 
 annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)
 
