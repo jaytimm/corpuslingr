@@ -70,12 +70,7 @@ head(GetDocDesc(annotations))
 
 ##Search function and aggregate functions.
 
-```{r}
-x <- spacyr::entity_extract(annotations[[1]])
 
-gg <- lapply(annotations,function(x) {spacyr::entity_extract(x)}) %>%
-  bind_rows()
-```
 
 
 GetSearchFreqs()
@@ -88,13 +83,15 @@ Allows for multiple search terms...
 As a single pipe.
 ```{r message=FALSE, warning=FALSE}
 library(knitr)
+library(DT)
 annotations%>%
-  corpuslingr::GetContexts(search="<_NXP> <_Vx>",corp=., LW=5, RW = 5)%>%
+  corpuslingr::GetContexts(search="<_Jx> <and!> <_Jx>",corp=., LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   data.frame()%>%
-  select(cont)%>%
-  slice(1:10)%>%
-  kable("markdown",escape=TRUE) 
+  select(doc_id,cont)%>%
+  #slice(1:5)%>%
+  #kable("markdown",escape=TRUE) %>%
+  DT::datatable(class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
 
 ```
 
