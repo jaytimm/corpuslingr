@@ -18,7 +18,7 @@ GetSearchFreqs <- function (x) {
       filter(place=="targ")%>%
       select(eg,doc_id,token)%>%
       group_by(eg,doc_id)%>%
-      summarize(targ = paste(token, collapse= " ")) %>%
+      summarize(targ = paste(token, collapse= " ")) %>% #Could add lempat and grampat here as well.
       mutate(targ=toupper(targ))%>%
       group_by(targ) %>%
       mutate(termDocFreq=length(unique(doc_id)))%>%
