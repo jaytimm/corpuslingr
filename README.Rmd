@@ -35,6 +35,8 @@ dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
 head(dailyMeta[1:2])
 ```
 
+We need to sort out meta with sites that are actually scraped.
+Also, re-try "artcle" verion of boilerpipeR.
 
 ```{r}
 txts <- dailyMeta$links  %>% 
@@ -80,23 +82,19 @@ GetBOW()
 Allows for multiple search terms...
 
 
-As a single pipe.
+Should add date. Demonstrate currency.
 ```{r message=FALSE, warning=FALSE}
 library(knitr)
-library(kableExtra)
-library(DT)
+
+term <- "<_Jx> <and!> <_Jx>"
 
 annotations%>%
-  corpuslingr::GetContexts(search="<_Jx> <and!> <_Jx>",corp=., LW=5, RW = 5)%>%
+  corpuslingr::GetContexts(search=term,corp=., LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   data.frame()%>%
   select(doc_id,cont)%>%
   mutate(cont=gsub("<mark>|</mark>","||",cont))%>%
-  kable("markdown") %>%
-  kable_styling()
-
-
-
+  kable("markdown")
 ```
 
 render("C:\\Users\\jason\\Google Drive\\GitHub\\packages\\corpuslingr\\README.rmd")

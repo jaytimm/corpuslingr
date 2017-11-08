@@ -6,9 +6,9 @@
 \alias{PrepAnnotation}
 \title{Annotate a corpus of texts using the `spacyr` package}
 \usage{
-buildTuple(x, form, lem, POS)
+buildTuple(x)
 
-PrepAnnotation(x, form, lem, POS)
+PrepAnnotation(x)
 }
 \arguments{
 \item{x}{A list of dataframes}
