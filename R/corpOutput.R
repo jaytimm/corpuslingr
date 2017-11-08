@@ -12,7 +12,7 @@
 #' @export
 #' @rdname corpOutput
 ##Still need to add meta
-GetSearchFreqs <- function (x) {
+GetSearchFreqs <- function (x) {#Potentially add 'groupBy' parameter.
   lapply(1:length(x), function(y){
     x[[y]]%>%
       filter(place=="targ")%>%
