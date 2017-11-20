@@ -50,11 +50,11 @@ GetBOW <- function (x,contentOnly) {
       arrange(desc(n)) })
 
   if (contentOnly==TRUE) {
-    output %>%
-      lapply(filter(pos %in% c("ADJ","NOUN","VERB","ADV"),!lemma %in% corpdatr::stops))
+    lapply(1:length(output), function(z){
+      output[[y]]%>%
+        filter(pos %in% c("ADJ","NOUN","VERB","ADV"),!lemma %in% corpusdatr::stops)})
   } else {return(output)}
-
-  } #Perhaps remove stops,punctuation.
+}
 
 #GetKWIC <- function {} Need to add pre/post if LW/RW =0.
 
