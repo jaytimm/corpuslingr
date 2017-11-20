@@ -48,6 +48,7 @@ GetWebTexts <- function(y) {
     gsub("\\\"","\"",., perl=TRUE)})
 
   output <- output[!sapply(output, is.na)]
-  Filter(nchar,output)
+  output <- Filter(nchar,output)
+  output[grepl("This RSS feed URL is deprecated",output$source)==FALSE,]
 }
 
