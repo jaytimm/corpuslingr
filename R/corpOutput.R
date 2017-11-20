@@ -41,13 +41,20 @@ GetKWIC <- function (x) {
 
 #' @export
 #' @rdname corpOutput
-GetBOW <- function (x) {
-  lapply(1:length(x), function(y){
+GetBOW <- function (x,contentOnly) {
+  output <- lapply(1:length(x), function(y){
     x[[y]]%>%
       filter (place!="target" ) %>%
       group_by(lemma, pos) %>%
       summarize(n=n())%>%
-      arrange(desc(n)) })} #Perhaps remove stops,punctuation.
+      arrange(desc(n)) })
+
+  if (contentOnly=TRUE) {
+    output %>%
+      lapply(filter(pos %in% c("ADJ","NOUN","VERB","ADV"),!lemma %in% corpdatr::stops))
+  } else {return(output)}
+
+  } #Perhaps remove stops,punctuation.
 
 #GetKWIC <- function {} Need to add pre/post if LW/RW =0.
 
