@@ -41,9 +41,11 @@ Also, re-try "article" verion of boilerpipeR.
 txts <- dailyMeta$links  %>% 
   GetWebTexts()
 
-substr(txts[1:5],1, 100)
+substr(txts[1:5],1, 50)
 ```
 
+
+##Corpus preparation
 ###`PrepAnnotation()`
 ```{r eval=FALSE}
 annotations <- txts  %>%

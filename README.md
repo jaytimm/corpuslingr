@@ -25,10 +25,10 @@ head(dailyMeta['titles'])
 ##                                                                                                   titles
 ## 1                               Trump announces designation of North Korea as state sponsor of terrorism
 ## 2                            Collapse of German coalition talks deals Merkel a blow; new election likely
-## 3 New York Times suspends top White House reporter amid investigation into sexual-harassment allegations
-## 4                                                         Will Zimbabwe's Mugabe Resign or Be Impeached?
-## 5                                                 Woman says Franken inappropriately touched her in 2010
-## 6          Brutally killed by Charles Manson's followers, Sharon Tate became the face of victims' rights
+## 3                                                         Will Zimbabwe's Mugabe Resign or Be Impeached?
+## 4 New York Times suspends top White House reporter amid investigation into sexual-harassment allegations
+## 5          Brutally killed by Charles Manson's followers, Sharon Tate became the face of victims' rights
+## 6                                                 Woman says Franken inappropriately touched her in 2010
 ```
 
 We need to sort out meta with sites that are actually scraped. Also, re-try "article" verion of boilerpipeR.
@@ -39,13 +39,16 @@ We need to sort out meta with sites that are actually scraped. Also, re-try "art
 txts <- dailyMeta$links  %>% 
   GetWebTexts()
 
-substr(txts[1:5],1, 100)
-## [1] "Trump announces designation of North Korea as state sponsor of terrorism 'Should have happened a lon"
-## [2] "Collapse of German coalition talks deals Merkel a blow; new election likely German Chancellor Angela"
-## [3] "× New York Times suspends top White House reporter amid investigation into sexual-harassment allegat"
-## [4] "By MJ Lee , CNN National Politics Reporter Updated 9:53 AM ET, Mon November 20, 2017 Chat with us in"
-## [5] "Brutally killed by Charles Manson's followers, Sharon Tate became the face of victims' rights Sharon"
+substr(txts[1:5],1, 50)
+## [1] "Trump announces designation of North Korea as stat"
+## [2] "Collapse of German coalition talks deals Merkel a "
+## [3] "× New York Times suspends top White House reporter"
+## [4] "Brutally killed by Charles Manson's followers, Sha"
+## [5] "By MJ Lee , CNN National Politics Reporter Updated"
 ```
+
+Corpus preparation
+------------------
 
 ### `PrepAnnotation()`
 
