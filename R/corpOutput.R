@@ -49,7 +49,7 @@ GetBOW <- function (x,contentOnly) {
       summarize(n=n())%>%
       arrange(desc(n)) })
 
-  if (contentOnly=TRUE) {
+  if (contentOnly==TRUE) {
     output %>%
       lapply(filter(pos %in% c("ADJ","NOUN","VERB","ADV"),!lemma %in% corpdatr::stops))
   } else {return(output)}
