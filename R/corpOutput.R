@@ -51,7 +51,7 @@ GetBOW <- function (x,contentOnly) {
 
   if (contentOnly==TRUE) {
     lapply(1:length(output), function(z){
-      output[[y]]%>%
+      output[[z]]%>%
         filter(pos %in% c("ADJ","NOUN","VERB","ADV"),!lemma %in% corpusdatr::stops)})
   } else {return(output)}
 }
