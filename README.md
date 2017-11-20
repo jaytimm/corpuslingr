@@ -1,11 +1,11 @@
 corpuslingr:
 ------------
 
-Some r functions for quick web scraping and corpus seach of complex grammtical constructions.
+Some r functions for quick web scraping and corpus seach of complex grammtical constructions. Works in conjunction with `spacyr` package.
 
 ``` r
 library(tidyverse)
-#devtools::install_github("jaytimm/corpuslingr")
+devtools::install_github("jaytimm/corpuslingr")
 #devtools::install_github("jaytimm/corpusdatr")
 library(corpuslingr)
 library(corpusdatr)
@@ -22,13 +22,13 @@ Web scraping functions
 dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
 
 head(dailyMeta['titles'])
-##                                                                                                   titles
-## 1                               Trump announces designation of North Korea as state sponsor of terrorism
-## 2                            Collapse of German coalition talks deals Merkel a blow; new election likely
-## 3                                                         Will Zimbabwe's Mugabe Resign or Be Impeached?
-## 4 New York Times suspends top White House reporter amid investigation into sexual-harassment allegations
-## 5          Brutally killed by Charles Manson's followers, Sharon Tate became the face of victims' rights
-## 6                                                 Woman says Franken inappropriately touched her in 2010
+##                                                                                                titles
+## 1                   The Justice Department is suing AT&T to block its $85 billion bid for Time Warner
+## 2                             North Korea's on-again-off-again status as a state sponsor of terrorism
+## 3                      Charlie Rose Suspended By CBS, PBS and Bloomberg Amid Sexual Misconduct Claims
+## 4      Slain border agent may have been beaten to death by rocks in 'grisly scene,' union leader says
+## 5 'We will continue to report this uncowed by his threats': Alabama Media Group responds to Roy Moore
+## 6                 Sarah Huckabee Sanders to April Ryan: 'I'm starting to regret calling on you first'
 ```
 
 We need to sort out meta with sites that are actually scraped. Also, re-try "article" verion of boilerpipeR.
@@ -40,11 +40,11 @@ txts <- dailyMeta$links  %>%
   GetWebTexts()
 
 substr(txts[1:5],1, 50)
-## [1] "Trump announces designation of North Korea as stat"
-## [2] "Collapse of German coalition talks deals Merkel a "
-## [3] "× New York Times suspends top White House reporter"
-## [4] "Brutally killed by Charles Manson's followers, Sha"
-## [5] "By MJ Lee , CNN National Politics Reporter Updated"
+## [1] "The Justice Department is suing AT&T to block its "
+## [2] "Analysis Interpretation of the news based on evide"
+## [3] "2:57 PM PST 11/20/2017 by Jeremy Barr Charlie Rose"
+## [4] "Slain border agent may have been beaten to death b"
+## [5] "Hamburger icon Close icon 'We will continue to rep"
 ```
 
 Corpus preparation
@@ -181,30 +181,37 @@ corpuslingr::GetContexts(search=search2,corp=gnews,LW=5, RW = 5)%>%
 
 ### `GetBOW()`
 
+Vector space model, or word embedding
+
 ``` r
 search3 <- "<Trump!>"
 
-corpuslingr::GetContexts(search=search3,corp=gnews,LW=0, RW = 15)%>%
-  corpuslingr::GetBOW() ##How would we get Noun Phrases from a BOW?
-## [[1]]
-## # A tibble: 517 x 3
-## # Groups:   lemma [502]
-##    lemma   pos     n
-##    <chr> <chr> <int>
-##  1 Trump PROPN   107
-##  2   the   DET    68
-##  3     , PUNCT    46
-##  4     a   DET    33
-##  5  PRON  PRON    30
-##  6     . PUNCT    27
-##  7   and CCONJ    27
-##  8    in   ADP    25
-##  9    to  PART    25
-## 10    's  PART    24
-## # ... with 507 more rows
+corpuslingr::GetContexts(search=search3,corp=gnews,LW=15, RW = 15)%>%
+  corpuslingr::GetBOW(contentOnly=TRUE)%>%
+  data.frame()%>%
+  slice(1:10)%>%
+  ggplot(aes(x=reorder(lemma,n), y=n)) + 
+    geom_bar(stat="identity", width=.5, fill="tomato3") +  
+    coord_flip()+
+    theme_bw()
 ```
 
-Demonstrate piping capacity -- do not run.
+![](README-unnamed-chunk-11-1.png)
+
+``` r
+
+##How would we get Noun Phrases from a BOW?
+```
+
+Multi-term search
+-----------------
+
+``` r
+#multi-search <- c("")
+```
+
+Corpus workflow
+---------------
 
 ``` r
 search4 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"

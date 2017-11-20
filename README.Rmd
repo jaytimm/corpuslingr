@@ -14,10 +14,10 @@ knitr::opts_chunk$set(
 
 ##corpuslingr: 
 
-Some r functions for quick web scraping and corpus seach of complex grammtical constructions.  
+Some r functions for quick web scraping and corpus seach of complex grammtical constructions. Works in conjunction with `spacyr` package. 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
-#devtools::install_github("jaytimm/corpuslingr")
+devtools::install_github("jaytimm/corpuslingr")
 #devtools::install_github("jaytimm/corpusdatr")
 library(corpuslingr)
 library(corpusdatr)
@@ -91,15 +91,32 @@ corpuslingr::GetContexts(search=search2,corp=gnews,LW=5, RW = 5)%>%
 ```
 
 ###`GetBOW()`
+Vector space model, or word embedding
 ```{r}
 search3 <- "<Trump!>"
 
-corpuslingr::GetContexts(search=search3,corp=gnews,LW=0, RW = 15)%>%
-  corpuslingr::GetBOW() ##How would we get Noun Phrases from a BOW?
+corpuslingr::GetContexts(search=search3,corp=gnews,LW=15, RW = 15)%>%
+  corpuslingr::GetBOW(contentOnly=TRUE)%>%
+  data.frame()%>%
+  slice(1:10)%>%
+  ggplot(aes(x=reorder(lemma,n), y=n)) + 
+    geom_bar(stat="identity", width=.5, fill="tomato3") +  
+    coord_flip()+
+    theme_bw()
+
+##How would we get Noun Phrases from a BOW?
 ```
 
 
-Demonstrate piping capacity -- do not run.
+
+##Multi-term search
+
+```{r}
+#multi-search <- c("")
+```
+
+
+##Corpus workflow
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 search4 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 
