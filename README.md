@@ -1,58 +1,53 @@
 corpuslingr:
 ------------
 
-Corpus work flow.
+Some r functions for quick web scraping and corpus seach of complex grammtical constructions.
 
 ``` r
 library(tidyverse)
 #devtools::install_github("jaytimm/corpuslingr")
+#devtools::install_github("jaytimm/corpusdatr")
 library(corpuslingr)
+library(corpusdatr)
+library(knitr)
 ```
 
-``` r
-library(spacyr)
-spacy_initialize()
-## NULL
-#spacy_initialize(python_executable = "C:\\Users\\jason\\AppData\\Local\\Programs\\Python\\Python36\\python.exe")
-```
+Web scraping functions
+----------------------
 
-Web-based functions -- super simple
------------------------------------
+### `GetGoogleNewsMeta()`
 
 ``` r
 #dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico", n=5)
 dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
 
-head(dailyMeta[1:2])
-##                            source
-## 1 This RSS feed URL is deprecated
-## 2                  New York Times
-## 3                  New York Times
-## 4                             CNN
-## 5                          SFGate
-## 6                  New York Times
-##                                                            titles
-## 1                                 This RSS feed URL is deprecated
-## 2            Republican Plan Delivers Permanent Corporate Tax Cut
-## 3 Trump Abandons Idea of Sending Terrorism Suspect to GuantÃ¡namo
-## 4                    Former DNC chair torches Clinton in new book
-## 5            The Latest: 3 victims of Walmart shooting identified
-## 6               Trump Announces Jerome Powell as New Fed Chairman
+head(dailyMeta['titles'])
+##                                                                                                   titles
+## 1                               Trump announces designation of North Korea as state sponsor of terrorism
+## 2                            Collapse of German coalition talks deals Merkel a blow; new election likely
+## 3 New York Times suspends top White House reporter amid investigation into sexual-harassment allegations
+## 4                                                         Will Zimbabwe's Mugabe Resign or Be Impeached?
+## 5                                                 Woman says Franken inappropriately touched her in 2010
+## 6          Brutally killed by Charles Manson's followers, Sharon Tate became the face of victims' rights
 ```
+
+We need to sort out meta with sites that are actually scraped. Also, re-try "article" verion of boilerpipeR.
+
+### `GetWebTexts()`
 
 ``` r
 txts <- dailyMeta$links  %>% 
   GetWebTexts()
 
 substr(txts[1:5],1, 100)
-## [1] "NYTimes.com no longer supports Internet Explorer 9 or earlier. Please upgrade your browser. LEARN MO"
-## [2] "NYTimes.com no longer supports Internet Explorer 9 or earlier. Please upgrade your browser. LEARN MO"
-## [3] "By Dan Merica and Maegan Vazquez, CNN Updated 3:26 PM ET, Thu November 2, 2017 Chat with us in Faceb"
-## [4] "Updated 12:17 pm, Thursday, November 2, 2017 Now Playing: A man nonchalantly walked into a Walmart a"
-## [5] "NYTimes.com no longer supports Internet Explorer 9 or earlier. Please upgrade your browser. LEARN MO"
+## [1] "Trump announces designation of North Korea as state sponsor of terrorism 'Should have happened a lon"
+## [2] "Collapse of German coalition talks deals Merkel a blow; new election likely German Chancellor Angela"
+## [3] "× New York Times suspends top White House reporter amid investigation into sexual-harassment allegat"
+## [4] "By MJ Lee , CNN National Politics Reporter Updated 9:53 AM ET, Mon November 20, 2017 Chat with us in"
+## [5] "Brutally killed by Charles Manson's followers, Sharon Tate became the face of victims' rights Sharon"
 ```
 
-Can be used to in a pipe laong with a corpus annotator, in this case `spacyr`...`GetWebTexts` a generic webscraping function
+### `PrepAnnotation()`
 
 ``` r
 annotations <- txts  %>%
@@ -63,64 +58,73 @@ annotations <- txts  %>%
 Output consists of a list of dataframes. Distinct from `spacyr` output.
 
 ``` r
-head(annotations[[1]])
-##   doc_id sentence_id token_id       token       lemma   pos tag entity
-## 1      1           1        1 NYTimes.com nytimes.com     X ADD       
-## 2      1           1        2          no          no   DET  DT       
-## 3      1           1        3      longer      longer   ADV RBR       
-## 4      1           1        4    supports     support  VERB VBZ       
-## 5      1           1        5    Internet    Internet PROPN NNP       
-## 6      1           1        6    Explorer    Explorer PROPN NNP       
-##                             tup tupBeg tupEnd
-## 1 <NYTimes.com,nytimes.com,ADD>      1     30
-## 2                    <no,no,DT>     31     41
-## 3           <longer,longer,RBR>     42     61
-## 4        <supports,support,VBZ>     62     84
-## 5       <Internet,Internet,NNP>     85    108
-## 6       <Explorer,Explorer,NNP>    109    132
+gnews <- corpusdatr::gnews11_20_17
 ```
 
+### `GetDocDesc()`
+
 ``` r
-head(GetDocDesc(annotations))
+head(GetDocDesc(gnews))
 ## # A tibble: 6 x 4
 ##   doc_id  docN docType docSent
 ##    <int> <int>   <int>   <int>
-## 1      1  1932     740      84
-## 2      2  1296     602      61
-## 3      3  1296     487      45
-## 4      4  1879     433      85
-## 5      5  1545     666      69
-## 6      6   614     336      23
+## 1      1   785     369      33
+## 2      2  1321     496      71
+## 3      3  1216     538      47
+## 4      4  1075     435      54
+## 5      5  1320     617      72
+## 6      6   817     386      34
 ```
 
 Search function and aggregate functions.
 ----------------------------------------
 
-GetSearchFreqs() GetKWIC() GetBOW()
-
-Allows for multiple search terms...
-
-As a single pipe.
+### `GetContexts()`
 
 ``` r
-library(knitr)
-library(kableExtra)
-library(DT)
+search1 <- "<_Vx> <_IN>"
 
-annotations%>%
-  corpuslingr::GetContexts(search="<_Jx> <and!> <_Jx>",corp=., LW=5, RW = 5)%>%
+found <- corpuslingr::GetContexts(search=search1,corp=gnews,LW=5, RW = 5)
+```
+
+### `GetSearchFreqs()`
+
+``` r
+corpuslingr::GetSearchFreqs(found)[[1]]
+## # A tibble: 608 x 3
+## # Groups:   targ [608]
+##               targ termDocFreq termTextFreq
+##              <chr>       <int>        <int>
+##  1    ACCORDING TO          13           30
+##  2         SAID IN          10           17
+##  3       SAID THAT           4            8
+##  4           IS IN           5            6
+##  5 RECOMMENDED FOR           3            6
+##  6      ADDED THAT           4            5
+##  7  CONTRIBUTED TO           5            5
+##  8      RELATED TO           2            5
+##  9    WORKING WITH           5            5
+## 10    HAPPENING IN           4            4
+## # ... with 598 more rows
+```
+
+### `GetKWIC()`
+
+``` r
+search2 <- "<_Jx> <and!> <_Jx>"
+
+corpuslingr::GetContexts(search=search2,corp=gnews,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   data.frame()%>%
   select(doc_id,cont)%>%
   mutate(cont=gsub("<mark>|</mark>","||",cont))%>%
-  kable("markdown") %>%
-  kable_styling()
+  knitr::kable("markdown")
 ```
 
 <table>
 <colgroup>
-<col width="5%" />
-<col width="94%" />
+<col width="6%" />
+<col width="93%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -131,57 +135,81 @@ annotations%>%
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="left">businesses blasted the bill as || ineffective and harmful || to Americans Advertisement Representative Peter</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="left">host of changes on the || corporate and individual || side , including repealing tax</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="left">. The cut would be || immediate and permanent || . It also eliminates the</td>
+<td align="left">whom he cast as a || maniacal and deranged || man . &quot; The regime</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="left">February called the comments &quot; || disturbing and disappointing || , &quot; but decided since</td>
+<td align="left">Menz said she had a || brief and cordial || exchange with the senator .</td>
 </tr>
 <tr class="odd">
-<td align="right">5</td>
-<td align="left">its stimulus campaign at a || slow and steady || pace . Over the last</td>
+<td align="right">2</td>
+<td align="left">said she has equally supported || Republican and Democratic || candidates while he said he</td>
 </tr>
 <tr class="even">
-<td align="right">7</td>
-<td align="left">prevention measure . &quot; Use || interior and exterior || lighting at all times ,</td>
-</tr>
-<tr class="odd">
-<td align="right">7</td>
-<td align="left">well - lit streets with || competent and trustworthy || government , &quot; and that</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="left">turn away ; along the || quiet and private || Lazy Lane , big estates</td>
+<td align="right">4</td>
+<td align="left">do remember she was very || rattled and upset || and ashamed of what she</td>
 </tr>
 <tr class="odd">
 <td align="right">8</td>
-<td align="left">and they 'll forget the || hidden and beautiful || unintended consequence of that victory</td>
-</tr>
-<tr class="even">
-<td align="right">8</td>
-<td align="left">victory : All over the || flawed and beautiful || city of Houston , for</td>
-</tr>
-<tr class="odd">
-<td align="right">9</td>
-<td align="left">, is known for being || shy and idiosyncratic || . A model - train</td>
+<td align="left">24 hours . CNN 's || military and diplomatic || analyst John Kirby reported in</td>
 </tr>
 <tr class="even">
 <td align="right">10</td>
-<td align="left">is not obviously accessible . || Japanese and French || scientists made the announcement after</td>
+<td align="left">an investigation , according to || legal and national || security experts at the website</td>
 </tr>
 <tr class="odd">
-<td align="right">10</td>
-<td align="left">cavity is perhaps 30 m || long and several || metres in height All three</td>
+<td align="right">11</td>
+<td align="left">, 2001 . Plenty of || former and current || players , including former Patriots</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="left">use personal funds to help || current and former || White House staff with their</td>
+</tr>
+<tr class="odd">
+<td align="right">18</td>
+<td align="left">legal bills that would meet || regulatory and ethical || standards , White House lawyer</td>
+</tr>
+<tr class="even">
+<td align="right">25</td>
+<td align="left">indeed partly covert with many || Muslim and Arab || countries , and usually (</td>
 </tr>
 </tbody>
 </table>
 
-render("C:\\Users\\jason\\Google Drive\\GitHub\\packages\\corpuslingr\\README.rmd")
+### `GetBOW()`
+
+``` r
+search3 <- "<Trump!>"
+
+corpuslingr::GetContexts(search=search3,corp=gnews,LW=0, RW = 15)%>%
+  corpuslingr::GetBOW() ##How would we get Noun Phrases from a BOW?
+## [[1]]
+## # A tibble: 517 x 3
+## # Groups:   lemma [502]
+##    lemma   pos     n
+##    <chr> <chr> <int>
+##  1 Trump PROPN   107
+##  2   the   DET    68
+##  3     , PUNCT    46
+##  4     a   DET    33
+##  5  PRON  PRON    30
+##  6     . PUNCT    27
+##  7   and CCONJ    27
+##  8    in   ADP    25
+##  9    to  PART    25
+## 10    's  PART    24
+## # ... with 507 more rows
+```
+
+Demonstrate piping capacity -- do not run.
+
+``` r
+search4 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
+
+dailyMeta$links  %>% 
+  corpuslingr::GetWebTexts()%>%
+  lapply(spacyr::spacy_parse,tag=TRUE)%>%
+  corpuslingr::PrepAnnotation()%>%
+  corpuslingr::GetContexts(search=search4,corp=.,LW=10, RW = 10)%>%
+  corpuslingr::GetSearchFreqs(found)[[1]]
+```

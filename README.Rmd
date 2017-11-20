@@ -14,30 +14,29 @@ knitr::opts_chunk$set(
 
 ##corpuslingr: 
 
-Corpus work flow.  
+Some r functions for quick web scraping and corpus seach of complex grammtical constructions.  
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
 #devtools::install_github("jaytimm/corpuslingr")
+#devtools::install_github("jaytimm/corpusdatr")
 library(corpuslingr)
+library(corpusdatr)
+library(knitr)
 ```
 
-```{r message=FALSE, warning=FALSE}
-library(spacyr)
-spacy_initialize()
-#spacy_initialize(python_executable = "C:\\Users\\jason\\AppData\\Local\\Programs\\Python\\Python36\\python.exe")
-```
-
-##Web-based functions --  super simple
+##Web scraping functions
+###`GetGoogleNewsMeta()`
 ```{r}
 #dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico", n=5)
 dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
 
-head(dailyMeta[1:2])
+head(dailyMeta['titles'])
 ```
 
 We need to sort out meta with sites that are actually scraped.
-Also, re-try "artcle" verion of boilerpipeR.
+Also, re-try "article" verion of boilerpipeR.
 
+###`GetWebTexts()`
 ```{r}
 txts <- dailyMeta$links  %>% 
   GetWebTexts()
@@ -45,58 +44,70 @@ txts <- dailyMeta$links  %>%
 substr(txts[1:5],1, 100)
 ```
 
-
-Can be used to in a pipe laong with a corpus annotator, in this case `spacyr`...`GetWebTexts` a generic webscraping function
-
-
-
-
-
-```{r}
+###`PrepAnnotation()`
+```{r eval=FALSE}
 annotations <- txts  %>%
   lapply(spacyr::spacy_parse,tag=TRUE)%>%
   corpuslingr::PrepAnnotation()
 ```
 
 Output consists of a list of dataframes.  Distinct from `spacyr` output.
-
 ```{r}
-head(annotations[[1]])
+gnews <- corpusdatr::gnews11_20_17
 ```
 
-
+###`GetDocDesc()` 
 ```{r}
-head(GetDocDesc(annotations))
+head(GetDocDesc(gnews))
 ```
 
 
 ##Search function and aggregate functions.
+###`GetContexts()`
+```{r}
+search1 <- "<_Vx> <_IN>"
+
+found <- corpuslingr::GetContexts(search=search1,corp=gnews,LW=5, RW = 5)
+```
 
 
+###`GetSearchFreqs()`
+```{r}
+corpuslingr::GetSearchFreqs(found)[[1]]
+```
 
+###`GetKWIC()`
+```{r}
+search2 <- "<_Jx> <and!> <_Jx>"
 
-GetSearchFreqs()
-GetKWIC()
-GetBOW()
-
-Allows for multiple search terms...
-
-
-Should add date. Demonstrate currency.
-```{r message=FALSE, warning=FALSE}
-library(knitr)
-
-term <- "<_Jx> <and!> <_Jx>"
-
-annotations%>%
-  corpuslingr::GetContexts(search=term,corp=., LW=5, RW = 5)%>%
+corpuslingr::GetContexts(search=search2,corp=gnews,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   data.frame()%>%
   select(doc_id,cont)%>%
   mutate(cont=gsub("<mark>|</mark>","||",cont))%>%
-  kable("markdown")
+  knitr::kable("markdown")
 ```
 
-render("C:\\Users\\jason\\Google Drive\\GitHub\\packages\\corpuslingr\\README.rmd")
+###`GetBOW()`
+```{r}
+search3 <- "<Trump!>"
+
+corpuslingr::GetContexts(search=search3,corp=gnews,LW=0, RW = 15)%>%
+  corpuslingr::GetBOW() ##How would we get Noun Phrases from a BOW?
+```
+
+
+Demonstrate piping capacity -- do not run.
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+search4 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
+
+dailyMeta$links  %>% 
+  corpuslingr::GetWebTexts()%>%
+  lapply(spacyr::spacy_parse,tag=TRUE)%>%
+  corpuslingr::PrepAnnotation()%>%
+  corpuslingr::GetContexts(search=search4,corp=.,LW=10, RW = 10)%>%
+  corpuslingr::GetSearchFreqs(found)[[1]]
+```
+
 
 
