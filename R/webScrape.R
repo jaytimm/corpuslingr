@@ -26,8 +26,11 @@ GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
     gsub("^.*url=","",.)
   pubdates <- XML::xpathSApply(doc,'//item/pubDate',xmlValue)
 
-  as.data.frame(cbind(source,titles,links,pubdates))%>%
-    mutate(source=as.character(source), titles=as.character(titles), links=as.character(links), pubdates=as.character(pubdates))%>%
+  date <- gsub("^.+, ","",pubdates)
+  date <- gsub(" [0-9]*:.+$","", date)
+
+  as.data.frame(cbind(source,titles,links,pubdates,date))%>%
+    mutate(source=as.character(source), titles=as.character(titles), links=as.character(links), pubdates=as.character(pubdates),date=as.character(date))%>%
     filter(source!="This RSS feed URL is deprecated")
   }
   #Add an id, perhaps.
