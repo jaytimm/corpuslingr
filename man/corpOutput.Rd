@@ -12,7 +12,7 @@ GetSearchFreqs(x)
 
 GetKWIC(x)
 
-GetBOW(x)
+GetBOW(x, contentOnly)
 
 GetDocDesc(x)
 }
