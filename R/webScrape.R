@@ -48,8 +48,8 @@ GetWebTexts <- function(y) {
   output <- lapply(raws, function(z) {
     lapply(z, boilerpipeR::ArticleExtractor)%>%
     gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",., perl=TRUE)%>%
-    gsub("\\\n"," ",., perl=TRUE)#%>%
-    #gsub("\\\"","\"",., perl=TRUE)#%>%
+    gsub("\\\n"," ",., perl=TRUE)%>%
+    gsub("\\\"","\"",., perl=TRUE)#%>%
     #gsub("\",","\"",., perl=TRUE)
       })
 
