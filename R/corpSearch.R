@@ -17,7 +17,7 @@ buildSearch <- function(x){
   if (length(grep("x", pos)==1)) {pos=gsub("x","[A-Z]{1,3}",pos)}
   if (length(grep("&", x)==1)) {lemma=gsub(".*<|&.*","",x)}
   if (length(grep("!", x)==1)) {form=gsub(".*<|!.*","",x)}
-  sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep=","), x, perl=TRUE)}
+  sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="_"), x, perl=TRUE)}
 
 #' @export
 #' @rdname corpSearch
