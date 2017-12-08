@@ -64,9 +64,16 @@ extractContext <- function(x,search,LW,RW) {
 #' @export
 #' @rdname corpSearch
 GetContexts <- function(search,corp,LW,RW){
+<<<<<<< HEAD
 
   conts <- list()
   found <- vector()
+=======
+#This needs to be a FOR loop through each search term.  
+#Easier to generate "Search not found" instead of useless error.
+#Also - A summary of search results should be output somewhere
+#A simple: search x count. Maybe even in console.
+>>>>>>> 9bfd6480556d9b2bf235b209b31d0455c05f54ad
   searchTerms <- unlist(lapply(search, CQLtoRegex))
 
   for (i in 1:length(searchTerms)){
