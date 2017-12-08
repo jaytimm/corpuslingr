@@ -71,7 +71,7 @@ GetContexts <- function(search,corp,LW,RW){
   searchTerms <- unlist(lapply(search, CQLtoRegex))
 
   for (i in 1:length(searchTerms)){
-    conts[[i]] <- lapply(corpus,extractContext,search=searchTerms[i],LW,RW)%>%
+    conts[[i]] <- lapply(corp,extractContext,search=searchTerms[i],LW,RW)%>%
       compact()%>%
       lapply(.,rbindlist,idcol="id")%>%
       rbindlist()
