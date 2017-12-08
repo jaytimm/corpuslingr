@@ -4,10 +4,8 @@
 #' @name corpOutput
 #' @param charList A list of texts as character strings
 #' @return A list of dataframes
-#' @import spacyr tidyverse data.table
-#' @export
-#' @rdname corpOutput
-#'
+#' @import magittr dplyr
+
 
 #' @export
 #' @rdname corpOutput
@@ -44,7 +42,7 @@ GetKWIC <- function (x) {
 GetBOW <- function (x,contentOnly) {
   output <- lapply(1:length(x), function(y){
     x[[y]]%>%
-      filter (place!="target" ) %>%
+      filter (place!="targ" ) %>%
       group_by(lemma, pos) %>%
       summarize(n=n())%>%
       arrange(desc(n)) })

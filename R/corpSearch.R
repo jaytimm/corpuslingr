@@ -7,7 +7,7 @@
 #' @param RW Size of context in number of words to right of the target
 #' @param corp List of annotated texts to be searched
 #' @return A list of dataframes
-#' @import tidyverse data.table
+#' @import magittr dplyr data.table
 
 
 buildSearch <- function(x){
@@ -65,14 +65,33 @@ extractContext <- function(x,search,LW,RW) {
 #' @rdname corpSearch
 GetContexts <- function(search,corp,LW,RW){
 
+  conts <- list()
+  found <- vector()
   searchTerms <- unlist(lapply(search, CQLtoRegex))
 
-  lapply(1:length(searchTerms), function(x) {
-    lapply(corp,extractContext,search=searchTerms[x],LW,RW)%>%
+  for (i in 1:length(searchTerms)){
+    conts[[i]] <- lapply(corpus,extractContext,search=searchTerms[i],LW,RW)%>%
       compact()%>%
       lapply(.,rbindlist,idcol="id")%>%
-      rbindlist()%>%
-      mutate(eg=group_indices(.,doc_id,id))%>%
-      select(-id)%>%
-      arrange(desc(eg))})
+      rbindlist()
+
+  if (length(conts[[i]]) >0 ) {
+    conts[[i]] <- conts[[i]][, eg := .GRP, by = .(doc_id,id)]%>%
+      select(-id)
+
+    found[i] <- i
+    } else
+    {found[i] <- 0}
+    }
+
+  found <- found [found>0]
+
+  if (sum(found) >0){
+
+  conts <- conts[c(found)]
+  names(conts) <- search[found]
+  return(conts)
+
+     } else
+      {return("NO SEARCH TERMS FOUND IN CORPUS")}
 }

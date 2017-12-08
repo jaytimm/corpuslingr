@@ -4,7 +4,7 @@
 #' @name corpAnnotate
 #' @param x A list of dataframes
 #' @return A list of dataframes
-#' @import tidyverse data.table
+#' @import magittr dplyr
 #' @export
 #' @rdname corpAnnotate
 #'
