@@ -7,7 +7,8 @@
 #' @return A dataframe of meta for articles collected.
 #' @importFrom XML xpathSApply xmlParse
 #' @importFrom boilerpipeR ArticleExtractor
-
+#' @importFrom RCurl getURL
+#' @import magrittr dplyr
 
 
 

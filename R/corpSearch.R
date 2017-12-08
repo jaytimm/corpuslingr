@@ -7,7 +7,8 @@
 #' @param RW Size of context in number of words to right of the target
 #' @param corp List of annotated texts to be searched
 #' @return A list of dataframes
-
+#' @importFrom data.table rbindlist
+#' @import magrittr dplyr
 
 buildSearch <- function(x){
 
@@ -76,7 +77,8 @@ GetContexts <- function(search,corp,LW,RW){
       rbindlist()
 
   if (length(conts[[i]]) >0 ) {
-    conts[[i]] <- conts[[i]][, eg := .GRP, by = .(doc_id,id)]%>%
+    conts[[i]] <- conts[[i]]%>%
+      mutate(eg=group_indices(.,doc_id,id))%>%
       select(-id)
 
     found[i] <- i
