@@ -4,7 +4,7 @@
 #' @name corpOutput
 #' @param charList A list of texts as character strings
 #' @return A list of dataframes
-#' @import tidyverse
+
 
 
 #' @export

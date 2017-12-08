@@ -4,10 +4,7 @@
 #' @name corpAnnotate
 #' @param x A list of dataframes
 #' @return A list of dataframes
-#' @import tidyverse
-#' @export
-#' @rdname corpAnnotate
-#'
+
 
 #' @export
 #' @rdname corpAnnotate
