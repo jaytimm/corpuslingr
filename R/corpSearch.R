@@ -7,7 +7,7 @@
 #' @param RW Size of context in number of words to right of the target
 #' @param corp List of annotated texts to be searched
 #' @return A list of dataframes
-#' @import magrittr dplyr data.table
+#' @import tidyverse data.table
 
 
 buildSearch <- function(x){
