@@ -36,7 +36,7 @@ buildTuple <- function(x){
 
 #' @export
 #' @rdname corpAnnotate
-CleanAnnotation <- function(x){
+ModifyAnnotation <- function(x){
 
 annotation <- lapply(x, function(y){
   out <- y %>%

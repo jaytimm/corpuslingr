@@ -4,14 +4,14 @@
 \alias{corpAnnotate}
 \alias{PrepText}
 \alias{buildTuple}
-\alias{CleanAnnotation}
+\alias{ModifyAnnotation}
 \title{Annotate a corpus of texts using the `spacyr` package}
 \usage{
 PrepText(x, hyphenate = TRUE)
 
 buildTuple(x)
 
-CleanAnnotation(x)
+ModifyAnnotation(x)
 }
 \arguments{
 \item{x}{A list of dataframes}
