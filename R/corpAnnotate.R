@@ -6,6 +6,22 @@
 #' @return A list of dataframes
 #' @import magrittr dplyr
 
+
+#' @export
+#' @rdname corpAnnotate
+PrepText <- function (x, hyphenate=TRUE) {
+
+  lapply(x, function(y){
+    txt <- y %>%
+      gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",., perl=TRUE)%>%
+      gsub('--(\\w)','-- \\1',., perl=TRUE)%>%
+      gsub('(\\w)--','\\1 --',., perl=TRUE)
+
+    if (hyphenate==TRUE) {
+        txt <- gsub("(\\w)-(\\w)",'\\1xxx\\2',txt, perl=TRUE)}
+    return(txt)})
+}
+
 #' @export
 #' @rdname corpAnnotate
 buildTuple <- function(x){
@@ -17,14 +33,19 @@ buildTuple <- function(x){
   return(x)}
 
 
+
 #' @export
 #' @rdname corpAnnotate
-PrepAnnotation <- function(x){
+CleanAnnotation <- function(x){
 
 annotation <- lapply(x, function(y){
   out <- y %>%
-    mutate(token=gsub("\\s*","",token),lemma=gsub("^-|-$|\\s*","",lemma))%>%
-    mutate(lemma=ifelse(pos=="PROPN",token,lemma))%>%
+    mutate(token=gsub("\\s*","",token),
+           lemma=gsub("\\s*","",lemma))%>%
+    mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
+    mutate(lemma=gsub("([[:alpha:]])xxx([[:alpha:]])",'\\1-\\2',lemma),
+           token=gsub("([[:alpha:]])xxx([[:alpha:]])",'\\1-\\2',token))%>%
+    mutate(tag = ifelse(tag=="ENTITY",paste('NP',substr(entity_type,1,2),sep=""),tag))%>%
     buildTuple()
 
   class(out) <- c("spacyr_parsed", "data.frame")

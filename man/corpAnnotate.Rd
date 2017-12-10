@@ -2,13 +2,16 @@
 % Please edit documentation in R/corpAnnotate.R
 \name{corpAnnotate}
 \alias{corpAnnotate}
+\alias{PrepText}
 \alias{buildTuple}
-\alias{PrepAnnotation}
+\alias{CleanAnnotation}
 \title{Annotate a corpus of texts using the `spacyr` package}
 \usage{
+PrepText(x, hyphenate = TRUE)
+
 buildTuple(x)
 
-PrepAnnotation(x)
+CleanAnnotation(x)
 }
 \arguments{
 \item{x}{A list of dataframes}

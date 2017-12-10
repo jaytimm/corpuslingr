@@ -8,7 +8,7 @@
 \alias{GetDocDesc}
 \title{Annotate a corpus of texts using the `spacyr` package}
 \usage{
-GetSearchFreqs(x)
+GetSearchFreqs(x, aggBy = "lemma")
 
 GetKWIC(x)
 

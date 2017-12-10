@@ -95,5 +95,5 @@ GetContexts <- function(search,corp,LW,RW){
   return(conts)
 
      } else
-      {return("NO SEARCH TERMS FOUND IN CORPUS")}
+      {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
