@@ -45,7 +45,7 @@ annotation <- lapply(x, function(y){
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
            token=gsub("xxx","-",token))%>%
-    mutate(tag = ifelse(tag=="ENTITY",paste("NE",substr(entity_type,1,2),sep=""),tag))%>%
+    mutate(tag = ifelse(tag=="ENTITY",paste("N",entity_type),sep=""),tag))%>%
     buildTuple() %>%
     mutate(token=gsub("_"," ",token),
            lemma=gsub("_"," ",lemma))
