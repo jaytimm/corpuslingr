@@ -15,6 +15,9 @@ GetSearchFreqs <- function (x,aggBy='lemma') {
       filter(place=="targ")%>%
       select(eg,doc_id,aggBy)%>%
       select(targ = !! quo(names(.)[[3]]), everything())%>%
+      group_by(eg,doc_id)%>%
+      #mutate(targ=summarize(paste0(targ, collapse = " ")))%>%
+      summarize_at(vars(targ),funs(paste(., collapse = " ")))%>%
       group_by(targ)%>%
       mutate(termDocFreq=length(unique(doc_id)))%>%
       group_by(targ,termDocFreq)%>%
