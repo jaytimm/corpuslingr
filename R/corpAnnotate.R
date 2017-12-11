@@ -40,8 +40,8 @@ ModifyAnnotation <- function(x){
 
 annotation <- lapply(x, function(y){
   out <- y %>%
-    mutate(token=gsub("\\s*","",token),
-           lemma=gsub("\\s*","",lemma))%>%
+    mutate(token=gsub("\\s*|_","",token),
+           lemma=gsub("\\s*|_","",lemma))%>%
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
            token=gsub("xxx","-",token))%>%
