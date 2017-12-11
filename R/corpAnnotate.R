@@ -43,9 +43,9 @@ annotation <- lapply(x, function(y){
     mutate(token=gsub("\\s*","",token),
            lemma=gsub("\\s*","",lemma))%>%
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
-    mutate(lemma=gsub("xxx",'-',lemma),
-           token=gsub("xxx",'-',token))%>%
-    mutate(tag = ifelse(tag=="ENTITY",paste('NE',substr(entity_type,1,2),sep=""),tag))%>%
+    mutate(lemma=gsub("xxx","-",lemma),
+           token=gsub("xxx","-",token))%>%
+    mutate(tag = ifelse(tag=="ENTITY",paste("NE",substr(entity_type,1,2),sep=""),tag))%>%
     buildTuple()
 
   class(out) <- c("spacyr_parsed", "data.frame")
