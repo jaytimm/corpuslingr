@@ -14,14 +14,16 @@ GetSearchFreqs <- function (x,aggBy='lemma') {
     x[[y]]%>%
       filter(place=="targ")%>%
       select(eg,doc_id,aggBy)%>%
+      select(targ = !! quo(names(.)[[3]]), everything())%>%
       group_by(eg,doc_id)%>%
-      summarize(targ = paste(aggBy, collapse= " ")) %>%
+      summarize(targ = paste(targ, collapse= " ")) %>%
       mutate(targ=toupper(targ))%>%
       group_by(targ) %>%
       mutate(termDocFreq=length(unique(doc_id)))%>%
       group_by(targ,termDocFreq)%>%
       summarize(termTextFreq=n()) %>%
       arrange(desc(termTextFreq))  })}
+
 
 #' @export
 #' @rdname corpOutput
