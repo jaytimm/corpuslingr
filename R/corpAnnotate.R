@@ -36,7 +36,7 @@ buildTuple <- function(x){
 
 #' @export
 #' @rdname corpAnnotate
-ModifyAnnotation1 <- function(x){
+ModifyAnnotation <- function(x){
 
 NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL')
 
