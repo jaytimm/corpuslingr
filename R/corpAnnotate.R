@@ -14,8 +14,8 @@ PrepText <- function (x, hyphenate=TRUE) {
   lapply(x, function(y){
     txt <- y %>%
       gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",., perl=TRUE)%>%
-      gsub('--(\\w)','-- \\1',., perl=TRUE)%>%
-      gsub('(\\w)--','\\1 --',., perl=TRUE)
+      gsub('--(.)','-- \\1',., perl=TRUE)%>%
+      gsub('(.)--','\\1 --',., perl=TRUE) #This needs to include non-aplha as well.
 
     if (hyphenate==TRUE) {
         txt <- gsub("(\\w)-(\\w)",'\\1xxx\\2',txt, perl=TRUE)}
@@ -36,7 +36,9 @@ buildTuple <- function(x){
 
 #' @export
 #' @rdname corpAnnotate
-ModifyAnnotation <- function(x){
+ModifyAnnotation1 <- function(x){
+
+NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL')
 
 annotation <- lapply(x, function(y){
   out <- y %>%
@@ -45,7 +47,8 @@ annotation <- lapply(x, function(y){
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
            token=gsub("xxx","-",token))%>%
-    mutate(tag = ifelse(tag=="ENTITY",paste("NE",gsub("_","",entity_type),sep=""),tag))%>%
+    mutate(tag = ifelse(tag=="ENTITY" & !entity_type %in% NUMS ,paste("NN",entity_type,sep=""),tag))%>%
+    mutate(tag = ifelse(tag=="ENTITY",entity_type,tag))%>%
     buildTuple() %>%
     mutate(token=gsub("_"," ",token),
            lemma=gsub("_"," ",lemma))
