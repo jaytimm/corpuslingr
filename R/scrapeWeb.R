@@ -1,7 +1,7 @@
 #' Access GoogleNews quickly
 #'
 #' These functions enable easy access to GoogleNews rss feed, and subsequent scraping.
-#' @name webScrape
+#' @name scrapeWeb
 #' @param search Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"
 #' @param n Number of articles to get; max = 30.
 #' @return A dataframe of meta for articles collected.
@@ -13,7 +13,7 @@
 
 
 #' @export
-#' @rdname webScrape
+#' @rdname scrapeWeb
 GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
 
   rss <- paste("https://news.google.com/news?hl=en&q=",gsub(" ","",search),"&ie=utf-8&num=",n,"&output=rss",sep="")
@@ -39,7 +39,7 @@ GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
 
 
 #' @export
-#' @rdname webScrape
+#' @rdname scrapeWeb
 GetWebTexts <- function(y) {
 
   raws <- sapply(y, function (x) {

@@ -1,4 +1,4 @@
-#' Annotate a corpus of texts using the `spacyr` package
+#' Modify text annotations for more robust corpus search
 #'
 #' These functions modify the output of `spacyr'
 #' @name corpAnnotate
@@ -8,22 +8,7 @@
 
 
 #' @export
-#' @rdname corpAnnotate
-PrepText <- function (x, hyphenate=TRUE) {
-
-  lapply(x, function(y){
-    txt <- y %>%
-      gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",., perl=TRUE)%>%
-      gsub('--(.)','-- \\1',., perl=TRUE)%>%
-      gsub('(.)--','\\1 --',., perl=TRUE) #This needs to include non-aplha as well.
-
-    if (hyphenate==TRUE) {
-        txt <- gsub("(\\w)-(\\w)",'\\1xxx\\2',txt, perl=TRUE)}
-    return(txt)})
-}
-
-#' @export
-#' @rdname corpAnnotate
+#' @rdname annotationModify
 buildTuple <- function(x){
   x$tup <- paste("<",x$token,"_",x$lemma,"_",x$tag,">",sep="")
   text <- paste(x$tup,collapse=" ")
@@ -35,10 +20,12 @@ buildTuple <- function(x){
 
 
 #' @export
-#' @rdname corpAnnotate
+#' @rdname annotationModify
 ModifyAnnotation <- function(x){
 
 NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL')
+
+if (is.data.frame(x)) x <- list(x)
 
 annotation <- lapply(x, function(y){
   out <- y %>%
@@ -49,14 +36,16 @@ annotation <- lapply(x, function(y){
            token=gsub("xxx","-",token))%>%
     mutate(tag = ifelse(tag=="ENTITY" & !entity_type %in% NUMS ,paste("NN",entity_type,sep=""),tag))%>%
     mutate(tag = ifelse(tag=="ENTITY",entity_type,tag))%>%
+    filter(pos != "SPACE")%>%
     buildTuple() %>%
     mutate(token=gsub("_"," ",token),
            lemma=gsub("_"," ",lemma))
 
   class(out) <- c("spacyr_parsed", "data.frame")
-  return(out)})
+  return(out)})#A list of dataframes.
 
-annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)
+if (length(out) >1) {
+annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)}
 
 return(annotation)
 }

@@ -1,7 +1,7 @@
 #' Get search in context
 #'
 #' These functions enable corpus search of gram constructions in context.
-#' @name corpSearch
+#' @name queryCorpus
 #' @param search Gram/lexical pattern to be searched for
 #' @param LW Size of context in number of words to left of the target
 #' @param RW Size of context in number of words to right of the target
@@ -10,35 +10,9 @@
 #' @importFrom data.table rbindlist
 #' @import magrittr dplyr
 
-buildSearch <- function(x){
-
-  pos <- "\\\\w*"; form <- "\\\\w*"; lemma <- "\\\\w*"
-  if (length(grep("_", x)==1)) {pos=gsub(".*_|>.*","",x)}
-  if (length(grep("x", pos)==1)) {pos=gsub("x","[A-Z]{1,3}",pos)}
-  if (length(grep("&", x)==1)) {lemma=gsub(".*<|&.*","",x)}
-  if (length(grep("!", x)==1)) {form=gsub(".*<|!.*","",x)}
-  sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="_"), x, perl=TRUE)}
 
 #' @export
-#' @rdname corpSearch
-nounPhrase <- "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
-
-#' @export
-#' @rdname corpSearch
-keyPhrase <- "(<_JJ> )*(<_N[A-Z]{1,3}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,3}> )+)?"
-
-
-CQLtoRegex <- function(x) {
-  x <- gsub("<_NXP>",nounPhrase,x)
-
-  unlist(strsplit(x," ")) %>%
-    lapply(buildSearch) %>%
-    paste(collapse="")%>%
-    gsub(">","> ",.)}
-
-
-#' @export
-#' @rdname corpSearch
+#' @rdname queryCorpus
 extractContext <- function(x,search,LW,RW) {
   locations <- gregexpr(pattern= search, paste(x$tup, collapse=" "), ignore.case=TRUE)
   starts <- unlist(as.vector(locations[[1]]))
@@ -62,16 +36,18 @@ extractContext <- function(x,search,LW,RW) {
 
 
 #' @export
-#' @rdname corpSearch
+#' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
 
-    conts <- list()
+  if (is.data.frame(corp)) x <- list(corp)
+  conts <- list()
   found <- vector()
 
   searchTerms <- unlist(lapply(search, CQLtoRegex))
 
   for (i in 1:length(searchTerms)){
     conts[[i]] <- lapply(corp,extractContext,search=searchTerms[i],LW,RW)%>%
+      #If >1 texts if df, search will cross text boundaries.
       compact()%>%
       lapply(.,rbindlist,idcol="id")%>%
       rbindlist()
@@ -92,7 +68,7 @@ GetContexts <- function(search,corp,LW,RW){
 
   conts <- conts[c(found)]
   names(conts) <- search[found]
-  return(conts)
+  rbindlist (conts,idcol="search_found")
 
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
