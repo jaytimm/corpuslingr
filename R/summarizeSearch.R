@@ -19,7 +19,7 @@ GetSearchFreqs <- function (x,aggBy='lemma') {
       summarize_at(vars(targ),funs(paste(., collapse = " ")))%>%
       group_by(search_found,targ)%>%
       mutate(termDocFreq=length(unique(doc_id)))%>%
-      group_by(targ,termDocFreq)%>%
+      group_by(search_found,targ,termDocFreq)%>%
       summarize(termTextFreq=n())%>%
       ungroup()%>%
       arrange(desc(termTextFreq))}
