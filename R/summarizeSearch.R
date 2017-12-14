@@ -22,7 +22,7 @@ GetSearchFreqs <- function (x,aggBy='lemma') {
       group_by(search_found,targ,termDocFreq)%>%
       summarize(termTextFreq=n())%>%
       ungroup()%>%
-      arrange(desc(termTextFreq))}
+      arrange(search_found,desc(termTextFreq))}
 
 
 #' @export
