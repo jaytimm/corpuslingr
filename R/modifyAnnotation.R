@@ -21,7 +21,7 @@ buildTuple <- function(x){
 
 #' @export
 #' @rdname annotationModify
-ModifyAnnotation <- function(x){
+ModifyAnnotation <- function(x){ #Need parameters here. MAybe.
 
 NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL')
 

@@ -39,7 +39,7 @@ extractContext <- function(x,search,LW,RW) {
 #' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
 
-  if (is.data.frame(corp)) x <- list(corp)
+  #if (is.data.frame(corp)) x <- list(corp)
   conts <- list()
   found <- vector()
 
