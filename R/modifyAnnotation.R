@@ -44,7 +44,7 @@ annotation <- lapply(x, function(y){
   class(out) <- c("spacyr_parsed", "data.frame")
   return(out)})#A list of dataframes.
 
-if (length(out) >1) {
+if (length(annotation) >1) {
 annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)}
 
 return(annotation)
