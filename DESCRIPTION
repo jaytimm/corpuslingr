@@ -15,4 +15,5 @@ Imports: magrittr,
     data.table,
     XML,
     boilerpipeR,
-    RCurl
+    RCurl,
+    tm

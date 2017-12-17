@@ -21,7 +21,7 @@ buildTuple <- function(x){
 
 #' @export
 #' @rdname annotationModify
-ModifyAnnotation <- function(x){ #Need parameters here. MAybe.
+ModifyAnnotation <- function(x,nerToTag=TRUE){
 
 NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL','TIME')
 
@@ -34,15 +34,20 @@ annotation <- lapply(x, function(y){
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
            token=gsub("xxx","-",token))%>%
+    filter(pos != "SPACE" | token!="")
+
+  if (nerToTag==TRUE) {
+  out <- out%>%
     mutate(tag = ifelse(tag=="ENTITY" & !entity_type %in% NUMS ,paste("NN",entity_type,sep=""),tag))%>%
-    mutate(tag = ifelse(tag=="ENTITY",entity_type,tag))%>%
-    filter(pos != "SPACE")%>% #Need to add token !=""; but this corrupts token_id. Could correct.
+    mutate(tag = ifelse(tag=="ENTITY",entity_type,tag))}
+
+  out <- out%>%
     buildTuple() %>%
     mutate(token=gsub("_"," ",token),
            lemma=gsub("_"," ",lemma))
 
   class(out) <- c("spacyr_parsed", "data.frame")
-  return(out)})#A list of dataframes.
+  return(out)})
 
 if (length(annotation) >1) {
 annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)}
