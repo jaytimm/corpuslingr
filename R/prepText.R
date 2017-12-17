@@ -13,9 +13,9 @@
 PrepText <- function (x, hyphenate=TRUE) {
   lapply(x, function(y){
     txt <- y %>%
-      tm::stripWhitespace()%>%
-      gsub('--([:alnum:])','-- \\1',., perl=TRUE)%>%
-      gsub('([:alnum:])--','\\1 --',., perl=TRUE)
+      tm::stripWhitespace()#%>%
+      #gsub('--([:alnum:])','-- \\1',., perl=TRUE)%>%
+      #gsub('([:alnum:])--','\\1 --',., perl=TRUE)
 
     if (hyphenate==TRUE) {
         txt <- gsub("(\\w)-(\\w)",'\\1xxx\\2',txt, perl=TRUE)}
