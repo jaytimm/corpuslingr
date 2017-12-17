@@ -75,7 +75,7 @@ if (is.data.frame(corp)) x <- list(corp)
   df %>%
   inner_join(conts)%>%##Use data.table instead?
   data.table()%>%
-  setorderv(.,c(search_found,lemma,token),c(1,1,1))))
+  setorderv(.,c(search_found,lemma,token),c(1,1,1))
 
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
