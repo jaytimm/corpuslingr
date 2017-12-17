@@ -10,18 +10,18 @@
 #' @rdname summarizeSearch
 FlattenContexts <- function(x) {
 
-  pats <- x[place=='targ', list(lemma=paste(lemma, collapse=" "),gram=paste(pos, collapse=" ")), by=list(search_found,doc_id,eg)]
+  pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),gram=paste(pos, collapse=" ")), by=list(search_found,doc_id,eg)]
 
   x[, list(context=paste(token, collapse=" ")), by=list(search_found,doc_id,eg,place)]%>%
     dcast.data.table(., search_found+doc_id+eg ~ place, value.var = "context")%>%
     left_join(pats)%>% ##Use data.table instead?
-    select(search_found,doc_id,eg,lemma,gram,pre,targ,post)} #This will break LW=0,eg.
+    select(search_found,doc_id,eg,lemma,gram,pre,token,post)} #This will break LW=0,eg.
 
 
 
 #' @export
 #' @rdname summarizeSearch
-GetSearchFreqs <- function (x,aggBy=c('lemma','targ')) {
+GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
     x%>%
     data.table()%>%
     .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%

@@ -28,7 +28,7 @@ extractContext <- function(x,search,LW,RW) {
   lapply(1:length(R2), function(y) #Using data.table here.
     as.data.frame(cbind(rw = c(L2[y]:R2[y]), #Row numbers.
           place= as.character(c(rep("pre",L1[y]-L2[y]),
-                   rep("targ",R1[y]-L1[y]+1),
+                   rep("token",R1[y]-L1[y]+1),
                    rep("post",R2[y]-R1[y]))))))%>%
   rbindlist(idcol='eg') %>%
   mutate(rw=as.integer(as.character(rw)))
@@ -38,12 +38,12 @@ extractContext <- function(x,search,LW,RW) {
 #' @export
 #' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
+if (is.data.frame(corp)) x <- list(corp)
 
   df <- corp %>%
     rbindlist()%>%
     .[, rw := rowid(doc_id)]
 
-  if (is.data.frame(corp)) x <- list(corp)
   conts <- list()
   found <- vector()
 
@@ -74,7 +74,8 @@ GetContexts <- function(search,corp,LW,RW){
 
   df %>%
   inner_join(conts)%>%##Use data.table instead?
-  data.table()
+  data.table()%>%
+  setorderv(.,c(search_found,lemma,token),c(1,1,1))))
 
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
