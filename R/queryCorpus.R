@@ -15,48 +15,46 @@
 #' @rdname queryCorpus
 extractContext <- function(x,search,LW,RW) {
   locations <- gregexpr(pattern= search, paste(x$tup, collapse=" "), ignore.case=TRUE)
-  starts <- unlist(as.vector(locations[[1]]))
-  stops <- starts + attr(locations[[1]],"match.length") -1
+  tupBeg <- unlist(as.vector(locations[[1]]))
+  tupEnd <- tupBeg + attr(locations[[1]],"match.length") -1
 
-  if (-1 %in% starts){} else {
+  if (-1 %in% tupBeg){} else {
 
-  L1 <- match(starts,x$tupBeg)  #Get search  boundaries.
-  R1 <- match(stops,x$tupEnd)
+  L1 <- match(tupBeg,x$tupBeg)  #Get search  boundaries.
+  R1 <- match(tupEnd,x$tupEnd)
   L2 <- ifelse((L1-LW) < 1, 1,L1-LW)
   R2 <- ifelse((R1+RW) > nrow(x), nrow(x),R1+RW)
 
-  lapply(1:length(R2), function(y)
-    cbind(
-          x[L2[y]:R2[y],1:ncol(x)],
+  lapply(1:length(R2), function(y) #Using data.table here.
+    as.data.frame(cbind(rw = c(L2[y]:R2[y]), #Row numbers.
           place= as.character(c(rep("pre",L1[y]-L2[y]),
                    rep("targ",R1[y]-L1[y]+1),
-                   rep("post",R2[y]-R1[y]))))
-    )}}
-
+                   rep("post",R2[y]-R1[y]))))))%>%
+  rbindlist(idcol='eg') %>%
+  mutate(rw=as.integer(as.character(rw)))
+}}
 
 
 #' @export
 #' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
 
-  #if (is.data.frame(corp)) x <- list(corp)
+  if (is.data.frame(corp)) x <- list(corp)
   conts <- list()
   found <- vector()
 
   searchTerms <- unlist(lapply(search, CQLtoRegex))
 
   for (i in 1:length(searchTerms)){
-    conts[[i]] <- lapply(corp,extractContext,search=searchTerms[i],LW,RW)%>%
+    conts[[i]] <- lapply(corp,extractContext,search=searchTerms[i],LW,RW)
+    names(conts[[i]]) <- c(1:length(conts[[i]]))
       #If >1 texts if df, search will cross text boundaries.
+    conts[[i]] <- conts[[i]] %>%
       compact()%>%
-      lapply(.,rbindlist,idcol="id")%>%
-      rbindlist()
+      rbindlist(idcol='doc_id')%>%
+      mutate(doc_id=as.integer(doc_id))
 
   if (length(conts[[i]]) >0 ) {
-    conts[[i]] <- conts[[i]]%>%
-      mutate(eg=group_indices(.,doc_id,id))%>%
-      select(-id)
-
     found[i] <- i
     } else
     {found[i] <- 0}

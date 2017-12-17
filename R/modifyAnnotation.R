@@ -23,7 +23,7 @@ buildTuple <- function(x){
 #' @rdname annotationModify
 ModifyAnnotation <- function(x){ #Need parameters here. MAybe.
 
-NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL')
+NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL','TIME')
 
 if (is.data.frame(x)) x <- list(x)
 
@@ -36,7 +36,7 @@ annotation <- lapply(x, function(y){
            token=gsub("xxx","-",token))%>%
     mutate(tag = ifelse(tag=="ENTITY" & !entity_type %in% NUMS ,paste("NN",entity_type,sep=""),tag))%>%
     mutate(tag = ifelse(tag=="ENTITY",entity_type,tag))%>%
-    filter(pos != "SPACE")%>%
+    filter(pos != "SPACE")%>% #Need to add token !=""; but this corrupts token_id. Could correct.
     buildTuple() %>%
     mutate(token=gsub("_"," ",token),
            lemma=gsub("_"," ",lemma))
