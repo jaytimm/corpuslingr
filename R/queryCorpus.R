@@ -39,6 +39,10 @@ extractContext <- function(x,search,LW,RW) {
 #' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
 
+  df <- corp %>%
+    rbindlist()%>%
+    .[, rw := rowid(doc_id)]
+
   if (is.data.frame(corp)) x <- list(corp)
   conts <- list()
   found <- vector()
@@ -66,7 +70,11 @@ GetContexts <- function(search,corp,LW,RW){
 
   conts <- conts[c(found)]
   names(conts) <- search[found]
-  rbindlist (conts,idcol="search_found")
+  conts <- rbindlist (conts,idcol="search_found")
+
+  df %>%
+  inner_join(conts)%>%##Use data.table instead?
+  data.table()
 
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
