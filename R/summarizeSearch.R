@@ -10,7 +10,7 @@
 #' @rdname summarizeSearch
 FlattenContexts <- function(x) {
 
-  pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),gram=paste(pos, collapse=" ")), by=list(search_found,doc_id,eg)]
+  pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),gram=paste(tag, collapse=" ")), by=list(search_found,doc_id,eg)]
 
   x[, list(context=paste(token, collapse=" ")), by=list(search_found,doc_id,eg,place)]%>%
     dcast.data.table(., search_found+doc_id+eg ~ place, value.var = "context")%>%
