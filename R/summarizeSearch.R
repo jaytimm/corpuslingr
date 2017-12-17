@@ -15,7 +15,8 @@ FlattenContexts <- function(x) {
   x[, list(context=paste(token, collapse=" ")), by=list(search_found,doc_id,eg,place)]%>%
     dcast.data.table(., search_found+doc_id+eg ~ place, value.var = "context")%>%
     left_join(pats)#%>% ##Use data.table instead?
-    #select(search_found,doc_id,eg,lemma,gram,pre,token,post)} #This will break LW=0,eg.
+    #select(search_found,doc_id,eg,lemma,gram,pre,token,post)
+  } #This will break LW=0,eg.
 
 
 
