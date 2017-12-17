@@ -2,12 +2,15 @@
 % Please edit documentation in R/summarizeSearch.R
 \name{summarizeSearch}
 \alias{summarizeSearch}
+\alias{FlattenContexts}
 \alias{GetSearchFreqs}
 \alias{GetKWIC}
 \alias{GetBOW}
 \title{Summarize results of corpuslingr::GetContexts()}
 \usage{
-GetSearchFreqs(x, aggBy = "lemma")
+FlattenContexts(x)
+
+GetSearchFreqs(x, aggBy = c("lemma", "targ"))
 
 GetKWIC(x)
 

@@ -6,23 +6,28 @@
 #' @return A dataframes
 #' @import magrittr dplyr
 
+#' @export
+#' @rdname summarizeSearch
+FlattenContexts <- function(x) {
+
+  pats <- x[place=='targ', list(lemma=paste(lemma, collapse=" "),gram=paste(pos, collapse=" ")), by=list(doc_id,eg)]
+
+  x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]%>%
+    dcast.data.table(., doc_id+eg ~ place, value.var = "context")%>%
+    left_join(pats)%>% ##Use data.table instead?
+    select(doc_id,eg,lemma,gram,pre,targ,post)} #This will break LW=0,eg.
+
+
 
 #' @export
 #' @rdname summarizeSearch
-GetSearchFreqs <- function (x,aggBy='lemma') {
+GetSearchFreqs <- function (x,aggBy=c('lemma','targ')) {
     x%>%
-      filter(place=="targ")%>%
-      select(search_found,eg,doc_id,aggBy)%>%
-      select(targ = !! quo(names(.)[[4]]), everything())%>%
-      group_by(search_found,eg,doc_id)%>%
-      #mutate(targ=summarize(paste0(targ, collapse = " ")))%>%
-      summarize_at(vars(targ),funs(paste(., collapse = " ")))%>%
-      group_by(search_found,targ)%>%
-      mutate(termDocFreq=length(unique(doc_id)))%>%
-      group_by(search_found,targ,termDocFreq)%>%
-      summarize(termTextFreq=n())%>%
-      ungroup()%>%
-      arrange(search_found,desc(termTextFreq))}
+    data.table()%>%
+    .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
+    setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
+    #.[order(c(aggBy,'txttf'),c(rep(1,length(aggBy)),-1))]
+    }
 
 
 #' @export
