@@ -21,7 +21,7 @@ buildTuple <- function(x){
 
 #' @export
 #' @rdname annotationModify
-ModifyAnnotation <- function(x,nerToTag=TRUE){
+ModifyAnnotation <- function(x,nerToTag=TRUE){ #We shuld preserve og tag.
 
 NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL','TIME')
 
