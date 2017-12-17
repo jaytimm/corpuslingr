@@ -74,7 +74,8 @@ if (is.data.frame(corp)) x <- list(corp)
 
   df %>%
   inner_join(conts)%>%##Use data.table instead?
-  data.table()#%>%
+  data.table()%>%
+  select(search_found,doc_id,eg,place,token_id:tupEnd)
   #setorderv(.,c(search_found,lemma,token),c(1,1,1))
 
      } else
