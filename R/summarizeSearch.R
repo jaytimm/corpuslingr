@@ -26,7 +26,8 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
     x%>%
     data.table()%>%
     .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
-    setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
+    setorderv(.,c(aggBy,'txtf'),c(rep(1,length(aggBy)),-1))
+    #setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
     #.[order(c(aggBy,'txttf'),c(rep(1,length(aggBy)),-1))]
     }
 
