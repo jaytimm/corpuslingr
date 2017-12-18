@@ -30,7 +30,7 @@ GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
 
   date <- gsub("^.+, ","",pubdates)
   date <- gsub(" [0-9]*:.+$","", date)
-  date <- as.Date(date,"%d %B %Y")
+
 
   as.data.frame(cbind(source,titles,links,pubdates,date))%>%
     mutate(source=as.character(source), titles=as.character(titles), links=as.character(links), pubdates=as.character(pubdates),date=as.character(date))%>%
