@@ -23,7 +23,7 @@ buildTuple <- function(x){
 #' @rdname annotationModify
 ModifyAnnotation <- function(x,nerToTag=TRUE){ #We shuld preserve og tag.
 
-NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL','TIME')
+NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL','TIME','QUANTITY')
 
 if (is.data.frame(x)) x <- list(x)
 
@@ -34,9 +34,8 @@ annotation <- lapply(x, function(y){
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
            token=gsub("xxx","-",token))%>%
-    filter(token!="")
+    filter(!tag %in% c("SP","NFP"))
 
-  out <- out[grepl("^[[:space:]]+$",out$token)==FALSE,]
 
   if (nerToTag==TRUE) {
   out <- out%>%
@@ -45,8 +44,8 @@ annotation <- lapply(x, function(y){
 
   out <- out%>%
     buildTuple() %>%
-    mutate(token=gsub("_"," ",token),
-           lemma=gsub("_"," ",lemma))
+    mutate(token=gsub("([[:alnum:]])_([[:alnum:]])","\\1 \\2",token),
+           lemma=gsub("([[:alnum:]])_([[:alnum:]])","\\1 \\2",lemma))
 
   class(out) <- c("spacyr_parsed", "data.frame")
   return(out)})
