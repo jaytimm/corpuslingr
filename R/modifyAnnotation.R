@@ -36,7 +36,7 @@ annotation <- lapply(x, function(y){
            token=gsub("xxx","-",token))%>%
     filter(token!="")
 
-  out <- out[grepl("^[[:space:]]+$",newKP$token)==FALSE,]
+  out <- out[grepl("^[[:space:]]+$",out$token)==FALSE,]
 
   if (nerToTag==TRUE) {
   out <- out%>%
