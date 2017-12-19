@@ -29,12 +29,12 @@ if (is.data.frame(x)) x <- list(x)
 
 annotation <- lapply(x, function(y){
   out <- y %>%
-    mutate(token=gsub("\\s*","",token),
-           lemma=gsub("\\s*","",lemma))%>%
+    mutate(token=gsub("[[:space:]]+", "",token),
+           lemma=gsub("[[:space:]]+", "",lemma))%>%
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
            token=gsub("xxx","-",token))%>%
-    filter(pos != "SPACE" | token!="")
+    filter(pos != "SPACE" | token!=""| lemma!="")
 
   if (nerToTag==TRUE) {
   out <- out%>%

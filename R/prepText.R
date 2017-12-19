@@ -6,14 +6,12 @@
 #' @param hyphenate if TRUE, trick spacy into preserving hyphenated words
 #' @return A list of character strings
 #' @import magrittr
-#' @importFrom tm stripWhitespace
 
 #' @export
 #' @rdname prepText
 PrepText <- function (x, hyphenate=TRUE) {
   lapply(x, function(y){
-    txt <- y %>%
-      tm::stripWhitespace()#%>%
+    txt <- gsub("[[:space:]]+", " ", y)
       #gsub('--([:alnum:])','-- \\1',., perl=TRUE)%>%
       #gsub('([:alnum:])--','\\1 --',., perl=TRUE)
 
