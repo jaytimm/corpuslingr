@@ -33,17 +33,15 @@ annotation <- lapply(x, function(y){
            lemma=gsub("[[:space:]]+", "",lemma))%>%
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
-           token=gsub("xxx","-",token))%>%
-    filter(!tag %in% c("SP","NFP"),pos!="SPACE",token!="",token!=" ")
-
-  #out <- out[grepl("^[[:space:]]+$",out$token)==FALSE,]
+           token=gsub("xxx","-",token))
 
   if (nerToTag==TRUE) {
   out <- out%>%
     mutate(tag = ifelse(tag=="ENTITY" & !entity_type %in% NUMS ,paste("NN",entity_type,sep=""),tag))%>%
     mutate(tag = ifelse(tag=="ENTITY",entity_type,tag))}
 
-  out <- out%>%
+  out <- out %>%
+    filter(!tag %in% c("SP","NFP"),pos!="SPACE",token!="",token!=" ")%>%
     buildTuple() %>%
     mutate(token=gsub("([[:alnum:]])_([[:alnum:]])","\\1 \\2",token),
            lemma=gsub("([[:alnum:]])_([[:alnum:]])","\\1 \\2",lemma))
