@@ -70,13 +70,11 @@ if (is.data.frame(corp)) x <- list(corp)
 
   conts <- conts[c(found)]
   names(conts) <- search[found]
-  conts <- rbindlist (conts,idcol="search_found")
+  conts <- rbindlist (conts,idcol="search_found")%>%
+    data.table()
 
-  df %>%
-  inner_join(conts)%>%##Use data.table instead?
-  data.table()%>%
+  df[conts, nomatch=0L, on = c('doc_id','rw')]%>%
   select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
-  #setorderv(.,c(search_found,lemma,token),c(1,1,1))
 
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
