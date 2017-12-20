@@ -34,8 +34,10 @@ annotation <- lapply(x, function(y){
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
     mutate(lemma=gsub("xxx","-",lemma),
            token=gsub("xxx","-",token))%>%
-    filter(!tag %in% c("SP","NFP"))
+    filter(!tag %in% c("SP","NFP"))%>%
+    filter(grepl("^[[:space:]]+$",token)==FALSE)
 
+  #out <- out[grepl("^[[:space:]]+$",out$token)==FALSE,]
 
   if (nerToTag==TRUE) {
   out <- out%>%
