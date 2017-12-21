@@ -73,8 +73,13 @@ if (is.data.frame(corp)) x <- list(corp)
   conts <- rbindlist (conts,idcol="search_found")%>%
     data.table()
 
-  conts[df, nomatch=0L, on = c('doc_id','rw')]%>%
-  select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
+  df %>%
+inner_join(conts)%>%##Use data.table instead?
+data.table()%>%
+select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
+
+  #conts[df, nomatch=0L, on = c('doc_id','rw')]%>%
+  #select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
 
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
