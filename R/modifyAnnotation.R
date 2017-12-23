@@ -10,7 +10,7 @@
 #' @export
 #' @rdname annotationModify
 buildTuple <- function(x){
-  x$tup <- paste("<",x$token,"_",x$lemma,"_",x$tag,">",sep="")
+  x$tup <- paste("<",x$token,",",x$lemma,",",x$tag,">",sep="")
   text <- paste(x$tup,collapse=" ")
   tup_bounds <- unlist(as.vector(gregexpr(pattern=" ", text)[[1]]))
   x$tupBeg <- append(1,tup_bounds+1)
