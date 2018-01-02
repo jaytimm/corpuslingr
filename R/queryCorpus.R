@@ -38,11 +38,7 @@ extractContext <- function(x,search,LW,RW) {
 #' @export
 #' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
-if (is.data.frame(corp)) x <- list(corp)
-
-  df <- corp %>%
-    rbindlist()%>%
-    .[, rw := rowid(doc_id)]
+  if (is.data.frame(corp)) x <- list(corp)
 
   conts <- list()
   found <- vector()
@@ -52,19 +48,21 @@ if (is.data.frame(corp)) x <- list(corp)
   for (i in 1:length(searchTerms)){
     conts[[i]] <- lapply(corp,extractContext,search=searchTerms[i],LW,RW)
     names(conts[[i]]) <- c(1:length(conts[[i]]))
-      #If >1 texts if df, search will cross text boundaries.
+    #Some conts will be empty. Name before filtering. Length = texts in corpus.
+
     conts[[i]] <- conts[[i]] %>%
-      compact()%>%
-      rbindlist(idcol='doc_id')%>%
+      compact()
+
+    if (length(conts[[i]]) >0 ) {found[i] <- i
+
+    conts[[i]] <- rbindlist(conts[[i]],idcol='doc_id')%>%
       mutate(doc_id=as.integer(doc_id))
 
-  if (length(conts[[i]]) >0 ) {
-    found[i] <- i
-    } else
+        } else
     {found[i] <- 0}
     }
 
-  found <- found [found>0]
+  found <- found [found>0]#Filter to found terms.
 
   if (sum(found) >0){
 
@@ -73,21 +71,17 @@ if (is.data.frame(corp)) x <- list(corp)
   conts <- rbindlist (conts,idcol="search_found")%>%
     data.table()
 
-  df %>%
-inner_join(conts)%>%##Use data.table instead?
-data.table()%>%
-select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
-
-  #conts[df, nomatch=0L, on = c('doc_id','rw')]%>%
-  #select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
+  corp %>%
+    rbindlist()%>%
+    .[, rw := rowid(doc_id)]%>%
+    inner_join(conts)%>%
+    #data.table()%>% #? Only if we use dt for join.
+    select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
 
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
 
-#Or, a left join onto conts.
 
-#df %>%
-#  inner_join(conts)%>%##Use data.table instead?
-#  data.table()%>%
-#  select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
+  #conts[df, nomatch=0L, on = c('doc_id','rw')]%>%
+  #select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
