@@ -23,8 +23,7 @@ FlattenContexts <- function(x) {
 #' @export
 #' @rdname summarizeSearch
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
-    x%>%
-    data.table()%>%
+    data.table(x)%>%
     .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
     setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
     }
