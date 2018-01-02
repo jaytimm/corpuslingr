@@ -75,7 +75,7 @@ GetContexts <- function(search,corp,LW,RW){
     rbindlist()%>%
     .[, rw := rowid(doc_id)]%>%
     inner_join(conts)%>%
-    #data.table()%>% #? Only if we use dt for join.
+    data.table()%>% # For subsequent summary functions.
     select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
 
      } else
