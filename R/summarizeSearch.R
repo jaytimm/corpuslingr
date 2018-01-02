@@ -22,11 +22,6 @@ FlattenContexts <- function(x) {
   }
 
 
->
-> #
->
-> names(trading)
-
 #' @export
 #' @rdname summarizeSearch
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
