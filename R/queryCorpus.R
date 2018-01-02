@@ -79,7 +79,8 @@ GetContexts <- function(search,corp,LW,RW){
     select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
     #Perhaps add sort.
   contexts <- FlattenContexts(BOW)
-  return(list(BOW,contexts))
+  out <- list("BOW" = BOW, "contexts" = contexts)
+  return(out)
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
