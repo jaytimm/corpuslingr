@@ -73,7 +73,7 @@ GetContexts <- function(search,corp,LW,RW){
 
   corp %>%
     rbindlist()%>%
-    .[, rw := rowid(doc_id)] %<%
+    .[, rw := rowid(doc_id)] %>%
     inner_join(conts)%>%
     data.table() %>%
     select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
