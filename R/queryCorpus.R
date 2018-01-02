@@ -78,7 +78,7 @@ GetContexts <- function(search,corp,LW,RW){
   setkey(df,doc_id,rw)
   setkey(conts,doc_id,rw)
 
-  df[conts] %>%
+  df[conts, nomatch = 0] %>%
     select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
     #Perhaps add sort.
      } else
