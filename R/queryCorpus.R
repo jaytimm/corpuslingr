@@ -71,13 +71,15 @@ GetContexts <- function(search,corp,LW,RW){
   conts <- rbindlist (conts,idcol="search_found")%>%
     data.table()
 
-  corp %>%
+  BOW <- corp %>%
     rbindlist()%>%
     .[, rw := rowid(doc_id)] %>%
     inner_join(conts)%>%
     data.table() %>%
     select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
     #Perhaps add sort.
+  contexts <- FlattenContexts(BOW)
+  return(list(BOW,contexts))
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
