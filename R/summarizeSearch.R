@@ -25,7 +25,7 @@ FlattenContexts <- function(x) {
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
     data.table(x)%>%
     .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
-    setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
+    setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))[]
     }
 
 
