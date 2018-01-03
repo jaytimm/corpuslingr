@@ -24,7 +24,7 @@ FlattenContexts <- function(x) {
 #' @export
 #' @rdname summarizeSearch
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
-  if(length(x)>1){x <- x$contexts}
+  if(is.data.frame(x)==FALSE){x <- x$contexts}
 
   freqs <- x%>%
     mutate_at(vars(lemma,token),funs(toupper))%>%
@@ -33,6 +33,7 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
     setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
     return(freqs)
     }
+
 
 
 #' @export
