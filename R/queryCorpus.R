@@ -95,7 +95,7 @@ GetContexts <- function(search,corp,LW,RW){
   contexts <- FlattenContexts(BOW)
 
   BOW <- contexts%>%
-    select(doc_id,eg,token,lemma, tag.pos)%>%
+    select(doc_id,eg,token,lemma, tag,pos)%>%
     rename(searchToken= token,searchLemma=lemma, searchTag =tag,searchPos = pos)%>%
     left_join(BOW)
 
