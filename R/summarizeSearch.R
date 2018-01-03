@@ -17,7 +17,7 @@ FlattenContexts <- function(x) {
     left_join(pats)%>%
     select(doc_id,eg,lemma,token,tag,pos,pre,token,post)
 
-  refcols <- c('doc_id','eg','lemma','token','pos')
+  refcols <- c('doc_id','eg','lemma','tag','pos')
   out[, c(refcols, setdiff(names(out), refcols))]
   }
 
