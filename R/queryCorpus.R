@@ -40,7 +40,7 @@ extractContext <- function(x,search,LW,RW) {
 GetContexts <- function(search,corp,LW,RW){
   if (is.data.frame(corp)) x <- list(corp)
 
-  searchTerms <- CQLtoRegex(search)
+  searchTerms <-  CQLtoRegex(search)
 
   conts <- lapply(corp,extractContext,search=searchTerms,LW,RW)
 
