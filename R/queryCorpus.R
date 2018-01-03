@@ -55,7 +55,7 @@ conts <- Filter(length,conts)
 
 if(length(conts)>0){
 
-conts <- rbindlist(conts, idcol='doc_id') %>%
+rbindlist(conts, idcol='doc_id') %>%
     data.table() %>%
     {colnames(.)[2] = "eg"; .}%>%
     mutate(token=gsub("<(\\w+),\\S+>","\\1",eg),
