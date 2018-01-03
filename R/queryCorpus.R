@@ -27,9 +27,9 @@ extractContext <- function(x,search,LW,RW) {
 
   lapply(1:length(R2), function(y) #Using data.table here.
     as.data.frame(cbind(rw = c(L2[y]:R2[y]), #Row numbers.
-          place= as.character(c(rep("pre",L1[y]-L2[y]),
+          place= as.character(c(rep("aContext",L1[y]-L2[y]),
                    rep("token",R1[y]-L1[y]+1),
-                   rep("post",R2[y]-R1[y]))))))%>%
+                   rep("zContext",R2[y]-R1[y]))))))%>%
   rbindlist(idcol='eg') %>%
   mutate(rw=as.integer(as.character(rw)))
 }}

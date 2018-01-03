@@ -10,8 +10,6 @@
 #' @rdname translateCQL
 buildSearch <- function(x){
 
-#We can just use spaces. And then encapsulate here.  Issue: wildcard.
-  #Nope. This will not allow for {1-3}, eg.  Anything
   pos <- "\\\\w*"; form <- "\\\\w*"; lemma <- "\\\\w*"
   if (length(grep("_", x)==1)) {pos=gsub(".*_|>.*","",x)}
   if (length(grep("x", pos)==1)) {pos=gsub("x","[A-Z]{1,10}",pos)}
