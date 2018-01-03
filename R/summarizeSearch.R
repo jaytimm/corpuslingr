@@ -10,14 +10,14 @@
 #' @rdname summarizeSearch
 FlattenContexts <- function(x) {
 
-  pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),gram=paste(tag, collapse=" ")), by=list(search_found,doc_id,eg)]
+  pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),gram=paste(tag, collapse=" ")), by=list(doc_id,eg)]
 
-  out <- x[, list(context=paste(token, collapse=" ")), by=list(search_found,doc_id,eg,place)]%>%
-    dcast.data.table(., search_found+doc_id+eg ~ place, value.var = "context")%>%
+  out <- x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]%>%
+    dcast.data.table(., doc_id+eg ~ place, value.var = "context")%>%
     left_join(pats)%>%
-    select(search_found,doc_id,eg,lemma,gram,pre,token,post)
+    select(doc_id,eg,lemma,gram,pre,token,post)
 
-  refcols <- c('search_found','doc_id','eg','lemma','gram')
+  refcols <- c('doc_id','eg','lemma','gram')
   out[, c(refcols, setdiff(names(out), refcols))]
   }
 
@@ -36,13 +36,13 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 #' @rdname summarizeSearch
 GetKWIC <- function (x) {
   x%>%
-    group_by(search_found,eg,doc_id,place)%>%
+    group_by(eg,doc_id,place)%>%
     summarize(context = paste(token, collapse= " ")) %>%
     spread(place,context) %>%
     replace_na(list(pre="",post=""))%>%
     rowwise()%>%
     mutate(cont = paste(pre,"<mark>",targ,"</mark>",post,collapse=" "))%>%
-    select(search_found,doc_id,targ,cont)}
+    select(doc_id,targ,cont)}
 
 #' @export
 #' @rdname summarizeSearch
@@ -50,7 +50,7 @@ GetBOW <- function (x,contentOnly=TRUE) {
 
   output <- x%>%
       filter (place!="targ" ) %>%
-      group_by(search_found,lemma, pos) %>%
+      group_by(lemma, pos) %>%
       summarize(n=n())%>%
       arrange(desc(n))
 
