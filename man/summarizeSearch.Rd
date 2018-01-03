@@ -10,11 +10,11 @@
 \usage{
 FlattenContexts(x)
 
-GetSearchFreqs(x, aggBy = c("lemma", "targ"))
+GetSearchFreqs(x, aggBy = c("lemma", "token"))
 
 GetKWIC(x)
 
-GetBOW(x, contentOnly = TRUE)
+GetBOW(x, contentOnly = TRUE, aggBy = c("lemma", "pos"))
 }
 \arguments{
 \item{charList}{A dataframe}

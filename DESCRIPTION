@@ -16,4 +16,4 @@ Imports: magrittr,
     XML,
     boilerpipeR,
     RCurl,
-    tm
+	DT

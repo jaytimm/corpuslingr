@@ -8,7 +8,7 @@
 \usage{
 buildTuple(x)
 
-ModifyAnnotation(x)
+ModifyAnnotation(x, nerToTag = TRUE)
 }
 \arguments{
 \item{x}{A list of dataframes}

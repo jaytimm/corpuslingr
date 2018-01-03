@@ -4,7 +4,7 @@
 #' @name summarizeSearch
 #' @param charList A dataframe
 #' @return A dataframes
-#' @import magrittr dplyr
+#' @import magrittr dplyr DT
 
 #' @export
 #' @rdname summarizeSearch
@@ -34,30 +34,24 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 #' @export
 #' @rdname summarizeSearch
 GetKWIC <- function (x) {
-  x%>%
-    group_by(eg,doc_id,place)%>%
-    summarize(context = paste(token, collapse= " ")) %>%
-    spread(place,context) %>%
-    replace_na(list(pre="",post=""))%>%
-    rowwise()%>%
-    mutate(cont = paste(pre,"<mark>",targ,"</mark>",post,collapse=" "))%>%
-    select(doc_id,targ,cont)}
+
+    x$contexts[, kwic = paste(aContext,"<mark>",token,"</mark>",zContext,collapse=" "), by=list(doc_id,eg)]%>%
+    select(doc_id,token,kwic)%>%
+    DT::datatable(class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
+  }
+
 
 #' @export
 #' @rdname summarizeSearch
-GetBOW <- function (x,contentOnly=TRUE) {
-
-  output <- x%>%
-      filter (place!="targ" ) %>%
-      group_by(lemma, pos) %>%
-      summarize(n=n())%>%
-      arrange(desc(n))
+GetBOW <- function (x,contentOnly=TRUE, aggBy=c('lemma','pos')) {
 
   if (contentOnly==TRUE) {
-      output%>%
-        filter(pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY"),!lemma %in% corpusdatr::stops)
-  } else {return(output)}
-}
+    bow <- filter(x$BOW,pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY"),!lemma %in% corpusdatr::stops)}
 
-#GetKWIC <- function {} Need to add pre/post if LW/RW =0.
+  bow <- data.table(bow)%>%
+    .[place!='token', cofreq=length(eg), by=aggBy]%>%
+    setorderv(.,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
+
+ return(bow)}
+
 

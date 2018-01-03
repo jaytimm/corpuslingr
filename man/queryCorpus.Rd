@@ -3,10 +3,13 @@
 \name{queryCorpus}
 \alias{queryCorpus}
 \alias{extractContext}
+\alias{SimpleSearch}
 \alias{GetContexts}
 \title{Get search in context}
 \usage{
 extractContext(x, search, LW, RW)
+
+SimpleSearch(search, corp)
 
 GetContexts(search, corp, LW, RW)
 }

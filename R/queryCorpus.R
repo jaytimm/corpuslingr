@@ -37,6 +37,38 @@ extractContext <- function(x,search,LW,RW) {
 
 #' @export
 #' @rdname queryCorpus
+SimpleSearch <- function(search,corp){
+
+searchTerms <- unlist(lapply(search, CQLtoRegex))
+
+conts <- lapply(corp, function(z) {
+  y <- paste(z$tup, collapse=" ")
+
+  locations <- gregexpr(pattern= searchTerms, y, ignore.case=TRUE)
+  if (-1 %in% locations){} else {
+  as.data.frame(regmatches(y,locations))}
+    })
+
+names(conts) <- c(1:length(conts))
+
+conts <- Filter(length,conts)
+
+if(length(conts)>0){
+
+conts <- rbindlist(conts, idcol='doc_id') %>%
+    data.table() %>%
+    {colnames(.)[2] = "eg"; .}%>%
+    mutate(token=gsub("<(\\w+),\\S+>","\\1",eg),
+           tag=gsub("<\\S+,(\\w+)>","\\1",eg),
+           lemma =gsub("\\S+,(\\w+),\\S+","\\1",eg))
+
+} else
+{return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
+}
+
+
+#' @export
+#' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
   if (is.data.frame(corp)) x <- list(corp)
 
@@ -67,7 +99,3 @@ GetContexts <- function(search,corp,LW,RW){
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
-
-
-  #conts[df, nomatch=0L, on = c('doc_id','rw')]%>%
-  #select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
