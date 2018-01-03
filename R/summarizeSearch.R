@@ -14,8 +14,7 @@ FlattenContexts <- function(x) {
 
   out <- x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]%>%
     dcast.data.table(., doc_id+eg ~ place, value.var = "context")%>%
-    left_join(pats)%>%
-    select(doc_id,eg,lemma,token,tag,pos,pre,token,post)
+    left_join(pats)
 
   refcols <- c('doc_id','eg','lemma','tag','pos')
   out[, c(refcols, setdiff(names(out), refcols))]
