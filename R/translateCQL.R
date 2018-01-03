@@ -34,6 +34,9 @@ keyPhrase <- "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)
 #' @export
 #' @rdname translateCQL
 CQLtoRegex <- function(x) {
+
+  if (length(x) > 1) {x <- paste(x,collapse=" |")}
+
   x <- gsub("<_NXP>",nounPhrase,x)
 
   unlist(strsplit(x," ")) %>%

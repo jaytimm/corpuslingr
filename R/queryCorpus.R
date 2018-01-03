@@ -45,31 +45,15 @@ GetContexts <- function(search,corp,LW,RW){
 
   searchTerms <- unlist(lapply(search, CQLtoRegex))
 
-  for (i in 1:length(searchTerms)){
-    conts[[i]] <- lapply(corp,extractContext,search=searchTerms[i],LW,RW)
-    names(conts[[i]]) <- c(1:length(conts[[i]]))
-    #Some conts will be empty. Name before filtering. Length = texts in corpus.
+  conts <- lapply(corp,extractContext,search=searchTerms,LW,RW)
 
-    conts[[i]] <- conts[[i]] %>%
-      compact()
+  names(conts[[i]]) <- c(1:length(conts[[i]]))
+  conts <- Filter(length,conts)
 
-    if (length(conts[[i]]) >0 ) {found[i] <- i
+  if (length(conts) >0 ) {
 
-    conts[[i]] <- rbindlist(conts[[i]],idcol='doc_id')%>%
-      mutate(doc_id=as.integer(doc_id))
-
-        } else
-    {found[i] <- 0}
-    }
-
-  found <- found [found>0]#Filter to found terms.
-
-  if (sum(found) >0){
-
-  conts <- conts[c(found)]
-  names(conts) <- search[found]
-  conts <- rbindlist (conts,idcol="search_found")%>%
-    data.table()
+  conts <- rbindlist(conts,idcol='doc_id')%>%
+    mutate(doc_id=as.integer(doc_id))
 
   BOW <- corp %>%
     rbindlist()%>%
@@ -78,9 +62,11 @@ GetContexts <- function(search,corp,LW,RW){
     data.table() %>%
     select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
     #Perhaps add sort.
+
   contexts <- FlattenContexts(BOW)
   out <- list("BOW" = BOW, "contexts" = contexts)
   return(out)
+
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
