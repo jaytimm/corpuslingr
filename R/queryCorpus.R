@@ -93,6 +93,12 @@ GetContexts <- function(search,corp,LW,RW){
     #Perhaps add sort.
 
   contexts <- FlattenContexts(BOW)
+
+  BOW <- contexts%>%
+    select(doc_id,eg,token,lemma, tag.pos)%>%
+    rename(searchToken= token,searchLemma=lemma, searchTag =tag,searchPos = pos)%>%
+    left_join(BOW)
+
   out <- list("BOW" = BOW, "contexts" = contexts)
   return(out)
 
