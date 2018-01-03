@@ -24,8 +24,9 @@ FlattenContexts <- function(x) {
 #' @export
 #' @rdname summarizeSearch
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
-  freqs <- data.table(x$contexts)%>%
+  freqs <- x$contexts%>%
     mutate_at(vars(lemma,token),funs(toupper))%>%
+    data.table()%>%
     .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
     setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
     return(freqs)
@@ -50,8 +51,9 @@ GetBOW <- function (x,contentOnly=TRUE, aggBy=c('lemma','pos')) {
   } else
       {bow <- x$BOW}
 
-  bow <- data.table(bow)%>%
+  bow <- bow %>%
     mutate_at(vars(lemma,token,searchLemma,searchToken),funs(toupper))%>%
+    data.table()%>%
     .[place!='token', list(cofreq=length(eg)), by=aggBy]%>%
     setorderv(.,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
 
