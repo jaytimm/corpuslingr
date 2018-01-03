@@ -57,7 +57,7 @@ GetContexts <- function(search,corp,LW,RW){
     .[, rw := rowid(doc_id)] %>%
     inner_join(conts)%>%
     data.table() %>%
-    select(search_found,doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
+    select(doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
     #Perhaps add sort.
 
   contexts <- FlattenContexts(BOW)
