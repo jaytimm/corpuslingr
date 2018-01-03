@@ -40,14 +40,11 @@ extractContext <- function(x,search,LW,RW) {
 GetContexts <- function(search,corp,LW,RW){
   if (is.data.frame(corp)) x <- list(corp)
 
-  conts <- list()
-  found <- vector()
-
-  searchTerms <- unlist(lapply(search, CQLtoRegex))
+  searchTerms <- CQLtoRegex(search)
 
   conts <- lapply(corp,extractContext,search=searchTerms,LW,RW)
 
-  names(conts[[i]]) <- c(1:length(conts[[i]]))
+  names(conts) <- c(1:length(conts))
   conts <- Filter(length,conts)
 
   if (length(conts) >0 ) {
