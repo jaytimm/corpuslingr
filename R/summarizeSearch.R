@@ -10,14 +10,14 @@
 #' @rdname summarizeSearch
 FlattenContexts <- function(x) {
 
-  pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),gram=paste(tag, collapse=" ")), by=list(doc_id,eg)]
+  pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),tag=paste(tag, collapse=" "),pos=paste(pos, collapse=" ")), by=list(doc_id,eg)]
 
   out <- x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]%>%
     dcast.data.table(., doc_id+eg ~ place, value.var = "context")%>%
     left_join(pats)%>%
-    select(doc_id,eg,lemma,gram,pre,token,post)
+    select(doc_id,eg,lemma,token,pos,pre,token,post)
 
-  refcols <- c('doc_id','eg','lemma','gram')
+  refcols <- c('doc_id','eg','lemma','token','pos')
   out[, c(refcols, setdiff(names(out), refcols))]
   }
 
