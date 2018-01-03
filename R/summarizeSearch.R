@@ -24,7 +24,8 @@ FlattenContexts <- function(x) {
 #' @export
 #' @rdname summarizeSearch
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
-    freqs <- data.table(x$contexts)%>%
+  freqs <- data.table(x$contexts)%>%
+    mutate_at(vars(lemma,token),funs(toupper))%>%
     .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
     setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
     return(freqs)
@@ -34,7 +35,6 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 #' @export
 #' @rdname summarizeSearch
 GetKWIC <- function (x) {
-
     data.table(x$contexts)%>%
     .[, list(kwic = paste(aContext,"<mark>",token,"</mark>",zContext,collapse=" ")), by=list(doc_id,eg,token,lemma)]%>%
     select(doc_id,token,lemma,kwic)%>%
@@ -45,13 +45,13 @@ GetKWIC <- function (x) {
 #' @export
 #' @rdname summarizeSearch
 GetBOW <- function (x,contentOnly=TRUE, aggBy=c('lemma','pos')) {
-
   if (contentOnly==TRUE) {
     bow <- filter(x$BOW,pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY"),!lemma %in% corpusdatr::stops)
   } else
       {bow <- x$BOW}
 
   bow <- data.table(bow)%>%
+    mutate_at(vars(lemma,token,searchLemma,searchToken),funs(toupper))%>%
     .[place!='token', list(cofreq=length(eg)), by=aggBy]%>%
     setorderv(.,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
 
