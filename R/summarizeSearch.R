@@ -46,11 +46,11 @@ GetKWIC <- function (x) {
 #' @rdname summarizeSearch
 GetBOW <- function (x,contentOnly=TRUE, aggBy=c('lemma','pos')) {
 
+  bow <- data.table(x$BOW)
   if (contentOnly==TRUE) {
-    bow <- filter(x$BOW,pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY"),!lemma %in% corpusdatr::stops)}
+    bow <- filter(bow,pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY"),!lemma %in% corpusdatr::stops)}
 
-  bow <- data.table(bow)%>%
-    .[place!='token', cofreq=length(eg), by=aggBy]%>%
+  bow <- bow[place!='token', cofreq=length(eg), by=aggBy]%>%
     setorderv(.,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
 
  return(bow)}
