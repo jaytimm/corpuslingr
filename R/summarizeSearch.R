@@ -24,7 +24,9 @@ FlattenContexts <- function(x) {
 #' @export
 #' @rdname summarizeSearch
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
-  freqs <- x$contexts%>%
+  if(length(x)>1){x <- x$contexts}
+
+  freqs <- x%>%
     mutate_at(vars(lemma,token),funs(toupper))%>%
     data.table()%>%
     .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
