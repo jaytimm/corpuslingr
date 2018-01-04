@@ -29,11 +29,9 @@ if (is.data.frame(x)) x <- list(x)
 
 annotation <- lapply(x, function(y){
   out <- y %>%
-    mutate(token=gsub("[[:space:]]+", "",token),
-           lemma=gsub("[[:space:]]+", "",lemma))%>%
+    mutate_at(vars(token,lemma),gsub("[[:space:]]+", "",.))%>%
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
-    mutate(lemma=gsub("xxx","-",lemma),
-           token=gsub("xxx","-",token))
+    mutate_at(vars(token,lemma),gsub("xxx","-",.)
 
   if (nerToTag==TRUE) {
   out <- out%>%
@@ -43,8 +41,7 @@ annotation <- lapply(x, function(y){
   out <- out %>%
     filter(!tag %in% c("SP","NFP"),pos!="SPACE",token!="",token!=" ")%>%
     buildTuple() %>%
-    mutate(token=gsub("([[:alnum:]])_([[:alnum:]])","\\1 \\2",token),
-           lemma=gsub("([[:alnum:]])_([[:alnum:]])","\\1 \\2",lemma))
+    mutate_at(vars(token,lemma),gsub("_"," ",.))
 
   class(out) <- c("spacyr_parsed", "data.frame")
   return(out)})
