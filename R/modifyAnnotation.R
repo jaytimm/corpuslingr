@@ -31,7 +31,7 @@ annotation <- lapply(x, function(y){
   out <- y %>%
     mutate_at(vars(token,lemma),gsub("[[:space:]]+", "",.))%>%
     mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
-    mutate_at(vars(token,lemma),gsub("xxx","-",.)
+    mutate_at(vars(token,lemma),gsub("xxx","-",.))
 
   if (nerToTag==TRUE) {
   out <- out%>%
