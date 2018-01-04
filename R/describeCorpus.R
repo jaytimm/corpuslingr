@@ -4,13 +4,12 @@
 #' @name describeCorpus
 #' @return A dataframe
 #' @import magrittr dplyr
-#' 
-#' 
+#'
+#'
 #' @export
 #' @rdname describeCorpus
 GetDocDesc <- function (x) {
-x %>%
-  bind_rows()%>%
+  bind_rows(x)%>%
   filter(pos!= "PUNCT")%>%
   group_by(doc_id)%>%
-  summarize(docN=n(),docType=length(unique(token)),docSent=length(unique(sentence_id)))}
+  summarize(textLength=n(),textType=length(unique(token)),textSent=length(unique(sentence_id)))}
