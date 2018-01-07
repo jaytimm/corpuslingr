@@ -59,9 +59,9 @@ rbindlist(conts, idcol='doc_id') %>%
     mutate(doc_id=as.integer(doc_id))%>%
     data.table() %>%
     {colnames(.)[2] = "eg"; .}%>%
-    mutate(token=gsub("<(\\w+),\\S+>","\\1",eg),
-           tag=gsub("<\\S+,(\\w+)>","\\1",eg),
-           lemma =gsub("\\S+,(\\w+),\\S+","\\1",eg))
+    mutate(token=gsub("<([A-Za-z0-9-]+),\\S+>","\\1",eg),
+           tag=gsub("<\\S+,([A-Za-z0-9-]+)>","\\1",eg),
+           lemma =gsub("\\S+,([A-Za-z0-9-]+),\\S+","\\1",eg))
 
 } else
 {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
