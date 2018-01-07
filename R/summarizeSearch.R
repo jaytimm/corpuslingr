@@ -39,7 +39,8 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 #' @export
 #' @rdname summarizeSearch
 GetKWIC <- function (x,include=c('doc_id','lemma')) {
-    data.table(x$contexts)%>%
+  #
+  data.table(x$contexts)%>%
     .[, list(kwic = paste(aContext,"<mark>",token,"</mark>",zContext,collapse=" ")), by=list(doc_id,eg,token,lemma)]%>%
     select(include,kwic)
   }
