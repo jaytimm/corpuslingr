@@ -10,7 +10,7 @@
 #' @rdname translateCQL
 buildSearch <- function(x){
 
-  pos <- "\\\\w*"; form <- "\\\\w*"; lemma <- "\\\\w*"
+  pos <- "[A-Za-z0-9-]+"; form <- "[A-Za-z0-9-]+"; lemma <- "[A-Za-z0-9-]+"
   if (length(grep("_", x)==1)) {pos=gsub(".*_|>.*","",x)}
   if (length(grep("x", pos)==1)) {pos=gsub("x","[A-Z]{1,10}",pos)}
   #Add replace tilde ~
