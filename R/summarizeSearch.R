@@ -39,12 +39,9 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 #' @export
 #' @rdname summarizeSearch
 GetKWIC <- function (x,include=c('doc_id','lemma')) {
-    y <- data.table(x$contexts)%>%
+    data.table(x$contexts)%>%
     .[, list(kwic = paste(aContext,"<mark>",token,"</mark>",zContext,collapse=" ")), by=list(doc_id,eg,token,lemma)]%>%
     select(include,kwic)
-
-    DT::datatable(y, class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)%>%
-    DT::formatStyle(c(1:ncol(y)),fontSize = '85%')
   }
 
 
