@@ -4,7 +4,7 @@
 #' @name summarizeSearch
 #' @param charList A dataframe
 #' @return A dataframes
-#' @import magrittr dplyr data.table
+#' @import magrittr dplyr
 
 #' @export
 #' @rdname summarizeSearch
