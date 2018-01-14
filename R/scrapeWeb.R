@@ -5,7 +5,7 @@
 #' @param search Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"
 #' @param n Number of articles to get; max = 30.
 #' @return A dataframe of meta for articles collected.
-#' @importFrom XML xpathSApply xmlParse
+#' @importFrom XML xpathSApply xmlParse xmlValue
 #' @importFrom boilerpipeR ArticleExtractor
 #' @importFrom RCurl getURL
 #' @import magrittr dplyr

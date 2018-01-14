@@ -12,7 +12,7 @@ FlattenContexts(x)
 
 GetSearchFreqs(x, aggBy = c("lemma", "token"))
 
-GetKWIC(x)
+GetKWIC(x, include = c("doc_id", "lemma"))
 
 GetBOW(x, contentOnly = TRUE, aggBy = c("lemma", "pos"))
 }
