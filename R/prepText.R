@@ -11,7 +11,7 @@
 #' @rdname prepText
 PrepText <- function (x, hyphenate=TRUE) {
   lapply(x, function(y){
-    txt <- gsub("[[:space:]]+", " ", y)
+    txt <- gsub("^ *|(?<= ) | *$", "", y, perl = TRUE)
       #gsub('--([:alnum:])','-- \\1',., perl=TRUE)%>%
       #gsub('([:alnum:])--','\\1 --',., perl=TRUE)
 
