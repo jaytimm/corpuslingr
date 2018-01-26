@@ -31,7 +31,7 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 
   freqs <-  freqs[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]
   freqs <- setorderv(freqs,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
-return(freqs)
+  return(freqs)
     }
 
 

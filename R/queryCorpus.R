@@ -77,13 +77,11 @@ GetContexts <- function(search,corp,LW,RW){
   searchTerms <-  CQLtoRegex(search)
 
   found <- lapply(corp,extractContext,search=searchTerms,LW,RW)
-  names(found) <- c(1:length(found))
   found <- Filter(length,found)
 
   if (length(found) >0 ) {
 
   found <- rbindlist(found,idcol='doc_id') #found locations. Joined to single df corpus.
-  found$doc_id <- paste('text',found$doc_id,sep="")
 
   BOW <- rbindlist(corp)
   BOW <- BOW[, rw := rowid(doc_id)]  #Add row number
