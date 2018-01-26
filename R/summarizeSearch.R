@@ -56,7 +56,7 @@ GetBOW <- function (x,contentOnly=TRUE, aggBy=c('lemma','pos')) {
   if (contentOnly==TRUE) {
     bow <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") | !x$lemma %in% corpusdatr::stops, ]}
 
-  bow <- bow[c('lemma','token','searchLemma','searchToken')] <- lapply(bow[c('lemma','token','searchLemma','searchToken')], toupper())
+  bow[,c('lemma','token','searchLemma','searchToken')] <- lapply(bow[,c('lemma','token','searchLemma','searchToken')], toupper)
 
   bow <- bow[place!='token', list(cofreq=length(eg)), by=aggBy]
   bow <- setorderv(bow,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
