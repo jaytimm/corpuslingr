@@ -22,13 +22,17 @@ devtools::install_github("jaytimm/corpuslingr")
 library(corpuslingr)
 library(corpusdatr)
 library(knitr)
+library(data.table)
+library(cleanNLP)
+
+library(stringi)
 ```
 
 ##Web scraping functions
-###`GetGoogleNewsMeta()`
+###GetGoogleNewsMeta()
 ```{r}
 #dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico", n=5)
-dailyMeta <- corpuslingr::GetGoogleNewsMeta (n=15)
+dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=15)
 
 head(dailyMeta['titles'])
 ```
@@ -36,36 +40,48 @@ head(dailyMeta['titles'])
 We need to sort out meta with sites that are actually scraped.
 Also, re-try "article" verion of boilerpipeR.
 
-###`GetWebTexts()`
+###GetWebTexts()
 ```{r}
 txts <- dailyMeta$links  %>% 
-  GetWebTexts()
-
+  corpuslingr::GetWebTexts() %>% ##'You don't have permission ...'-business
+  stringi::stri_enc_toutf8()
+  
 substr(txts[1:5],1, 50)
 ```
 
+```{r}
+nmTIF <- unlist(txts) %>%
+  melt() %>%
+  mutate(value=as.character(value),doc_id=row_number())%>%
+  bind_cols(dailyMeta) %>%
+  rename(txt = value) #%>%
+  #mutate(txt=corpuslingr::PrepText(txt)) #PrepText. 
+
+#This doesn't work -- returns list.
+```
+
+
+ModifyAnnotation() needs to be modified.  Will not work on non-spacyr annotations.  Need something akin to 'tuple parameters'
+
 
 ##Corpus preparation
-###`PrepAnnotation()`
+###PrepAnnotation()
 ```{r eval=FALSE}
-annotations <- txts  %>%
-  lapply(spacyr::spacy_parse,tag=TRUE)%>%
-  corpuslingr::PrepAnnotation()
+cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
+
+annotations <- cleanNLP::cnlp_annotate(nmTIF$txt, as_strings = TRUE) %>%
+  Filter(length,.)
 ```
 
-Output consists of a list of dataframes.  Distinct from `spacyr` output.
-```{r}
-gnews <- corpusdatr::gnews11_20_17
-```
 
-###`GetDocDesc()` 
+###GetDocDesc() 
 ```{r}
 head(GetDocDesc(gnews))
 ```
 
 
 ##Search function and aggregate functions.
-###`GetContexts()`
+###GetContexts()
 ```{r}
 search1 <- "<_Vx> <_IN>"
 
@@ -73,12 +89,12 @@ found <- corpuslingr::GetContexts(search=search1,corp=gnews,LW=5, RW = 5)
 ```
 
 
-###`GetSearchFreqs()`
+###GetSearchFreqs()
 ```{r}
 corpuslingr::GetSearchFreqs(found)[[1]]
 ```
 
-###`GetKWIC()`
+###GetKWIC()
 ```{r}
 search2 <- "<_Jx> <and!> <_Jx>"
 
@@ -90,7 +106,7 @@ corpuslingr::GetContexts(search=search2,corp=gnews,LW=5, RW = 5)%>%
   knitr::kable("markdown")
 ```
 
-###`GetBOW()`
+###GetBOW()
 Vector space model, or word embedding
 ```{r}
 search3 <- "<Trump!>"

@@ -7,8 +7,7 @@
 #' @param RW Size of context in number of words to right of the target
 #' @param corp List of annotated texts to be searched
 #' @return A list of dataframes
-#' @importFrom data.table rbindlist
-#' @import magrittr dplyr
+#' @import data.table
 
 
 #' @export
@@ -25,13 +24,16 @@ extractContext <- function(x,search,LW,RW) {
   L2 <- ifelse((L1-LW) < 1, 1,L1-LW)
   R2 <- ifelse((R1+RW) > nrow(x), nrow(x),R1+RW)
 
-  lapply(1:length(R2), function(y) #Using data.table here.
+  df_locs <- lapply(1:length(R2), function(y)
     as.data.frame(cbind(rw = c(L2[y]:R2[y]), #Row numbers.
           place= as.character(c(rep("aContext",L1[y]-L2[y]),
                    rep("token",R1[y]-L1[y]+1),
-                   rep("zContext",R2[y]-R1[y]))))))%>%
-  rbindlist(idcol='eg') %>%
-  mutate(rw=as.integer(as.character(rw)))
+                   rep("zContext",R2[y]-R1[y]))))))
+
+  df_locs <- rbindlist(df_locs,idcol='eg')
+  df_locs$rw <- as.integer(as.character(df_locs$rw))
+
+return(df_locs)
 }}
 
 
@@ -41,7 +43,8 @@ SimpleSearch <- function(search,corp){
 
 searchTerms <- unlist(lapply(search, CQLtoRegex))
 
-conts <- lapply(corp, function(z) {
+#Will need to split dataframe.
+found <- lapply(corp, function(z) {
   y <- paste(z$tup, collapse=" ")
 
   locations <- gregexpr(pattern= searchTerms, y, ignore.case=TRUE)
@@ -49,19 +52,18 @@ conts <- lapply(corp, function(z) {
   as.data.frame(regmatches(y,locations))}
     })
 
-names(conts) <- c(1:length(conts))
+found <- Filter(length,found)
 
-conts <- Filter(length,conts)
+if(length(found)>0) {
 
-if(length(conts)>0){
+found <- rbindlist(found, idcol='doc_id')
+colnames(found)[2] <- 'eg'
 
-rbindlist(conts, idcol='doc_id') %>%
-    mutate(doc_id=as.integer(doc_id))%>%
-    data.table() %>%
-    {colnames(.)[2] = "eg"; .}%>%
-    mutate(token=gsub("<([A-Za-z0-9-]+),\\S+>","\\1",eg),
-           tag=gsub("<\\S+,([A-Za-z0-9-]+)>","\\1",eg),
-           lemma =gsub("\\S+,([A-Za-z0-9-]+),\\S+","\\1",eg))
+found$token <- gsub("<([A-Za-z0-9-]+),\\S+>","\\1",found$eg)
+found$tag <- gsub("<\\S+,([A-Za-z0-9-]+)>","\\1",found$eg)
+found$lemma <- gsub("\\S+,([A-Za-z0-9-]+),\\S+","\\1",found$eg)
+
+return(found)
 
 } else
 {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
@@ -71,36 +73,34 @@ rbindlist(conts, idcol='doc_id') %>%
 #' @export
 #' @rdname queryCorpus
 GetContexts <- function(search,corp,LW,RW){
-  if (is.data.frame(corp)) x <- list(corp)
 
   searchTerms <-  CQLtoRegex(search)
 
-  conts <- lapply(corp,extractContext,search=searchTerms,LW,RW)
+  found <- lapply(corp,extractContext,search=searchTerms,LW,RW)
+  names(found) <- c(1:length(found))
+  found <- Filter(length,found)
 
-  names(conts) <- c(1:length(conts))
-  conts <- Filter(length,conts)
+  if (length(found) >0 ) {
 
-  if (length(conts) >0 ) {
+  found <- rbindlist(found,idcol='doc_id') #found locations. Joined to single df corpus.
+  found$doc_id <- paste('text',found$doc_id,sep="")
 
-  conts <- rbindlist(conts,idcol='doc_id')%>%
-    mutate(doc_id=as.integer(doc_id))
+  BOW <- rbindlist(corp)
+  BOW <- BOW[, rw := rowid(doc_id)]  #Add row number
+  BOW <- BOW[found, on=c("doc_id","rw"), nomatch=0]
 
-  BOW <- corp %>%
-    rbindlist()%>%
-    .[, rw := rowid(doc_id)] %>%
-    inner_join(conts)%>%
-    data.table() %>%
-    select(doc_id,eg,sentence_id,token_id ,place,token:tupEnd)
-    #Perhaps add sort.
+  KWIC <- FlattenContexts(BOW)
 
-  contexts <- FlattenContexts(BOW)
+  tmp <- KWIC[, c('doc_id','eg','token','lemma','tag','pos'), with = FALSE]
 
-  BOW <- contexts%>%
-    select(doc_id,eg,token,lemma, tag,pos)%>%
-    rename(searchToken= token,searchLemma=lemma, searchTag =tag,searchPos = pos)%>%
-    left_join(BOW)
+  SetNames(tmp, old = c('token','lemma','tag','pos'), new = c('searchToken', 'searchLemma','searchTag','searchPos'))
 
-  out <- list("BOW" = BOW, "contexts" = contexts)
+  setkey(tmp,doc_id,eg)
+  setkey(BOW,doc_id,eg)
+
+  BOW <- tmp[BOW]
+
+  out <- list("BOW" = BOW, "KWIC" = KWIC)
   return(out)
 
      } else

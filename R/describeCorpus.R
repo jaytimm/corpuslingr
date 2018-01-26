@@ -3,13 +3,19 @@
 #' These functions aggregate search results by frequency, BOW, and KWIC.
 #' @name describeCorpus
 #' @return A dataframe
-#' @import magrittr dplyr
+#' @import data.table
 #'
 #'
 #' @export
 #' @rdname describeCorpus
 GetDocDesc <- function (x) {
-  bind_rows(x)%>%
-  filter(pos!= "PUNCT")%>%
-  group_by(doc_id)%>%
-  summarize(textLength=n(),textType=length(unique(token)),textSent=length(unique(sentence_id)))}
+
+  if (!is.data.frame(x)) {x <- rbindlist(x)}
+  x <- as.data.table(x)
+
+  x[pos!="PUNCT", list(textLength=length(token),textType=length(unique(token)),textSent=length(unique(sentence_id))), by=list(doc_id)]
+
+}
+
+
+#While we are here, we could add ++descriptives; namely, baayen lexical richness stuff.

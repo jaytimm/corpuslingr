@@ -5,7 +5,6 @@
 #' @param x A list of character strings
 #' @param hyphenate if TRUE, trick spacy into preserving hyphenated words
 #' @return A list of character strings
-#' @import magrittr
 
 #' @export
 #' @rdname prepText

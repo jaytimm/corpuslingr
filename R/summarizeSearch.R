@@ -4,34 +4,34 @@
 #' @name summarizeSearch
 #' @param charList A dataframe
 #' @return A dataframes
-#' @import magrittr dplyr
-
+#' @import data.table
+#'
 #' @export
 #' @rdname summarizeSearch
 FlattenContexts <- function(x) {
 
   pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),tag=paste(tag, collapse=" "),pos=paste(pos, collapse=" ")), by=list(doc_id,eg)]
 
-  out <- x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]%>%
-    dcast.data.table(., doc_id+eg ~ place, value.var = "context")%>%
-    left_join(pats)
-
-  refcols <- c('doc_id','eg','lemma','tag','pos')
-  out[, c(refcols, setdiff(names(out), refcols))]
+  out <- x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]
+  out <- dcast.data.table(out, doc_id+eg ~ place, value.var = "context")
+  setkey(pats,doc_id,eg)
+  setkey(out,doc_id,eg)
+  pats[out]
   }
 
 
 #' @export
 #' @rdname summarizeSearch
 GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
-  if(is.data.frame(x)==FALSE){x <- x$contexts}
+  if(!is.data.frame(x)){x <- x$KWIC}
 
-  freqs <- x%>%
-    mutate_at(vars(lemma,token),funs(toupper))%>%
-    data.table()%>%
-    .[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]%>%
-    setorderv(.,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
-    return(freqs)
+  freqs <- as.data.table(x)
+  freqs$lemma <- toupper(freqs$lemma)
+  freqs$token <- toupper(freqs$token)
+
+  freqs <-  freqs[, list(txtf=length(eg),docf=length(unique(doc_id))),by=aggBy]
+  freqs <- setorderv(freqs,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
+return(freqs)
     }
 
 
@@ -39,27 +39,26 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 #' @export
 #' @rdname summarizeSearch
 GetKWIC <- function (x,include=c('doc_id','lemma')) {
-  #
-  data.table(x$contexts)%>%
-    .[, list(kwic = paste(aContext,"<mark>",token,"</mark>",zContext,collapse=" ")), by=list(doc_id,eg,token,lemma)]%>%
-    select(include,kwic)
+  if(!is.data.frame(x)){x <- x$KWIC}
+
+  kwic_table <- as.data.table(x)
+  kwic_table <- kwic_table[, list(kwic = paste(aContext, "<mark>", token, "</mark>", zContext, collapse=" ")), by=list(doc_id,eg,token,lemma)]
+
+  kwic_table[, c(include,'kwic'), with = FALSE]
   }
 
 
 #' @export
 #' @rdname summarizeSearch
 GetBOW <- function (x,contentOnly=TRUE, aggBy=c('lemma','pos')) {
+  if(!is.data.frame(x)){x <- x$BOW}
+
   if (contentOnly==TRUE) {
-    bow <- filter(x$BOW,pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY"),!lemma %in% corpusdatr::stops)
-  } else
-      {bow <- x$BOW}
+    bow <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") | !x$lemma %in% corpusdatr::stops, ]}
 
-  bow <- bow %>%
-    mutate_at(vars(lemma,token,searchLemma,searchToken),funs(toupper))%>%
-    data.table()%>%
-    .[place!='token', list(cofreq=length(eg)), by=aggBy]%>%
-    setorderv(.,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
+  bow <- bow[c('lemma','token','searchLemma','searchToken')] <- lapply(bow[c('lemma','token','searchLemma','searchToken')], toupper())
 
- return(bow)}
+  bow <- bow[place!='token', list(cofreq=length(eg)), by=aggBy]
+  bow <- setorderv(bow,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
 
-
+  return(bow)}

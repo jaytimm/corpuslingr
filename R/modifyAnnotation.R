@@ -1,53 +1,56 @@
 #' Modify text annotations for more robust corpus search
 #'
 #' These functions modify the output of `spacyr'
-#' @name corpAnnotate
+#' @name setCorpus
 #' @param x A list of dataframes
 #' @return A list of dataframes
-#' @import magrittr dplyr
+#' @import data.table
+
+
+SetNames <- function(x, old, new) {
+    old.intersect <- intersect(old, names(x))
+    common.indices <- old %in% old.intersect
+    new.intersect <- new[common.indices]
+    setnames(x, old.intersect, new.intersect)
+  }
 
 
 #' @export
-#' @rdname annotationModify
-buildTuple <- function(x){
-  x$tup <- paste("<",x$token,",",x$lemma,",",x$tag,">",sep="")
-  text <- paste(x$tup,collapse=" ")
+#' @rdname setCorpus
+SetTuple <- function(x){
+  text <- paste(x$tup,collapse=" ") #TIF
   tup_bounds <- unlist(as.vector(gregexpr(pattern=" ", text)[[1]]))
   x$tupBeg <- append(1,tup_bounds+1)
   x$tupEnd <- append(tup_bounds,nchar(text)+1)
+  class(x) <- c("spacyr_parsed", "data.frame")
   return(x)}
 
-
+#Could return tuple_tif here.
 
 #' @export
-#' @rdname annotationModify
-ModifyAnnotation <- function(x,nerToTag=TRUE){ #We shuld preserve og tag.
+#' @rdname setCorpus
+SetSearchCorpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos', NER_as_tag = FALSE) { #demarc_var - ?
 
-NUMS <- c('PERCENT','ORDINAL','MONEY','DATE','CARDINAL','TIME','QUANTITY')
+  SetNames(x, old = c(doc_var,token_var,lemma_var,tag_var, pos_var), new = c('doc_id', 'token','lemma','tag','pos'))
+  x$doc_id <- gsub('\\D+','text',x$doc_id)
 
-if (is.data.frame(x)) x <- list(x)
+  x$lemma <- gsub("[[:space:]]+", "",x$lemma)
+  x$token <- gsub("[[:space:]]+", "",x$token)
 
-annotation <- lapply(x, function(y){
-  out <- y %>%
-    mutate_at(vars(token,lemma),funs(gsub("[[:space:]]+", "",.)))%>%
-    mutate(lemma=ifelse(pos=="PROPN"|pos=="ENTITY",token,lemma))%>%
-    mutate_at(vars(token,lemma),funs(gsub("xxx","-",.)))
+  x$lemma <- ifelse(x$pos=="PROPN"|x$pos=="ENTITY",x$token,x$lemma)
 
-  if (nerToTag==TRUE) {
-  out <- out%>%
-    mutate(tag = ifelse(tag=="ENTITY" & !entity_type %in% NUMS ,paste("NN",entity_type,sep=""),tag))%>%
-    mutate(tag = ifelse(tag=="ENTITY",entity_type,tag))}
+  x$lemma <- gsub("xxx", "-", x$lemma)
+  x$token <- gsub("xxx", "-", x$token)
 
-  out <- out %>%
-    filter(!tag %in% c("SP","NFP"),pos!="SPACE",token!="",token!=" ")%>%
-    buildTuple() %>%
-    mutate_at(vars(token,lemma),funs(gsub("_"," ",.)))
+  x <- x[!(x$tag=='NN'| x$tag=='NFP' | x$pos == 'SPACE' | x$token =="" | x$token==" "),]
 
-  class(out) <- c("spacyr_parsed", "data.frame")
-  return(out)})
+  if (NER_as_tag == TRUE) {}
+  #x$tag = ifelse(x$tag=="ENTITY",paste("NN",x$entity_type,sep=""),x$tag)
+  #x$tag = ifelse(x$tag=="ENTITY",x$entity_type,x$tag)
 
-if (length(annotation) >1) {
-annotation <- mapply (`[<-`, annotation, 'doc_id', value = as.integer(c(1:length(annotation))), SIMPLIFY = FALSE)}
-
-return(annotation)
+  x$tup <- paste("<",x$token,",",x$lemma,",",x$tag,">",sep="")
+  list_dfs <- split(x, f = x$doc_id)
+  lapply(list_dfs,SetTuple)
 }
+
+#Also - entity_consolidate() issue. Would occur previous to SetSearchCorpus().

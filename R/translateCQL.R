@@ -4,7 +4,6 @@
 #' @name translateCQL
 #' @param x Gram/lexical pattern to be searched for
 #' @return A list of character strings
-#' @import magrittr
 
 #' @export
 #' @rdname translateCQL
@@ -37,8 +36,8 @@ CQLtoRegex <- function(x) {
 
   x <- gsub("<_NXP>",nounPhrase,x)
 
-  unlist(strsplit(x," ")) %>%
-    lapply(buildSearch) %>%
-    paste(collapse="")%>%
-    gsub(">","> ",.)}
+  y <- unlist(strsplit(x," "))
+  y <- lapply(y,buildSearch)
+  y <- paste(y, collapse="")
+  gsub(">","> ",y)}
 
