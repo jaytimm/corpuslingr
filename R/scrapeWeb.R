@@ -53,7 +53,7 @@ GetWebTexts <- function(y,link_var='links') {
     gsub("\\\"","\"",x, perl=TRUE)
       })
 
-  names(cleaned) <- y$links
+  names(cleaned) <- y[link_var]
   tif <- melt(unlist(cleaned),value.name='txt')
   setDT(tif, keep.rownames = TRUE)[]
   colnames(tif)[1] <- 'links'
