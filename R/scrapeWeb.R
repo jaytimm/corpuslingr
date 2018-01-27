@@ -32,13 +32,11 @@ GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
 
 
   out <- as.data.frame(cbind(source,titles,links,pubdates,date))
-  out$source <- as.character(out$source)
-  out$titles <- as.character(out$titles)
-  out$links <- as.character(out$links)
-  out$pubdates <- as.character(out$pubdates)
-  out$date <- as.character(out$date)
 
-  out <- out[out$source!="This RSS feed URL is deprecated",]
+  out[,c('source','titles','links','pubdates','date')] <- lapply(out[,c('source','titles','links','pubdates','date')], as.character)
+
+  out <- out[grepl("This RSS feed URL is deprecated|You don't have permission",out$source),]
+
 }
 
 
