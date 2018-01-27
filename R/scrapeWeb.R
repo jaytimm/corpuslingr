@@ -40,7 +40,6 @@ GetGoogleNewsMeta1 <- function(x,search=NULL,n=30) {
 }
 
 
-y = dailyMeta
 #' @export
 #' @rdname scrapeWeb
 GetWebTexts <- function(y,link_var='links') {
