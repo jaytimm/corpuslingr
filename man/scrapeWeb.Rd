@@ -8,7 +8,7 @@
 \usage{
 GetGoogleNewsMeta(x, search = NULL, n = 30)
 
-GetWebTexts(y)
+GetWebTexts(y, link_var = "links")
 }
 \arguments{
 \item{search}{Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"}

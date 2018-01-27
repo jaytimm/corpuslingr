@@ -14,7 +14,7 @@
 
 #' @export
 #' @rdname scrapeWeb
-GetGoogleNewsMeta1 <- function(x,search=NULL,n=30) {
+GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
 
   rss <- paste("https://news.google.com/news?hl=en&q=",gsub(" ","",search),"&ie=utf-8&num=",n,"&output=rss",sep="")
 
