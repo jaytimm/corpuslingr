@@ -5,6 +5,7 @@
 #' @param search Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"
 #' @param n Number of articles to get; max = 30.
 #' @return A dataframe of meta for articles collected.
+#' @import data.table
 #' @importFrom XML xpathSApply xmlParse xmlValue
 #' @importFrom boilerpipeR ArticleExtractor
 #' @importFrom RCurl getURL
@@ -13,7 +14,7 @@
 
 #' @export
 #' @rdname scrapeWeb
-GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
+GetGoogleNewsMeta1 <- function(x,search=NULL,n=30) {
 
   rss <- paste("https://news.google.com/news?hl=en&q=",gsub(" ","",search),"&ie=utf-8&num=",n,"&output=rss",sep="")
 
@@ -35,28 +36,30 @@ GetGoogleNewsMeta <- function(x,search=NULL,n=30) {
 
   out[,c('source','titles','links','pubdates','date')] <- lapply(out[,c('source','titles','links','pubdates','date')], as.character)
 
-  out <- out[grepl("This RSS feed URL is deprecated|You don't have permission",out$source),]
-
+  out[out$source != "This RSS feed URL is deprecated",]
 }
 
 
-
+y = dailyMeta
 #' @export
 #' @rdname scrapeWeb
-GetWebTexts <- function(y) {
+GetWebTexts <- function(y,link_var='links') {
 
-  raws <- sapply(y, function (x) {
+  raws <- sapply(y[link_var], function (x) {
     tryCatch(RCurl::getURL(x, .encoding='UTF-8', ssl.verifypeer = FALSE), error=function(e) NULL)})
 
-  names(raws) <- y
-  raws <- Filter(length,raws)
-
-  output <- lapply(raws, function(z) {
+  cleaned <- lapply(raws, function(z) {
     x <- lapply(z, boilerpipeR::ArticleExtractor)
     x <- gsub("\\\n"," ",x, perl=TRUE)
     gsub("\\\"","\"",x, perl=TRUE)
       })
 
-  output <- output[!sapply(output, is.na)]
-  Filter(nchar,output)
+  names(cleaned) <- y$links
+  tif <- melt(unlist(cleaned),value.name='txt')
+  setDT(tif, keep.rownames = TRUE)[]
+  colnames(tif)[1] <- 'links'
+  tif <- merge(y,tif,by.x=c(link_var),by.y=c('links'))
+  tif$txt <- as.character(tif$txt)
+
+  tif[nchar(tif$txt)>250,]
 }
