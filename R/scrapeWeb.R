@@ -63,4 +63,5 @@ GetWebTexts <- function(y,link_var='links') {
   tif <- tif[nchar(tif$txt)>250,]
   tif$doc_id <- paste('doc',seq.int(nrow(tif)),sep="")
   tif$date <- as.Date(tif$date, "%d %b %Y")
+  return(tif)
 }
