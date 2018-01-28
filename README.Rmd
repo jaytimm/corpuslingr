@@ -3,7 +3,6 @@
 output:
   md_document:
     variant: markdown_github
-    toc: yes
 ---
 
 ```{r, echo = FALSE}
@@ -102,7 +101,7 @@ head(corpuslingr::GetDocDesc(lingr_corpus)$text)
 
 
 
-##Search function and aggregate functions.
+##Search & aggregation functions
 
 We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.  
 
@@ -122,9 +121,11 @@ lingr_corpus %>%
 
 ###GetContexts()
 
+This function allows ... output includes a list of data.frames.  `BOW` and `KWIC`
+
 ```{r}
-search4 <- '<all!> <> <of!>'
-corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
+search2 <- '<all!> <> <of!>'
+corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()
 ```
 
@@ -146,9 +147,9 @@ lingr_corpus %>%
 
 ###GetKWIC()
 ```{r}
-search2 <- "<_Jx> <and!> <_Jx>"
+search4 <- "<_Jx> <and!> <_Jx>"
 
-corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
+corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   head()
 ```
@@ -159,14 +160,15 @@ Vector space model, or word embedding
 
 ###GetKeyphrases()
 
-The package has one 'specialty' function... most of this is described more thoroughly in this [post]().
+most of this is described more thoroughly in this [post]().
+
+The function leverages `SimpleSearch()` .... uses tf-idf weights to extract keyphrases from each text comprising corpus.  The user can specify ... 
 
 ```{r}
 keyPhrase
 ```
 ```{r}
 lingr_corpus %>%
-  #SimpleSearch() %>% add doc_var ~makes it more generic. key_var
   GetKeyPhrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
   head()
 ```
@@ -183,7 +185,7 @@ lingr_corpus %>%
 
 ##Corpus workflow
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
-search4 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
+search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ```
 
 

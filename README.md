@@ -1,22 +1,3 @@
--   [corpuslingr:](#corpuslingr)
--   [Web scraping functions](#web-scraping-functions)
-    -   [GetGoogleNewsMeta()](#getgooglenewsmeta)
-    -   [GetWebTexts()](#getwebtexts)
--   [Corpus preparation](#corpus-preparation)
-    -   [PrepCorpus()](#prepcorpus)
-    -   [SetSearchCorpus()](#setsearchcorpus)
-    -   [GetDocDesc()](#getdocdesc)
--   [Search function and aggregate functions.](#search-function-and-aggregate-functions.)
-    -   [An in-house corpus querying language (CQL)](#an-in-house-corpus-querying-language-cql)
-    -   [SimpleSearch()](#simplesearch)
-    -   [GetContexts()](#getcontexts)
-    -   [GetSearchFreqs()](#getsearchfreqs)
-    -   [GetKWIC()](#getkwic)
-    -   [GetBOW()](#getbow)
-    -   [GetKeyphrases()](#getkeyphrases)
--   [Multi-term search](#multi-term-search)
--   [Corpus workflow](#corpus-workflow)
-
 corpuslingr:
 ------------
 
@@ -44,13 +25,13 @@ Following grammatical constructions ~ day-to-day changes, eg.
 dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30)
 
 head(dailyMeta['titles'])
-##                                                                    titles
-## 2   New Mexico holds hundreds of people in prison past their release date
-## 3     Stuck at the bottom: Why New Mexico fails to thrive | Education ...
-## 4                        Colorado State comes up short against New Mexico
-## 5                     Breaking down lawmakers' bills on kids and families
-## 6         New Mexico Senior care services no longer on the chopping block
-## 7 New Mexico invests in young entrepreneurs to kickstart its sluggish ...
+##                                                                  titles
+## 2 New Mexico holds hundreds of people in prison past their release date
+## 3                      Colorado State comes up short against New Mexico
+## 4   Stuck at the bottom: Why New Mexico fails to thrive | Education ...
+## 5                   Breaking down lawmakers' bills on kids and families
+## 6   New Mexico Senior care services no longer on the chopping block ...
+## 7                Turnovers too costly as Rams fall at New Mexico, 80-65
 ```
 
 ### GetWebTexts()
@@ -102,22 +83,22 @@ lingr_corpus <- ann_corpus$token %>%
 ``` r
 corpuslingr::GetDocDesc(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     20      13520     3025      808
+## 1:     21      14016     3079      824
 ```
 
 ``` r
 head(corpuslingr::GetDocDesc(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        958      348       55
-## 2: text10       1039      427       70
-## 3: text11        543      256       35
-## 4: text12        182      106       11
-## 5: text13        474      200       21
-## 6: text14        529      247       36
+## 2: text10        543      256       35
+## 3: text11        182      106       11
+## 4: text12        474      200       21
+## 5: text13        529      247       36
+## 6: text14        422      210       18
 ```
 
-Search function and aggregate functions.
-----------------------------------------
+Search & aggregation functions
+------------------------------
 
 We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.
 
@@ -135,23 +116,25 @@ lingr_corpus %>%
   head ()
 ##    doc_id        token     tag      lemma
 ## 1:  text1     sets up  VBZ RP     set up 
-## 2: text10     grow up   VB RP    grow up 
-## 3: text10  growing up  VBG RP    grow up 
-## 4: text11    shake up   VB RP   shake up 
-## 5: text13     step up   VB IN    step up 
-## 6: text14 climbing up  VBG RP  climbe up
+## 2: text10    shake up   VB RP   shake up 
+## 3: text12     step up   VB IN    step up 
+## 4: text13 climbing up  VBG RP  climbe up 
+## 5: text13     woke up  VBD RP    wake up 
+## 6: text15     stay up   VB IN    stay up
 ```
 
 ### GetContexts()
 
+This function allows ... output includes a list of data.frames. `BOW` and `KWIC`
+
 ``` r
-search4 <- '<all!> <> <of!>'
-corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
+search2 <- '<all!> <> <of!>'
+corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()
 ##    doc_id       lemma
 ## 1: text15 all four of
-## 2: text19   all or of
-## 3: text20 all sort of
+## 2: text20   all or of
+## 3: text21 all sort of
 ## 4:  text7   all or of
 ##                                                                                              kwic
 ## 1:                            Burns came out on in <mark> all four of </mark> her events on the ,
@@ -174,35 +157,35 @@ lingr_corpus %>%
   head()
 ##          lemma txtf docf
 ## 1:    GROW UP     4    2
-## 2:      BE UP     3    2
-## 3:    SHOW UP     3    1
+## 2:    SHOW UP     3    1
+## 3:    MAKE UP     2    2
 ## 4: PARTNER UP     2    1
 ## 5:     SET UP     2    2
-## 6:   BRING UP     1    1
+## 6:      BE UP     1    1
 ```
 
 ### GetKWIC()
 
 ``` r
-search2 <- "<_Jx> <and!> <_Jx>"
+search4 <- "<_Jx> <and!> <_Jx>"
 
-corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
+corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   head()
-##    doc_id               lemma
-## 1: text10 economic and social
-## 2: text10  economic and early
-## 3: text15    third and fourth
-## 4: text16    warmer and drier
-## 5: text16    early and active
-## 6: text19  expensive and long
+##    doc_id              lemma
+## 1: text15   third and fourth
+## 2: text16   warmer and drier
+## 3: text16   early and active
+## 4: text20 expensive and long
+## 5: text20  overall and fewer
+## 6: text21  more and populous
 ##                                                                                     kwic
-## 1:              and , and of the <mark> economic and social </mark> well - of families .
-## 2:      , nonpartisan Coming Monday : <mark> Economic and early </mark> go in ; shows of
-## 3:   1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
-## 4: through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
-## 5:   We are preparing for an <mark> early and active </mark> and bringing some and crews
-## 6:                   " in- . " An <mark> expensive and long </mark> - , it routinely has
+## 1:   1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
+## 2: through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
+## 3:   We are preparing for an <mark> early and active </mark> and bringing some and crews
+## 4:                   " in- . " An <mark> expensive and long </mark> - , it routinely has
+## 5:         a in women 's rates <mark> overall and fewer </mark> - based options for them
+## 6: young brains draining away to <mark> more and populous </mark> markets . But there 's
 ```
 
 ### GetBOW()
@@ -211,7 +194,9 @@ Vector space model, or word embedding
 
 ### GetKeyphrases()
 
-The package has one 'specialty' function... most of this is described more thoroughly in this [post]().
+most of this is described more thoroughly in this [post]().
+
+The function leverages `SimpleSearch()` .... uses tf-idf weights to extract keyphrases from each text comprising corpus. The user can specify ...
 
 ``` r
 keyPhrase
@@ -220,7 +205,6 @@ keyPhrase
 
 ``` r
 lingr_corpus %>%
-  #SimpleSearch() %>% add doc_var ~makes it more generic. key_var
   GetKeyPhrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
   head()
 ##    doc_id
@@ -230,13 +214,13 @@ lingr_corpus %>%
 ## 4: text12
 ## 5: text13
 ## 6: text14
-##                                                                                                        keyphrases
-## 1:                                                         West Texas | Evans | Buffs | western New Mexico | WNm 
-## 2:                                                        child | Minnesota | ranking | teens | Casey Foundation 
-## 3:                                                      Dunn | Libertarian | Libertarians | Republicans | Senate 
-## 4:                                                       glitch | Families Department | Youth | Medicaid | child 
-## 5: democratic lawmaker | New Mexico House | dollar to New Mexico | AP Photo | Albuquerque Studios in Albuquerque 
-## 6:                                       McKenzie Jamieson | light | Yakima | West Valley High School | dinosaur
+##                                                                                      keyphrases
+## 1:                                       West Texas | Evans | western New Mexico | Buffs | WNm 
+## 2:                                     Dunn | Libertarians | Libertarian | party | Republicans 
+## 3:                                     Medicaid | glitch | Families Department | Youth | child 
+## 4: democratic lawmaker | New Mexico House | dollar to New Mexico | Maestas | Russell Contreras 
+## 5:                     West Valley High School | McKenzie Jamieson | Yakima | light | dinosaur 
+## 6:                                             Rams | Lobos | Colorado State | point | rebound
 ```
 
 ?Reference corpus.
@@ -253,5 +237,5 @@ Corpus workflow
 ---------------
 
 ``` r
-search4 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
+search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ```
