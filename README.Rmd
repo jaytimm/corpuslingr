@@ -24,7 +24,6 @@ library(tidyverse)
 library(cleanNLP)
 library(stringi)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
-library(corpusdatr) #devtools::install_github("jaytimm/corpusdatr")
 ```
 
 
@@ -56,11 +55,12 @@ nm_news <- dailyMeta %>%
 
 ##Corpus preparation
 
+###PrepCorpus()
 Also, PrepText(). Although, I think it may not work on TIF.
 Hyphenated words and any excessive spacing in texts. Upstream solution.
 
 Using the ... `cleanNLP` package. 
-```{r}
+```{r message=FALSE, warning=FALSE}
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
 #cnlp_init_corenlp(language="en",anno_level = 1L)
 ann_corpus <- cleanNLP::cnlp_annotate(nm_news$txt, as_strings = TRUE) 
@@ -149,7 +149,8 @@ lingr_corpus %>%
 search2 <- "<_Jx> <and!> <_Jx>"
 
 corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
-  corpuslingr::GetKWIC()
+  corpuslingr::GetKWIC()%>%
+  head()
 ```
 
 ###GetBOW()

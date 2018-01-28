@@ -3,6 +3,7 @@
     -   [GetGoogleNewsMeta()](#getgooglenewsmeta)
     -   [GetWebTexts()](#getwebtexts)
 -   [Corpus preparation](#corpus-preparation)
+    -   [PrepCorpus()](#prepcorpus)
     -   [SetSearchCorpus()](#setsearchcorpus)
     -   [GetDocDesc()](#getdocdesc)
 -   [Search function and aggregate functions.](#search-function-and-aggregate-functions.)
@@ -28,7 +29,6 @@ library(tidyverse)
 library(cleanNLP)
 library(stringi)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
-library(corpusdatr) #devtools::install_github("jaytimm/corpusdatr")
 ```
 
 Web scraping functions
@@ -46,8 +46,8 @@ dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30)
 head(dailyMeta['titles'])
 ##                                                                    titles
 ## 2   New Mexico holds hundreds of people in prison past their release date
-## 3                        Colorado State comes up short against New Mexico
-## 4     Stuck at the bottom: Why New Mexico fails to thrive | Education ...
+## 3     Stuck at the bottom: Why New Mexico fails to thrive | Education ...
+## 4                        Colorado State comes up short against New Mexico
 ## 5                     Breaking down lawmakers' bills on kids and families
 ## 6         New Mexico Senior care services no longer on the chopping block
 ## 7 New Mexico invests in young entrepreneurs to kickstart its sluggish ...
@@ -66,13 +66,14 @@ nm_news <- dailyMeta %>%
 Corpus preparation
 ------------------
 
+### PrepCorpus()
+
 Also, PrepText(). Although, I think it may not work on TIF. Hyphenated words and any excessive spacing in texts. Upstream solution.
 
 Using the ... `cleanNLP` package.
 
 ``` r
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
-## Loading required namespace: udpipe
 #cnlp_init_corenlp(language="en",anno_level = 1L)
 ann_corpus <- cleanNLP::cnlp_annotate(nm_news$txt, as_strings = TRUE) 
 ```
@@ -101,18 +102,18 @@ lingr_corpus <- ann_corpus$token %>%
 ``` r
 corpuslingr::GetDocDesc(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     21      13649     3041      807
+## 1:     20      13520     3025      808
 ```
 
 ``` r
 head(corpuslingr::GetDocDesc(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        958      348       55
-## 2: text10         92       76        6
-## 3: text11       1039      427       70
-## 4: text12        543      256       35
-## 5: text13        182      106       11
-## 6: text14        474      200       21
+## 2: text10       1039      427       70
+## 3: text11        543      256       35
+## 4: text12        182      106       11
+## 5: text13        474      200       21
+## 6: text14        529      247       36
 ```
 
 Search function and aggregate functions.
@@ -134,11 +135,11 @@ lingr_corpus %>%
   head ()
 ##    doc_id        token     tag      lemma
 ## 1:  text1     sets up  VBZ RP     set up 
-## 2: text11     grow up   VB RP    grow up 
-## 3: text11  growing up  VBG RP    grow up 
-## 4: text12    shake up   VB RP   shake up 
-## 5: text14     step up   VB IN    step up 
-## 6: text15 climbing up  VBG RP  climbe up
+## 2: text10     grow up   VB RP    grow up 
+## 3: text10  growing up  VBG RP    grow up 
+## 4: text11    shake up   VB RP   shake up 
+## 5: text13     step up   VB IN    step up 
+## 6: text14 climbing up  VBG RP  climbe up
 ```
 
 ### GetContexts()
@@ -148,10 +149,10 @@ search4 <- '<all!> <> <of!>'
 corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()
 ##    doc_id       lemma
-## 1: text16 all four of
-## 2: text20   all or of
-## 3: text21 all sort of
-## 4:  text8   all or of
+## 1: text15 all four of
+## 2: text19   all or of
+## 3: text20 all sort of
+## 4:  text7   all or of
 ##                                                                                              kwic
 ## 1:                            Burns came out on in <mark> all four of </mark> her events on the ,
 ## 2: corrections officials holding inmates for <mark> all or of </mark> their terms - often because
@@ -186,43 +187,22 @@ lingr_corpus %>%
 search2 <- "<_Jx> <and!> <_Jx>"
 
 corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
-  corpuslingr::GetKWIC()
-##     doc_id                lemma
-##  1: text11  economic and social
-##  2: text11   economic and early
-##  3: text16     third and fourth
-##  4: text17     warmer and drier
-##  5: text17     early and active
-##  6: text20   expensive and long
-##  7: text20    overall and fewer
-##  8: text21    more and populous
-##  9: text21   varied and diverse
-## 10: text21         far and wide
-## 11: text21    bigger and bigger
-## 12:  text4   economic and early
-## 13:  text4   early and economic
-## 14:  text4      small and large
-## 15:  text6 honest and effective
-## 16:  text8   expensive and long
-## 17:  text8    overall and fewer
-##                                                                                                    kwic
-##  1:                            and , and of the <mark> economic and social </mark> well - of families .
-##  2:                    , nonpartisan Coming Monday : <mark> Economic and early </mark> go in ; shows of
-##  3:                 1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
-##  4:               through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
-##  5:                 We are preparing for an <mark> early and active </mark> and bringing some and crews
-##  6:                                 " in- . " An <mark> expensive and long </mark> - , it routinely has
-##  7:                       a in women 's rates <mark> overall and fewer </mark> - based options for them
-##  8:               young brains draining away to <mark> more and populous </mark> markets . But there 's
-##  9:              these human collisions with a <mark> varied and diverse </mark> of people that can add
-## 10:                             all sorts of visitors from <mark> far and wide </mark> . The big is the
-## 11:                          to , you know , <mark> bigger and bigger </mark> places ? Alonso Estrada :
-## 12:                       around the and the that <mark> economic and early </mark> go in . And nowhere
-## 13:                           zeroed in on the between <mark> early and economic </mark> well - . His ,
-## 14:             a statewide that represents 250 <mark> small and large </mark> businesses . " . Showing
-## 15: empower New Mexicans to demand <mark> honest and effective </mark> public . Politically , advocates
-## 16:                                 " in- . " An <mark> expensive and long </mark> - , it routinely has
-## 17:                       a in women 's rates <mark> overall and fewer </mark> - based options for them
+  corpuslingr::GetKWIC()%>%
+  head()
+##    doc_id               lemma
+## 1: text10 economic and social
+## 2: text10  economic and early
+## 3: text15    third and fourth
+## 4: text16    warmer and drier
+## 5: text16    early and active
+## 6: text19  expensive and long
+##                                                                                     kwic
+## 1:              and , and of the <mark> economic and social </mark> well - of families .
+## 2:      , nonpartisan Coming Monday : <mark> Economic and early </mark> go in ; shows of
+## 3:   1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
+## 4: through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
+## 5:   We are preparing for an <mark> early and active </mark> and bringing some and crews
+## 6:                   " in- . " An <mark> expensive and long </mark> - , it routinely has
 ```
 
 ### GetBOW()
@@ -250,13 +230,13 @@ lingr_corpus %>%
 ## 4: text12
 ## 5: text13
 ## 6: text14
-##                                                                         keyphrases
-## 1:                          West Texas | Buffs | Evans | western New Mexico | WNm 
-## 2:     police | passenger | Bloomfield | NW New Mexico David Lynch January | belt 
-## 3:                         child | Minnesota | ranking | teens | Casey Foundation 
-## 4:                       Dunn | Libertarian | Libertarians | Republicans | Senate 
-## 5:                        Youth | Medicaid | glitch | Families Department | child 
-## 6: dollar to New Mexico | New Mexico House | democratic lawmaker | AP Photo | NBC
+##                                                                                                        keyphrases
+## 1:                                                         West Texas | Evans | Buffs | western New Mexico | WNm 
+## 2:                                                        child | Minnesota | ranking | teens | Casey Foundation 
+## 3:                                                      Dunn | Libertarian | Libertarians | Republicans | Senate 
+## 4:                                                       glitch | Families Department | Youth | Medicaid | child 
+## 5: democratic lawmaker | New Mexico House | dollar to New Mexico | AP Photo | Albuquerque Studios in Albuquerque 
+## 6:                                       McKenzie Jamieson | light | Yakima | West Valley High School | dinosaur
 ```
 
 ?Reference corpus.
