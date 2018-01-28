@@ -2,13 +2,10 @@
 % Please edit documentation in R/setCorpus.R
 \name{setCorpus}
 \alias{setCorpus}
-\alias{SetNames}
 \alias{SetTuple}
 \alias{SetSearchCorpus}
 \title{Modify text annotations for more robust corpus search}
 \usage{
-SetNames(x, old, new)
-
 SetTuple(x)
 
 SetSearchCorpus(x, doc_var = "doc_id", token_var = "token",

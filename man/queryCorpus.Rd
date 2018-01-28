@@ -14,7 +14,8 @@ SimpleSearch(search, corp)
 
 GetContexts(search, corp, LW, RW)
 
-GetKeyPhrases(x, n = 5, aggBy = "lemma", flatten = TRUE, jitter = TRUE)
+GetKeyPhrases(x, n = 5, key_var = "lemma", flatten = TRUE,
+  jitter = TRUE)
 }
 \arguments{
 \item{search}{Gram/lexical pattern to be searched for}

@@ -8,7 +8,7 @@
 
 #' @export
 #' @rdname prepText
-PrepText <- function (x, hyphenate=TRUE) {
+PrepCorpus <- function (x, hyphenate=TRUE) {
   lapply(x, function(y){
     txt <- gsub("^ *|(?<= ) | *$", "", y, perl = TRUE)
       #gsub('--([:alnum:])','-- \\1',., perl=TRUE)%>%
