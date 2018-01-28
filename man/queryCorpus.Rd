@@ -5,6 +5,7 @@
 \alias{extractContext}
 \alias{SimpleSearch}
 \alias{GetContexts}
+\alias{GetKeyPhrases}
 \title{Get search in context}
 \usage{
 extractContext(x, search, LW, RW)
@@ -12,6 +13,8 @@ extractContext(x, search, LW, RW)
 SimpleSearch(search, corp)
 
 GetContexts(search, corp, LW, RW)
+
+GetKeyPhrases(x, n = 5, aggBy = "lemma", flatten = TRUE, jitter = TRUE)
 }
 \arguments{
 \item{search}{Gram/lexical pattern to be searched for}

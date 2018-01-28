@@ -13,7 +13,7 @@ SetTuple(x)
 
 SetSearchCorpus(x, doc_var = "doc_id", token_var = "token",
   lemma_var = "lemma", tag_var = "tag", pos_var = "pos",
-  NER_as_tag = FALSE)
+  sentence_var = "sentence_id", NER_as_tag = FALSE)
 }
 \arguments{
 \item{x}{A list of dataframes}
