@@ -137,7 +137,7 @@ GetKeyPhrases <- function (x,n=5, aggBy ='lemma', flatten=TRUE,jitter=TRUE) {
   colnames(k1)[3] <- 'keyphrases'
 
   if (flatten == TRUE) {
-    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse="|")), by=list(doc_id)]
+    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse="| ")), by=list(doc_id)]
     }
 
   return(k1)
