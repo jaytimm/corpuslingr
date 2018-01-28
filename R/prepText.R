@@ -9,12 +9,9 @@
 #' @export
 #' @rdname prepText
 PrepCorpus <- function (x, hyphenate=TRUE) {
-  lapply(x, function(y){
-    txt <- gsub("^ *|(?<= ) | *$", "", y, perl = TRUE)
-      #gsub('--([:alnum:])','-- \\1',., perl=TRUE)%>%
-      #gsub('([:alnum:])--','\\1 --',., perl=TRUE)
+  x$text <- gsub("^ *|(?<= ) | *$", "", x$text, perl = TRUE)
+
 
     if (hyphenate==TRUE) {
-        txt <- gsub("(\\w)-(\\w)",'\\1xxx\\2',txt, perl=TRUE)}
-    return(txt)})
+        x$text <- gsub("(\\w)-(\\w)",'\\1xxx\\2',x$text, perl=TRUE)}
 }

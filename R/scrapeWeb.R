@@ -54,13 +54,14 @@ GetWebTexts <- function(y,link_var='links') {
       })
 
   names(cleaned) <- y[[link_var]]
-  tif <- melt(unlist(cleaned),value.name='txt')
+  tif <- melt(unlist(cleaned),value.name='text')
   setDT(tif, keep.rownames = TRUE)[]
   colnames(tif)[1] <- 'links'
   tif <- merge(y,tif,by.x=c(link_var),by.y=c('links'))
-  tif$txt <- as.character(tif$txt)
+  tif$text <- as.character(tif$text)
+  tif$text <- enc2utf8(tif$text)
 
-  tif <- tif[nchar(tif$txt)>250,]
+  tif <- tif[nchar(tif$text)>250,]
   tif <- tif[complete.cases(tif),]
   tif$doc_id <- paste('doc',seq.int(nrow(tif)),sep="")
   tif$date <- as.Date(tif$date, "%d %b %Y")
