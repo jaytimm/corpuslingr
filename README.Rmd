@@ -4,7 +4,6 @@ output:
   md_document:
     variant: markdown_github
     toc: yes
-    df_print: paged
 ---
 
 ```{r, echo = FALSE}
@@ -52,8 +51,6 @@ Text interchange formats.
 nm_news <- dailyMeta %>% 
   corpuslingr::GetWebTexts(link_var='links') %>%
   mutate(txt=stringi::stri_enc_toutf8(txt))
-
-head(nm_news)
 ```
 
 
@@ -119,7 +116,8 @@ Should be 'copy and paste' at his point. See 'Corpus design' post. Tuples and co
 search1 <- "<_Vx> <up!>"
 
 lingr_corpus %>%
-  corpuslingr::SimpleSearch(search=search1)
+  corpuslingr::SimpleSearch(search=search1)%>%
+  head ()
 ```
 
 ###GetContexts()
@@ -141,7 +139,8 @@ nounPhrase
 ```{r}
 lingr_corpus %>%
   corpuslingr::SimpleSearch(search=search1)%>%
-  corpuslingr::GetSearchFreqs(aggBy = 'lemma')
+  corpuslingr::GetSearchFreqs(aggBy = 'lemma')%>%
+  head()
 ```
 
 
@@ -167,7 +166,8 @@ keyPhrase
 ```{r}
 lingr_corpus %>%
   #SimpleSearch() %>% add doc_var ~makes it more generic. key_var
-  GetKeyPhrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)
+  GetKeyPhrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
+  head()
 ```
 
 ?Reference corpus.  
