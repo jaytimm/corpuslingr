@@ -105,3 +105,40 @@ GetContexts <- function(search,corp,LW,RW){
      } else
       {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
+
+
+#' @export
+#' @rdname queryCorpus
+GetKeyPhrases <- function (x,n=5, aggBy ='lemma', flatten=TRUE,jitter=TRUE) {
+
+  keys <- corpuslingr::SimpleSearch(x,search=keyPhrase)
+
+  doc <-  keys[, list(docf=length(unique(doc_id))),by=aggBy]
+  txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',aggBy)]
+
+  corp <- rbindlist(x)
+  freqs <-  corp[, list(textLength=length(aggBy)),by=doc_id]
+  setkeyv(doc,aggBy)
+  setkeyv(txt,aggBy)
+
+  k1 <- doc[txt]
+
+  setkey(k1,doc_id)
+  setkey(freqs,doc_id)
+
+  k1 <- freqs[k1]
+  k1$docsInCorpus <- nrow(freqs)
+
+  k1$tf_idf <- (k1$txtf/k1$textLength)*log(k1$docsInCorpus/(k1$docf+1))
+
+  if (jitter==TRUE) {k1$tf_idf <- jitter(k1$tf_idf)}
+
+  k1 <- k1[,.SD[order(-tf_idf)[1:n]],by=doc_id]
+  colnames(k1)[3] <- 'keyphrases'
+
+  if (flatten == TRUE) {
+    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse="|")), by=list(doc_id)]
+    }
+
+  return(k1)
+}
