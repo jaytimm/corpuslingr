@@ -109,20 +109,22 @@ GetContexts <- function(search,corp,LW,RW){
 
 #' @export
 #' @rdname queryCorpus
-GetKeyPhrases <- function (x,n=5, doc_var = 'doc_id', key_var ='lemma', flatten=TRUE,jitter=TRUE) {
+GetKeyPhrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE) {
 
-  doc <-  x[, list(docf=length(unique(doc_var))),by=key_var]
-  txt <-  x[, list(txtf=length(tag)),by=c(doc_var,key_var)]
+  keys <- corpuslingr::SimpleSearch(x,search=keyPhrase)
+
+  doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
+  txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
 
   corp <- rbindlist(x)
-  freqs <-  corp[, list(textLength=length(key_var)),by=doc_var]
-  setkeyv(doc_var,key_var)
+  freqs <-  corp[, list(textLength=length(key_var)),by=doc_id]
+  setkeyv(doc,key_var)
   setkeyv(txt,key_var)
 
   k1 <- doc[txt]
 
-  setkeyv(k1,doc_var)
-  setkeyv(freqs,doc_var)
+  setkey(k1,doc_id)
+  setkey(freqs,doc_id)
 
   k1 <- freqs[k1]
   k1$docsInCorpus <- nrow(freqs)
@@ -131,11 +133,11 @@ GetKeyPhrases <- function (x,n=5, doc_var = 'doc_id', key_var ='lemma', flatten=
 
   if (jitter==TRUE) {k1$tf_idf <- jitter(k1$tf_idf)}
 
-  k1 <- k1[,.SD[order(-tf_idf)[1:n]],by=doc_var]
+  k1 <- k1[,.SD[order(-tf_idf)[1:n]],by=doc_id]
   colnames(k1)[3] <- 'keyphrases'
 
   if (flatten == TRUE) {
-    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse="| ")), by=list(doc_var)]
+    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse="| ")), by=list(doc_id)]
     }
 
   return(k1)
