@@ -61,6 +61,7 @@ GetWebTexts <- function(y,link_var='links') {
   tif$txt <- as.character(tif$txt)
 
   tif <- tif[nchar(tif$txt)>250,]
+  tif <- tif[complete.cases(tif),]
   tif$doc_id <- paste('doc',seq.int(nrow(tif)),sep="")
   tif$date <- as.Date(tif$date, "%d %b %Y")
   tif <- tif[, c(ncol(tif),1:(ncol(tif)-1))]
