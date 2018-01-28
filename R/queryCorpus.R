@@ -63,7 +63,7 @@ found$token <- gsub("<([A-Za-z0-9-]+),\\S+>","\\1",found$eg)
 found$tag <- gsub("<\\S+,([A-Za-z0-9-]+)>","\\1",found$eg)
 found$lemma <- gsub("\\S+,([A-Za-z0-9-]+),\\S+","\\1",found$eg)
 
-found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
+found <- found[, c('doc_id','eg','token','tag','lemma'), with = FALSE]
 return(found)
 
 } else
