@@ -30,7 +30,7 @@ library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 
 These functions .... There are other packages/means to scrape the web.  The two included here are designed for quick/easy search of headline news. And creation of tif corpus-object.  making subsequent annotation straightforward.  'Scrape news -> annotate -> search' in three or four steps.
 
-Following grammatical constructions ~ day-to-day changes, eg.
+Following grammatical constructions ~ day-to-day changes, eg. Search defaults to NULL, which smounts to national headlines.
 
 ###GetGoogleNewsMeta()
 ```{r}
@@ -47,8 +47,7 @@ Text interchange formats.
 
 ```{r}
 nm_news <- dailyMeta %>% 
-  corpuslingr::GetWebTexts(link_var='links') %>%
-  mutate(txt=stringi::stri_enc_toutf8(txt))
+  corpuslingr::GetWebTexts(link_var='links')
 ```
 
 
@@ -58,14 +57,16 @@ nm_news <- dailyMeta %>%
 Also, PrepText(). Although, I think it may not work on TIF.
 Hyphenated words and any excessive spacing in texts. Upstream solution.
 
-Using the ... `cleanNLP` package. 
-```{r message=FALSE, warning=FALSE}
-cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
-#cnlp_init_corenlp(language="en",anno_level = 1L)
-ann_corpus <- cleanNLP::cnlp_annotate(nm_news$txt, as_strings = TRUE) 
+```{r}
+nm_news <- nm_news %>% mutate(text = PrepCorpus(text, hyphenate = TRUE))
 ```
 
 
+Using the ... `cleanNLP` package. 
+```{r message=FALSE, warning=FALSE}
+cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
+ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE) 
+```
 
 
 ###SetSearchCorpus()
@@ -160,7 +161,7 @@ Vector space model, or word embedding
 
 ###GetKeyphrases()
 
-most of this is described more thoroughly in this [post]().
+most of this is described more thoroughly in this [post](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
 The function leverages `SimpleSearch()` .... uses tf-idf weights to extract keyphrases from each text comprising corpus.  The user can specify ... 
 
@@ -180,12 +181,26 @@ lingr_corpus %>%
 
 ```{r}
 #multi-search <- c("")
+search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ```
 
 
-##Corpus workflow
+##Corpus workflow with corpuslingr, cleanNLP, & tidy
+
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
-search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
+corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30) %>%
+  corpuslingr::GetWebTexts(link_var='links') %>%
+  mutate(txt=stringi::stri_enc_toutf8(txt))%>%
+  cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
+  corpuslingr::SetSearchCorpus(doc_var='id', 
+                  token_var='word', 
+                  lemma_var='lemma', 
+                  tag_var='pos', 
+                  pos_var='upos',
+                  sentence_var='sid',
+                  NER_as_tag = FALSE) %>%
+  corpuslingr::GetContexts(search=search2,LW=5, RW = 5)%>%
+  corpuslingr::GetKWIC()
 ```
 
 

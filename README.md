@@ -17,7 +17,7 @@ Web scraping functions
 
 These functions .... There are other packages/means to scrape the web. The two included here are designed for quick/easy search of headline news. And creation of tif corpus-object. making subsequent annotation straightforward. 'Scrape news -&gt; annotate -&gt; search' in three or four steps.
 
-Following grammatical constructions ~ day-to-day changes, eg.
+Following grammatical constructions ~ day-to-day changes, eg. Search defaults to NULL, which smounts to national headlines.
 
 ### GetGoogleNewsMeta()
 
@@ -25,13 +25,13 @@ Following grammatical constructions ~ day-to-day changes, eg.
 dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30)
 
 head(dailyMeta['titles'])
-##                                                                  titles
-## 2 New Mexico holds hundreds of people in prison past their release date
-## 3                      Colorado State comes up short against New Mexico
-## 4   Stuck at the bottom: Why New Mexico fails to thrive | Education ...
-## 5                   Breaking down lawmakers' bills on kids and families
-## 6   New Mexico Senior care services no longer on the chopping block ...
-## 7                Turnovers too costly as Rams fall at New Mexico, 80-65
+##                                                                              titles
+## 2             New Mexico holds hundreds of people in prison past their release date
+## 3 Indian Slavery Once Thrived in New Mexico. Latinos Are Finding Family Ties to It.
+## 4                                  Colorado State comes up short against New Mexico
+## 5               Stuck at the bottom: Why New Mexico fails to thrive | Education ...
+## 6               New Mexico Senior care services no longer on the chopping block ...
+## 7                               Breaking down lawmakers' bills on kids and families
 ```
 
 ### GetWebTexts()
@@ -40,8 +40,7 @@ This function ... takes the output of GetGoogleNews() (or any table with links t
 
 ``` r
 nm_news <- dailyMeta %>% 
-  corpuslingr::GetWebTexts(link_var='links') %>%
-  mutate(txt=stringi::stri_enc_toutf8(txt))
+  corpuslingr::GetWebTexts(link_var='links')
 ```
 
 Corpus preparation
@@ -51,12 +50,15 @@ Corpus preparation
 
 Also, PrepText(). Although, I think it may not work on TIF. Hyphenated words and any excessive spacing in texts. Upstream solution.
 
+``` r
+nm_news <- nm_news %>% mutate(text = PrepCorpus(text, hyphenate = TRUE))
+```
+
 Using the ... `cleanNLP` package.
 
 ``` r
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
-#cnlp_init_corenlp(language="en",anno_level = 1L)
-ann_corpus <- cleanNLP::cnlp_annotate(nm_news$txt, as_strings = TRUE) 
+ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE) 
 ```
 
 ### SetSearchCorpus()
@@ -83,18 +85,18 @@ lingr_corpus <- ann_corpus$token %>%
 ``` r
 corpuslingr::GetDocDesc(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     21      14016     3079      824
+## 1:     20      12720     2962      749
 ```
 
 ``` r
 head(corpuslingr::GetDocDesc(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
-## 1:  text1        958      348       55
-## 2: text10        543      256       35
-## 3: text11        182      106       11
-## 4: text12        474      200       21
-## 5: text13        529      247       36
-## 6: text14        422      210       18
+## 1:  text1        958      346       56
+## 2: text10        470      197       21
+## 3: text11        526      244       36
+## 4: text12        417      215       18
+## 5: text13        963      404       61
+## 6: text14        791      356       39
 ```
 
 Search & aggregation functions
@@ -116,11 +118,11 @@ lingr_corpus %>%
   head ()
 ##    doc_id        token     tag      lemma
 ## 1:  text1     sets up  VBZ RP     set up 
-## 2: text10    shake up   VB RP   shake up 
-## 3: text12     step up   VB IN    step up 
-## 4: text13 climbing up  VBG RP  climbe up 
-## 5: text13     woke up  VBD RP    wake up 
-## 6: text15     stay up   VB IN    stay up
+## 2: text10     step up   VB IN    step up 
+## 3: text11 climbing up  VBG RP  climbe up 
+## 4: text11     woke up  VBD RP    wake up 
+## 5: text13     stay up   VB IN    stay up 
+## 6: text13   teamed up  VBN RP    team up
 ```
 
 ### GetContexts()
@@ -132,12 +134,12 @@ search2 <- '<all!> <> <of!>'
 corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()
 ##    doc_id       lemma
-## 1: text15 all four of
-## 2: text20   all or of
-## 3: text21 all sort of
-## 4:  text7   all or of
+## 1: text13 all four of
+## 2: text19   all or of
+## 3: text20 all sort of
+## 4:  text6   all or of
 ##                                                                                              kwic
-## 1:                            Burns came out on in <mark> all four of </mark> her events on the ,
+## 1:                                s came out on in <mark> all four of </mark> her events on the ,
 ## 2: corrections officials holding inmates for <mark> all or of </mark> their terms - often because
 ## 3:            The draws Native vendors and <mark> all sorts of </mark> visitors from far and wide
 ## 4: corrections officials holding inmates for <mark> all or of </mark> their terms - often because
@@ -157,11 +159,11 @@ lingr_corpus %>%
   head()
 ##          lemma txtf docf
 ## 1:    GROW UP     4    2
-## 2:    SHOW UP     3    1
-## 3:    MAKE UP     2    2
-## 4: PARTNER UP     2    1
-## 5:     SET UP     2    2
-## 6:      BE UP     1    1
+## 2:    MAKE UP     2    2
+## 3: PARTNER UP     2    1
+## 4:     SET UP     2    2
+## 5:      BE UP     1    1
+## 6: CLAMBER UP     1    1
 ```
 
 ### GetKWIC()
@@ -172,20 +174,20 @@ search4 <- "<_Jx> <and!> <_Jx>"
 corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
   corpuslingr::GetKWIC()%>%
   head()
-##    doc_id              lemma
-## 1: text15   third and fourth
-## 2: text16   warmer and drier
-## 3: text16   early and active
-## 4: text20 expensive and long
-## 5: text20  overall and fewer
-## 6: text21  more and populous
-##                                                                                     kwic
-## 1:   1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
-## 2: through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
-## 3:   We are preparing for an <mark> early and active </mark> and bringing some and crews
-## 4:                   " in- . " An <mark> expensive and long </mark> - , it routinely has
-## 5:         a in women 's rates <mark> overall and fewer </mark> - based options for them
-## 6: young brains draining away to <mark> more and populous </mark> markets . But there 's
+##    doc_id                   lemma
+## 1: text13        third and fourth
+## 2: text14        warmer and drier
+## 3: text14        early and active
+## 4: text18       mexican and other
+## 5: text18 fascinating and disturb
+## 6: text19       overall and fewer
+##                                                                                        kwic
+## 1:      1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
+## 2:    through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
+## 3:      We are preparing for an <mark> early and active </mark> and bringing some and crews
+## 4:       , as well as from <mark> Mexican and other </mark> Latin American immigrants . But
+## 5:   , but it 's both <mark> fascinating and disturbing </mark> to see how various cultures
+## 6: a in women 's rates <mark> overall and fewer </mark> community-based options for them as
 ```
 
 ### GetBOW()
@@ -194,7 +196,7 @@ Vector space model, or word embedding
 
 ### GetKeyphrases()
 
-most of this is described more thoroughly in this [post]().
+most of this is described more thoroughly in this [post](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
 The function leverages `SimpleSearch()` .... uses tf-idf weights to extract keyphrases from each text comprising corpus. The user can specify ...
 
@@ -214,13 +216,13 @@ lingr_corpus %>%
 ## 4: text12
 ## 5: text13
 ## 6: text14
-##                                                                                      keyphrases
-## 1:                                       West Texas | Evans | western New Mexico | Buffs | WNm 
-## 2:                                     Dunn | Libertarians | Libertarian | party | Republicans 
-## 3:                                     Medicaid | glitch | Families Department | Youth | child 
-## 4: democratic lawmaker | New Mexico House | dollar to New Mexico | Maestas | Russell Contreras 
-## 5:                     West Valley High School | McKenzie Jamieson | Yakima | light | dinosaur 
-## 6:                                             Rams | Lobos | Colorado State | point | rebound
+##                                                                                        keyphrases
+## 1:                                         West Texas | Buffs | western New Mexico | Evans | WNm 
+## 2: democratic lawmaker | dollar to New Mexico | New Mexico House | Russell Contreras | incentive 
+## 3:                       light | dinosaur | Yakima | West Valley High School | McKenzie Jamieson 
+## 4:                                               Rams | Lobos | Colorado State | point | rebound 
+## 5:                                                 event | Aggy | Lobos | individual win | State 
+## 6:                                               Thursday | La | condition | Fontenot | Pajarito
 ```
 
 ?Reference corpus.
@@ -231,11 +233,24 @@ Multi-term search
 
 ``` r
 #multi-search <- c("")
+search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ```
 
-Corpus workflow
----------------
+Corpus workflow with corpuslingr, cleanNLP, & tidy
+--------------------------------------------------
 
 ``` r
-search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
+corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30) %>%
+  corpuslingr::GetWebTexts(link_var='links') %>%
+  mutate(txt=stringi::stri_enc_toutf8(txt))%>%
+  cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
+  corpuslingr::SetSearchCorpus(doc_var='id', 
+                  token_var='word', 
+                  lemma_var='lemma', 
+                  tag_var='pos', 
+                  pos_var='upos',
+                  sentence_var='sid',
+                  NER_as_tag = FALSE) %>%
+  corpuslingr::GetContexts(search=search2,LW=5, RW = 5)%>%
+  corpuslingr::GetKWIC()
 ```
