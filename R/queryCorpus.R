@@ -92,7 +92,7 @@ GetContexts <- function(search,corp,LW,RW){
 
   tmp <- KWIC[, c('doc_id','eg','token','lemma','tag','pos'), with = FALSE]
 
-  SetNames(tmp, old = c('token','lemma','tag','pos'), new = c('searchToken', 'searchLemma','searchTag','searchPos'))
+  setnames(tmp, old = c('token','lemma','tag','pos'), new = c('searchToken', 'searchLemma','searchTag','searchPos'))
 
   setkey(tmp,doc_id,eg)
   setkey(BOW,doc_id,eg)

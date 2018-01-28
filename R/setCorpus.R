@@ -7,14 +7,6 @@
 #' @import data.table
 
 
-SetNames <- function(x, old, new) {
-    old.intersect <- intersect(old, names(x))
-    common.indices <- old %in% old.intersect
-    new.intersect <- new[common.indices]
-    setnames(x, old.intersect, new.intersect)
-  }
-
-
 #' @export
 #' @rdname setCorpus
 SetTuple <- function(x){
@@ -31,7 +23,7 @@ SetTuple <- function(x){
 #' @rdname setCorpus
 SetSearchCorpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', NER_as_tag = FALSE) { #demarc_var - ?
 
-  SetNames(x, old = c(doc_var,token_var,lemma_var,tag_var, pos_var,sentence_var), new = c('doc_id', 'token','lemma','tag','pos','sentence_id'))
+  setnames(x, old = c(doc_var,token_var,lemma_var,tag_var, pos_var,sentence_var), new = c('doc_id', 'token','lemma','tag','pos','sentence_id'))
   x$doc_id <- gsub('\\D+','text',x$doc_id)
 
   x$lemma <- gsub("[[:space:]]+", "",x$lemma)
