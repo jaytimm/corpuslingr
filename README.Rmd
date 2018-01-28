@@ -14,116 +14,162 @@ knitr::opts_chunk$set(
 
 ##corpuslingr: 
 
-Some r functions for quick web scraping and corpus seach of complex grammtical constructions. Works in conjunction with `spacyr` package. 
+Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions. 
+
+High Level utility. Hypothetical workflows. Independently or in conjunction.  Academic linguists and digital humanists.
+
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
-devtools::install_github("jaytimm/corpuslingr")
-#devtools::install_github("jaytimm/corpusdatr")
-library(corpuslingr)
-library(corpusdatr)
-library(knitr)
-library(data.table)
 library(cleanNLP)
-
 library(stringi)
+library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
+library(corpusdatr) #devtools::install_github("jaytimm/corpusdatr")
 ```
 
+
 ##Web scraping functions
+
+These functions .... There are other packages/means to scrape the web.  The two included here are designed for quick/easy search of headline news. And creation of tif corpus-object.  making subsequent annotation straightforward.  'Scrape news -> annotate -> search' in three or four steps.
+
+Following grammatical constructions ~ day-to-day changes, eg.
+
 ###GetGoogleNewsMeta()
 ```{r}
-#dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico", n=5)
-dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=15)
+dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30)
 
 head(dailyMeta['titles'])
 ```
 
-We need to sort out meta with sites that are actually scraped.
-Also, re-try "article" verion of boilerpipeR.
 
 ###GetWebTexts()
-```{r}
-txts <- dailyMeta$links  %>% 
-  corpuslingr::GetWebTexts() %>% ##'You don't have permission ...'-business
-  stringi::stri_enc_toutf8()
-  
-substr(txts[1:5],1, 50)
-```
+
+This function ... takes the output of GetGoogleNews() (or any table with links to websites) ... and returns a 'tif as corpus df'
+Text interchange formats.
 
 ```{r}
-nmTIF <- unlist(txts) %>%
-  melt() %>%
-  mutate(value=as.character(value),doc_id=row_number())%>%
-  bind_cols(dailyMeta) %>%
-  rename(txt = value) #%>%
-  #mutate(txt=corpuslingr::PrepText(txt)) #PrepText. 
+nm_news <- dailyMeta %>% 
+  corpuslingr::GetWebTexts(link_var='links') %>%
+  mutate(txt=stringi::stri_enc_toutf8(txt))
 
-#This doesn't work -- returns list.
+head(nm_news)
 ```
-
-
-ModifyAnnotation() needs to be modified.  Will not work on non-spacyr annotations.  Need something akin to 'tuple parameters'
 
 
 ##Corpus preparation
-###PrepAnnotation()
-```{r eval=FALSE}
-cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
 
-annotations <- cleanNLP::cnlp_annotate(nmTIF$txt, as_strings = TRUE) %>%
-  Filter(length,.)
+Also, PrepText(). Although, I think it may not work on TIF.
+Hyphenated words and any excessive spacing in texts. Upstream solution.
+
+Using the ... `cleanNLP` package. 
+```{r}
+cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
+#cnlp_init_corenlp(language="en",anno_level = 1L)
+ann_corpus <- cleanNLP::cnlp_annotate(nm_news$txt, as_strings = TRUE) 
+```
+
+
+
+
+###SetSearchCorpus()
+
+This function performs some cleaning ... It will ... any/all annotation types in theory.  Output, however, homogenizes column names to make things easier downstream. Naming conventions established in the `spacyr` package are adopted here.  The function performs two or three general tasks. Eliminates spaces.  Annotation form varies depending on the annotator, as different folks have different 
+
+Adds tuples and their chraracter onsets/offsets. A fairly crude corpus querying language  
+
+Lastly, the function splits corpus into a list of dataframes by doc_id.  This facilitates ... any easy solution to ...
+
+
+```{r}
+lingr_corpus <- ann_corpus$token %>%
+  SetSearchCorpus(doc_var='id', 
+                  token_var='word', 
+                  lemma_var='lemma', 
+                  tag_var='pos', 
+                  pos_var='upos',
+                  sentence_var='sid',
+                  NER_as_tag = FALSE)
 ```
 
 
 ###GetDocDesc() 
+
+
 ```{r}
-head(GetDocDesc(gnews))
+corpuslingr::GetDocDesc(lingr_corpus)$corpus
+```
+```{r}
+head(corpuslingr::GetDocDesc(lingr_corpus)$text)
 ```
 
 
-##Search function and aggregate functions.
-###GetContexts()
-```{r}
-search1 <- "<_Vx> <_IN>"
 
-found <- corpuslingr::GetContexts(search=search1,corp=gnews,LW=5, RW = 5)
+##Search function and aggregate functions.
+
+We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.  
+
+
+###An in-house corpus querying language (CQL)
+
+Should be 'copy and paste' at his point. See 'Corpus design' post. Tuples and complex corpus search.?
+
+###SimpleSearch()
+```{r}
+search1 <- "<_Vx> <up!>"
+
+lingr_corpus %>%
+  corpuslingr::SimpleSearch(search=search1)
+```
+
+###GetContexts()
+
+```{r}
+search4 <- '<all!> <> <of!>'
+corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
+  corpuslingr::GetKWIC()
+```
+
+
+
+```{r}
+nounPhrase
 ```
 
 
 ###GetSearchFreqs()
 ```{r}
-corpuslingr::GetSearchFreqs(found)[[1]]
+lingr_corpus %>%
+  corpuslingr::SimpleSearch(search=search1)%>%
+  corpuslingr::GetSearchFreqs(aggBy = 'lemma')
 ```
+
 
 ###GetKWIC()
 ```{r}
 search2 <- "<_Jx> <and!> <_Jx>"
 
-corpuslingr::GetContexts(search=search2,corp=gnews,LW=5, RW = 5)%>%
-  corpuslingr::GetKWIC()%>%
-  data.frame()%>%
-  select(doc_id,cont)%>%
-  mutate(cont=gsub("<mark>|</mark>","||",cont))%>%
-  knitr::kable("markdown")
+corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
+  corpuslingr::GetKWIC()
 ```
 
 ###GetBOW()
 Vector space model, or word embedding
+
+
+###GetKeyphrases()
+
+The package has one 'specialty' function... most of this is described more thoroughly in this [post]().
+
 ```{r}
-search3 <- "<Trump!>"
-
-corpuslingr::GetContexts(search=search3,corp=gnews,LW=15, RW = 15)%>%
-  corpuslingr::GetBOW(contentOnly=TRUE)%>%
-  data.frame()%>%
-  slice(1:10)%>%
-  ggplot(aes(x=reorder(lemma,n), y=n)) + 
-    geom_bar(stat="identity", width=.5, fill="tomato3") +  
-    coord_flip()+
-    theme_bw()
-
-##How would we get Noun Phrases from a BOW?
+keyPhrase
+```
+```{r}
+lingr_corpus %>%
+  #SimpleSearch() %>% add doc_var ~makes it more generic. key_var
+  GetKeyPhrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)
 ```
 
-
+?Reference corpus.  
+~Perhaps using SOTU.
 
 ##Multi-term search
 
@@ -135,13 +181,6 @@ corpuslingr::GetContexts(search=search3,corp=gnews,LW=15, RW = 15)%>%
 ##Corpus workflow
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 search4 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
-
-dailyMeta$links  %>% 
-  corpuslingr::GetWebTexts()%>%
-  lapply(spacyr::spacy_parse,tag=TRUE)%>%
-  corpuslingr::PrepAnnotation()%>%
-  corpuslingr::GetContexts(search=search4,corp=.,LW=10, RW = 10)%>%
-  corpuslingr::GetSearchFreqs(found)[[1]]
 ```
 
 
