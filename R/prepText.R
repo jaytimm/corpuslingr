@@ -13,5 +13,5 @@ PrepCorpus <- function (x, hyphenate=TRUE) {
 
 
     if (hyphenate==TRUE) {
-        x <- gsub("([:aplha])-([:aplha])",'\\1xxx\\2',x, perl=TRUE)}
+        x <- gsub("([:aplha:])-([:aplha:])",'\\1xxx\\2',x, perl=TRUE)}
 }
