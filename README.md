@@ -18,11 +18,9 @@ library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 Web scraping functions
 ----------------------
 
-These functions .... There are other packages/means to scrape the web. The two included here are designed for quick/easy search of headline news. And creation of tif corpus-object. making subsequent annotation straightforward. 'Scrape news -&gt; annotate -&gt; search' in three or four steps.
-
-Following grammatical constructions ~ day-to-day changes, eg. Search defaults to NULL, which smounts to national headlines.
-
 ### clr\_web\_gnews()
+
+The two functions presented here more or less work in tandem. The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.
 
 ``` r
 dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
@@ -34,12 +32,16 @@ head(dailyMeta['titles'])
 ## 4                      University of New Mexico Ranked 7th for Application Increase
 ## 5                       Lawsuit Targets New Mexico's Two-Tier Identification System
 ## 6                             New Mexico lawmaker seeks funding for school security
-## 7                         New Mexico Art Exhibit Highlights Presidents' Word Choice
+## 7             New Mexico holds hundreds of people in prison past their release date
 ```
 
 ### clr\_web\_scrape()
 
-This function ... takes the output of corp\_web\_gnews() (or any table with links to websites) ... and returns a 'tif as corpus df' Text interchange formats. Builds on top of boilerpipeR, XML, RCurl packages.
+The second function, `clr_web_scrape`, scrapes text from a vector of web addresses. This can be supplied by the output from `clr_web_gnews`, or any dataframe with links to websites.
+
+The function returns a [TIF]()-compliant dataframe, with each scraped text represented as a single row. Metadata from output of `clr_web_gnews` is also included.
+
+Both functions depend on functionality made available in the `boilerpipeR`, `XML`, and `RCurl` packages.
 
 ``` r
 nm_news <- dailyMeta %>% 
@@ -51,13 +53,15 @@ Corpus preparation
 
 ### clr\_prep\_corpus
 
-Also, PrepText(). Although, I think it may not work on TIF. Hyphenated words and any excessive spacing in texts. Upstream solution.
+This function performs two tasks. It elminates unnecessary whitespace from the text column of the corpus dataframe object. Additionally, it attempts to trick annotators into treating hyphenated words as a single token. With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens. For folks interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
 
 ``` r
 nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
 ```
 
-Using the ... `cleanNLP` package.
+For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object. The `cleanNLP` package is fantastic -- the author has aggregated three different annotators (spacy, CoreNLP, and `udpipe`) into one convenient pacakge. There are pros/cons with each annotator; we won't get into these here.
+
+A benefit of `udpipe` is that it is dependency-free, making it super useful for classroom and demo purposes.
 
 ``` r
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
@@ -88,14 +92,14 @@ lingr_corpus <- ann_corpus$token %>%
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     16      11007     2526      641
+## 1:     16      10373     2465      605
 ```
 
 ``` r
 head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        958      346       56
-## 2: text10        759      327       41
+## 2: text10        791      356       39
 ## 3: text11        540      268       32
 ## 4: text12        338      188       18
 ## 5: text13        643      334       29
@@ -121,7 +125,7 @@ lingr_corpus %>%
   head ()
 ##    doc_id         token     tag       lemma
 ## 1:  text1      sets up  VBZ RP      set up 
-## 2: text10      come up   VB RP     come up 
+## 2: text10   setting up  VBG RP      set up 
 ## 3: text12     comes up  VBZ RP     come up 
 ## 4: text15        is up  VBZ JJ       be up 
 ## 5: text15   partner up   VB RP  partner up 
@@ -151,9 +155,9 @@ lingr_corpus %>%
   head()
 ##          lemma txtf docf
 ## 1:    GROW UP     4    2
-## 2:    COME UP     2    2
-## 3: PARTNER UP     2    1
-## 4:     SET UP     2    2
+## 2: PARTNER UP     2    1
+## 3:     SET UP     2    2
+## 4:    STEP UP     2    2
 ## 5:      BE UP     1    1
 ## 6: CLAMBER UP     1    1
 ```
@@ -167,19 +171,19 @@ corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>
   corpuslingr::clr_context_kwic()%>%
   head()
 ##    doc_id                   lemma
-## 1: text10        strong and broad
-## 2: text10     different and local
+## 1: text10        warmer and drier
+## 2: text10        early and active
 ## 3: text11       public and tribal
 ## 4: text11 irreversible and costly
 ## 5: text11     efficient and safer
 ## 6: text11  transparent and honest
-##                                                                                               kwic
-## 1: Florida and Virginia had very <mark> strong and broad </mark> protections for companies that go
-## 2:           decides on a . Sometimes <mark> different and local </mark> laws pose a for companies
-## 3:    emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
-## 4:    full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
-## 5:          Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
-## 6:    operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
+##                                                                                            kwic
+## 1:        through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
+## 2:          We are preparing for an <mark> early and active </mark> and bringing some and crews
+## 3: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
+## 4: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
+## 5:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
+## 6: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
 ```
 
 ### clr\_context\_bow()
@@ -194,9 +198,9 @@ corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>
 ## 1:         MEXICO PROPN      3
 ## 2:            NEW PROPN      3
 ## 3: COMMUNITY-BASE  VERB      2
-## 4:        COMPANY  NOUN      2
-## 5:             GO  VERB      2
-## 6:         OPTION  NOUN      2
+## 4:         OPTION  NOUN      2
+## 5:           RATE  NOUN      2
+## 6:          WOMAN  NOUN      2
 ```
 
 ### clr\_search\_keyphrases()
@@ -214,13 +218,13 @@ clr_keyphrase
 lingr_corpus %>%
   corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
   head()
-##    doc_id                                                      keyphrases
-## 1:  text1          West Texas | western New Mexico | Buffs | Evans | WNm 
-## 2: text10              company | Hicks | open rule | DiBello | operation 
-## 3: text11           lands | measure | New Mexicans | resource | Martinez 
-## 4: text12 Colorado State | Rams | point | Jackson | Wyoming on Wednesday 
-## 5: text13            slave | Americas | descendant | Hispanic | Trujillo 
-## 6: text14   inmate | Valencia | document | corrections Department | July
+##    doc_id                                                    keyphrases
+## 1:  text1        West Texas | Buffs | western New Mexico | Evans | WNm 
+## 2: text10              La | condition | Thursday | Fontenot | Pajarito 
+## 3: text11           lands | New Mexicans | dollar | measure | resource 
+## 4: text12              Colorado State | Rams | point | Jackson | Paige 
+## 5: text13          slave | Americas | Hispanic | descendant | Trujillo 
+## 6: text14 inmate | Valencia | document | corrections Department | July
 ```
 
 ?Reference corpus.

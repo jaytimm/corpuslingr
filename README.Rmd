@@ -31,11 +31,10 @@ library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 
 ##Web scraping functions
 
-These functions .... There are other packages/means to scrape the web.  The two included here are designed for quick/easy search of headline news. And creation of tif corpus-object.  making subsequent annotation straightforward.  'Scrape news -> annotate -> search' in three or four steps.
-
-Following grammatical constructions ~ day-to-day changes, eg. Search defaults to NULL, which smounts to national headlines.
-
 ###clr_web_gnews()
+
+The two functions presented here more or less work in tandem.  The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.  
+
 ```{r}
 dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
 
@@ -45,8 +44,11 @@ head(dailyMeta['titles'])
 
 ###clr_web_scrape()
 
-This function ... takes the output of corp_web_gnews() (or any table with links to websites) ... and returns a 'tif as corpus df'
-Text interchange formats.  Builds on top of boilerpipeR, XML, RCurl packages.
+The second function, `clr_web_scrape`, scrapes text from a vector of web addresses.  This can be supplied by the output from `clr_web_gnews`, or any dataframe with links to websites.
+
+The function returns a [TIF]()-compliant dataframe, with each scraped text represented as a single row.  Metadata from output of `clr_web_gnews` is also included.
+
+Both functions depend on functionality made available in the `boilerpipeR`, `XML`, and `RCurl` packages.
 
 ```{r}
 nm_news <- dailyMeta %>% 
@@ -57,15 +59,18 @@ nm_news <- dailyMeta %>%
 ##Corpus preparation
 
 ###clr_prep_corpus
-Also, PrepText(). Although, I think it may not work on TIF.
-Hyphenated words and any excessive spacing in texts. Upstream solution.
+
+This function performs two tasks.  It elminates unnecessary whitespace from the text column of the corpus dataframe object.  Additionally, it attempts to trick annotators into treating hyphenated words as a single token.  With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens.  For folks interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
 
 ```{r}
 nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
 ```
 
 
-Using the ... `cleanNLP` package. 
+For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object. The `cleanNLP` package is fantastic -- the author has aggregated three different annotators (spacy, CoreNLP, and `udpipe`) into one convenient pacakge.  There are pros/cons with each annotator; we won't get into these here.     
+
+A benefit of `udpipe` is that it is dependency-free, making it super useful for classroom and demo purposes.
+ 
 ```{r message=FALSE, warning=FALSE}
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
 ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE) 
