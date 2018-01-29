@@ -2,13 +2,13 @@
 % Please edit documentation in R/scrapeWeb.R
 \name{scrapeWeb}
 \alias{scrapeWeb}
-\alias{GetGoogleNewsMeta}
-\alias{GetWebTexts}
+\alias{corp_web_gnews}
+\alias{corp_web_scrape}
 \title{Access GoogleNews quickly}
 \usage{
-GetGoogleNewsMeta(x, search = NULL, n = 30)
+corp_web_gnews(x, search = NULL, n = 30)
 
-GetWebTexts(y, link_var = "links")
+corp_web_scrape(y, link_var = "links")
 }
 \arguments{
 \item{search}{Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"}

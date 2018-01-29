@@ -2,10 +2,10 @@
 % Please edit documentation in R/prepText.R
 \name{prepText}
 \alias{prepText}
-\alias{PrepCorpus}
+\alias{corp_prep_corpus}
 \title{Prepare character string for annotation}
 \usage{
-PrepCorpus(x, hyphenate = TRUE)
+corp_prep_corpus(x, hyphenate = TRUE)
 }
 \arguments{
 \item{x}{A list of character strings}

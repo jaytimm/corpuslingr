@@ -2,19 +2,19 @@
 % Please edit documentation in R/summarizeSearch.R
 \name{summarizeSearch}
 \alias{summarizeSearch}
-\alias{FlattenContexts}
-\alias{GetSearchFreqs}
-\alias{GetKWIC}
-\alias{GetBOW}
+\alias{flatten_contexts}
+\alias{corp_get_freq}
+\alias{corp_context_kwic}
+\alias{corp_context_bow}
 \title{Summarize results of corpuslingr::GetContexts()}
 \usage{
-FlattenContexts(x)
+flatten_contexts(x)
 
-GetSearchFreqs(x, aggBy = c("lemma", "token"))
+corp_get_freq(x, agg_var = c("lemma", "token"))
 
-GetKWIC(x, include = c("doc_id", "lemma"))
+corp_context_kwic(x, include = c("doc_id", "lemma"))
 
-GetBOW(x, contentOnly = TRUE, aggBy = c("lemma", "pos"))
+corp_context_bow(x, content_only = TRUE, agg_var = c("lemma", "pos"))
 }
 \arguments{
 \item{charList}{A dataframe}

@@ -3,20 +3,20 @@
 \docType{data}
 \name{translateCQL}
 \alias{translateCQL}
-\alias{buildSearch}
-\alias{nounPhrase}
-\alias{keyPhrase}
-\alias{CQLtoRegex}
+\alias{build_search}
+\alias{corp_noun_phrase}
+\alias{corp_key_phrase}
+\alias{corp_cql_regex}
 \title{Translate user search input to regex}
 \format{An object of class \code{character} of length 1.}
 \usage{
-buildSearch(x)
+build_search(x)
 
-nounPhrase
+corp_noun_phrase
 
-keyPhrase
+corp_key_phrase
 
-CQLtoRegex(x)
+corp_cql_regex(x)
 }
 \arguments{
 \item{x}{Gram/lexical pattern to be searched for}
