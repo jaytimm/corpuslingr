@@ -16,11 +16,11 @@ knitr::opts_chunk$set(
 
 Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions in context. 
 
-The two sets of functions can be used in conjunction, or independently.  In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammtical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
+The two sets of functions can be used in conjunction, or independently.  In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using r-pacakges `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammtical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
 
 The package facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported.  Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. 
 
-The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized (personal) corpora.
+The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
@@ -31,9 +31,11 @@ library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 
 ##Web scraping functions
 
+The two web-based functions presented here more or less work in tandem.  
+
 ###clr_web_gnews()
 
-The two functions presented here more or less work in tandem.  The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.  
+The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.  
 
 ```{r}
 dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
@@ -54,7 +56,7 @@ nm_news <- dailyMeta %>%
 ```
 
 
-##Corpus preparation
+##Corpus preparation & annotation
 
 ###clr_prep_corpus
 
@@ -65,6 +67,7 @@ nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphena
 ```
 
 
+###Annotate via cleanNLP and udpipe
 For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object. The `cleanNLP` package is fantastic -- the author has aggregated three different annotators (spacy, CoreNLP, and `udpipe`) into one convenient pacakge.  There are pros/cons with each annotator; we won't get into these here.     
 
 A benefit of `udpipe` is that it is dependency-free, making it super useful for classroom and demo purposes.
@@ -77,7 +80,7 @@ ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE)
 
 ###clr_set_corpus()
 
-This function gets the corpus ready for compex, tuple-based search.  Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, to make things easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.    
+This function gets the corpus ready for complex, tuple-based search.  Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, making things easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.    
 
 Lastly, the function splits the corpus into a list of dataframes by document.  This is ultimately a search convenience.
 
@@ -95,12 +98,12 @@ lingr_corpus <- ann_corpus$token %>%
 
 ###clr_desc_corpus() 
 
-This function ... As can be noted, not all of the user-specified (n=30) links were successfully scraped.  Not all websites care to be scraped.
+A simple function for describing corpus. As can be noted, not all of the user-specified (n=30) links were successfully scraped.  Not all websites care to be scraped.
 ```{r}
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ```
 
-
+Text-based descritpives:
 ```{r}
 head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ```
@@ -109,9 +112,9 @@ head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 
 ##Search & aggregation functions
 
-We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.  
+After setting the tuples, text can now be rebuilt 
 ```{r}
-paste(lingr_corpus[[5]]$tup[1:30], sep=" ",collapse=" ")
+paste(lingr_corpus[[5]]$tup[1:5], sep=" ",collapse=" ")
 ```
 
 

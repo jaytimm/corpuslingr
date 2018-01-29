@@ -3,11 +3,11 @@ corpuslingr:
 
 Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions in context.
 
-The two sets of functions can be used in conjunction, or independently. In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammtical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
+The two sets of functions can be used in conjunction, or independently. In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using r-pacakges `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammtical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
 
 The package facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported. Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
 
-The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized (personal) corpora.
+The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
 
 ``` r
 library(tidyverse)
@@ -18,9 +18,11 @@ library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 Web scraping functions
 ----------------------
 
+The two web-based functions presented here more or less work in tandem.
+
 ### clr\_web\_gnews()
 
-The two functions presented here more or less work in tandem. The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.
+The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.
 
 ``` r
 dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
@@ -46,8 +48,8 @@ nm_news <- dailyMeta %>%
   corpuslingr::clr_web_scrape(link_var='links')
 ```
 
-Corpus preparation
-------------------
+Corpus preparation & annotation
+-------------------------------
 
 ### clr\_prep\_corpus
 
@@ -56,6 +58,8 @@ This function performs two tasks. It elminates unnecessary whitespace from the t
 ``` r
 nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
 ```
+
+### Annotate via cleanNLP and udpipe
 
 For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object. The `cleanNLP` package is fantastic -- the author has aggregated three different annotators (spacy, CoreNLP, and `udpipe`) into one convenient pacakge. There are pros/cons with each annotator; we won't get into these here.
 
@@ -68,7 +72,7 @@ ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE)
 
 ### clr\_set\_corpus()
 
-This function gets the corpus ready for compex, tuple-based search. Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, to make things easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.
+This function gets the corpus ready for complex, tuple-based search. Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, making things easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.
 
 Lastly, the function splits the corpus into a list of dataframes by document. This is ultimately a search convenience.
 
@@ -85,33 +89,35 @@ lingr_corpus <- ann_corpus$token %>%
 
 ### clr\_desc\_corpus()
 
-This function ... As can be noted, not all of the user-specified (n=30) links were successfully scraped. Not all websites care to be scraped.
+A simple function for describing corpus. As can be noted, not all of the user-specified (n=30) links were successfully scraped. Not all websites care to be scraped.
 
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     17      10979     2574      674
+## 1:     16      10842     2549      667
 ```
+
+Text-based descritpives:
 
 ``` r
 head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        289      177       14
-## 2: text10        470      197       21
-## 3: text11        963      404       61
-## 4: text12        540      268       32
-## 5: text13        338      188       18
-## 6: text14        643      334       29
+## 2: text10        963      404       61
+## 3: text11        540      268       32
+## 4: text12        338      188       18
+## 5: text13        643      334       29
+## 6: text14        985      448       48
 ```
 
 Search & aggregation functions
 ------------------------------
 
-We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.
+After setting the tuples, text can now be rebuilt
 
 ``` r
-paste(lingr_corpus[[5]]$tup[1:30], sep=" ",collapse=" ")
-## [1] "<Colorado,Colorado,NNP> <State,State,NNP> <comes,come,VBZ> <up,up,RP> <short,short,JJ> <against,against,IN> <New,New,NNP> <Mexico,Mexico,NNP> <Up,Up,NNP> <next,next,IN> <:,:,:> <Colorado,Colorado,NNP> <State,State,NNP> <is,be,VBZ> <home,home,RB> <against,against,IN> <Wyoming,Wyoming,NNP> <on,on,IN> <Wednesday,Wednesday,NNP> <Share,share,VB> <this,this,DT> <:,:,:> <By,by,IN> <Glen,Glen,NNP> <Rosales,Rosales,NNP> <The,the,DT> <Associated,Associated,NNP> <Press,Press,NNP> <January,January,NNP> <27,27,CD>"
+paste(lingr_corpus[[5]]$tup[1:5], sep=" ",collapse=" ")
+## [1] "<Opt,opt,VB> <out,out,RP> <or,or,CC> <contact,contact,VB> <us,we,PRP>"
 ```
 
 ### An in-house corpus querying language (CQL)
@@ -126,13 +132,13 @@ search1 <- "<_Vx> <up!>"
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
-##    doc_id       token     tag       lemma
-## 1: text10    step up   VB IN     step up 
-## 2: text11    stay up   VB IN     stay up 
-## 3: text11  teamed up  VBN RP     team up 
-## 4: text13   comes up  VBZ RP     come up 
-## 5: text16      is up  VBZ JJ       be up 
-## 6: text16 partner up   VB RP  partner up
+##    doc_id         token     tag       lemma
+## 1: text10      stay up   VB IN     stay up 
+## 2: text10    teamed up  VBN RP     team up 
+## 3: text12     comes up  VBZ RP     come up 
+## 4: text15        is up  VBZ JJ       be up 
+## 5: text15   partner up   VB RP  partner up 
+## 6: text15 partnered up  VBD RP  partner up
 ```
 
 ### clr\_search\_context()
@@ -174,12 +180,12 @@ corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>
   corpuslingr::clr_context_kwic()%>%
   head()
 ##    doc_id                   lemma
-## 1: text11        third and fourth
-## 2: text12       public and tribal
-## 3: text12 irreversible and costly
-## 4: text12     efficient and safer
-## 5: text12  transparent and honest
-## 6: text12     fair and reasonable
+## 1: text10        third and fourth
+## 2: text11       public and tribal
+## 3: text11 irreversible and costly
+## 4: text11     efficient and safer
+## 5: text11  transparent and honest
+## 6: text11     fair and reasonable
 ##                                                                                            kwic
 ## 1:          1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
 ## 2: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
@@ -228,13 +234,13 @@ lingr_corpus %>%
 ## 4: text12
 ## 5: text13
 ## 6: text14
-##                                                                             keyphrases
-## 1:                          Morale | meals on wheels | Services | senior | Bernalillo 
-## 2: democratic lawmaker | dollar to New Mexico | New Mexico House | official | Maestas 
-## 3:                                    event | Aggy | Lobos | individual win | McGowan 
-## 4:                                        lands | measure | dollar | Martinez | State 
-## 5:                                      point | Colorado State | minute | Rams | game 
-## 6:                                    slave | Hispanic | Trujillo | Continue | origin
+##                                                                keyphrases
+## 1: Morale | Services | meals on wheels | senior | senior service for ten 
+## 2:                       event | Aggy | Lobos | McGowan | individual win 
+## 3:                       lands | measure | dollar | State | New Mexicans 
+## 4:         point | Colorado State | minute | Rams | Wyoming on Wednesday 
+## 5:                 slave | origin | Trujillo | Hispanic | indian captive 
+## 6:          Valencia | inmate | document | corrections Department | July
 ```
 
 ?Reference corpus.
