@@ -18,7 +18,7 @@ These functions .... There are other packages/means to scrape the web. The two i
 
 Following grammatical constructions ~ day-to-day changes, eg. Search defaults to NULL, which smounts to national headlines.
 
-### corp\_web\_gnews()
+### clr\_web\_gnews()
 
 ``` r
 dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
@@ -33,7 +33,7 @@ head(dailyMeta['titles'])
 ## 7                                  Colorado State comes up short against New Mexico
 ```
 
-### corp\_web\_scrape()
+### clr\_web\_scrape()
 
 This function ... takes the output of corp\_web\_gnews() (or any table with links to websites) ... and returns a 'tif as corpus df' Text interchange formats. Builds on top of boilerpipeR, XML, RCurl packages.
 
@@ -45,7 +45,7 @@ nm_news <- dailyMeta %>%
 Corpus preparation
 ------------------
 
-### corp\_prep\_corpus
+### clr\_prep\_corpus
 
 Also, PrepText(). Although, I think it may not work on TIF. Hyphenated words and any excessive spacing in texts. Upstream solution.
 
@@ -80,8 +80,6 @@ lingr_corpus <- ann_corpus$token %>%
 ```
 
 ### clr\_desc\_corpus()
-
-clr
 
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
@@ -126,7 +124,7 @@ lingr_corpus %>%
 ## 6: text16   comes up  VBZ RP  come up
 ```
 
-### clr\_search\_contexts()
+### clr\_search\_context()
 
 This function allows ... output includes a list of data.frames. `BOW` and `KWIC`
 
@@ -220,12 +218,12 @@ lingr_corpus %>%
 ## 5: text13
 ## 6: text14
 ##                                                                                    keyphrases
-## 1:                                     West Texas | Buffs | Evans | western New Mexico | WNm 
-## 2: Mortensen | charge | San Juan Regional Medical Center | battery charge | Steven Mortensen 
-## 3: dollar to New Mexico | New Mexico House | democratic lawmaker | productions | Night Shift 
+## 1:                                     West Texas | western New Mexico | Evans | Buffs | WNm 
+## 2: Mortensen | Bloomfield | Steven Mortensen | prosecutor | San Juan Regional Medical Center 
+## 3:   New Mexico House | democratic lawmaker | dollar to New Mexico | NBC | Russell Contreras 
 ## 4:                                           Rams | Colorado State | Lobos | point | rebound 
-## 5:                                           event | Aggy | Lobos | diver | New Mexico State 
-## 6:                                               La | condition | Thursday | Fontenot | fire
+## 5:                               Aggy | event | Lobos | NEW MEXICO Saturday | individual win 
+## 6:                                                    La | condition | Thursday | fire | run
 ```
 
 ?Reference corpus.

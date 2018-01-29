@@ -31,7 +31,7 @@ These functions .... There are other packages/means to scrape the web.  The two 
 
 Following grammatical constructions ~ day-to-day changes, eg. Search defaults to NULL, which smounts to national headlines.
 
-###corp_web_gnews()
+###clr_web_gnews()
 ```{r}
 dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
 
@@ -39,7 +39,7 @@ head(dailyMeta['titles'])
 ```
 
 
-###corp_web_scrape()
+###clr_web_scrape()
 
 This function ... takes the output of corp_web_gnews() (or any table with links to websites) ... and returns a 'tif as corpus df'
 Text interchange formats.  Builds on top of boilerpipeR, XML, RCurl packages.
@@ -52,7 +52,7 @@ nm_news <- dailyMeta %>%
 
 ##Corpus preparation
 
-###corp_prep_corpus
+###clr_prep_corpus
 Also, PrepText(). Although, I think it may not work on TIF.
 Hyphenated words and any excessive spacing in texts. Upstream solution.
 
@@ -91,7 +91,6 @@ lingr_corpus <- ann_corpus$token %>%
 
 ###clr_desc_corpus() 
 
-clr
 ```{r}
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ```
@@ -119,7 +118,7 @@ lingr_corpus %>%
   head ()
 ```
 
-###clr_search_contexts()
+###clr_search_context()
 
 This function allows ... output includes a list of data.frames.  `BOW` and `KWIC`
 
