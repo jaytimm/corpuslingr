@@ -53,7 +53,7 @@ clr_context_kwic <- function (x,include=c('doc_id','lemma')) {
 clr_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
   if(!is.data.frame(x)){x <- x$BOW}
 
-  if (contentOnly==TRUE) {
+  if (content_only==TRUE) {
     bow <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") | !x$lemma %in% corpusdatr::stops, ]}
 
   bow[,c('lemma','token','searchLemma','searchToken')] <- lapply(bow[,c('lemma','token','searchLemma','searchToken')], toupper)
