@@ -12,7 +12,7 @@
 
 #' @export
 #' @rdname queryCorpus
-extract_context <- function(x,search,LW,RW) {
+clr_extract_context <- function(x,search,LW,RW) {
   locations <- gregexpr(pattern= search, paste(x$tup, collapse=" "), ignore.case=TRUE)
   tupBeg <- unlist(as.vector(locations[[1]]))
   tupEnd <- tupBeg + attr(locations[[1]],"match.length") -1
@@ -39,9 +39,9 @@ return(df_locs)
 
 #' @export
 #' @rdname queryCorpus
-corp_search_gramx <- function(search,corp){
+clr_search_gramx <- function(search,corp){
 
-searchTerms <- unlist(lapply(search, CQLtoRegex))
+searchTerms <- unlist(lapply(search, clr_cql_regex))
 
 #Will need to split dataframe.
 found <- lapply(corp, function(z) {
@@ -73,11 +73,11 @@ return(found)
 
 #' @export
 #' @rdname queryCorpus
-corp_search_context <- function(search,corp,LW,RW){
+clr_search_context <- function(search,corp,LW,RW){
 
-  searchTerms <-  corp_cql_regex(search)
+  searchTerms <-  clr_cql_regex(search)
 
-  found <- lapply(corp,extract_context,search=searchTerms,LW,RW)
+  found <- lapply(corp,clr_extract_context,search=searchTerms,LW,RW)
   found <- Filter(length,found)
 
   if (length(found) >0 ) {
@@ -88,7 +88,7 @@ corp_search_context <- function(search,corp,LW,RW){
   BOW <- BOW[, rw := rowid(doc_id)]  #Add row number
   BOW <- BOW[found, on=c("doc_id","rw"), nomatch=0]
 
-  KWIC <- FlattenContexts(BOW)
+  KWIC <- clr_flatten_contexts(BOW)
 
   tmp <- KWIC[, c('doc_id','eg','token','lemma','tag','pos'), with = FALSE]
 
@@ -109,9 +109,9 @@ corp_search_context <- function(search,corp,LW,RW){
 
 #' @export
 #' @rdname queryCorpus
-corp_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE) {
+clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE) {
 
-  keys <- corpuslingr::core_search_gramx(x,search=keyPhrase)
+  keys <- corpuslingr::clr_search_gramx(x,search= clr_keyphrase)
 
   doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
   txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]

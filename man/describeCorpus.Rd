@@ -2,10 +2,10 @@
 % Please edit documentation in R/describeCorpus.R
 \name{describeCorpus}
 \alias{describeCorpus}
-\alias{GetDocDesc}
+\alias{clr_desc_corpus}
 \title{Summarize results of corpuslingr::GetContexts()}
 \usage{
-GetDocDesc(x)
+clr_desc_corpus(x)
 }
 \value{
 A dataframe

@@ -2,13 +2,13 @@
 % Please edit documentation in R/scrapeWeb.R
 \name{scrapeWeb}
 \alias{scrapeWeb}
-\alias{corp_web_gnews}
-\alias{corp_web_scrape}
+\alias{clr_web_gnews}
+\alias{clr_web_scrape}
 \title{Access GoogleNews quickly}
 \usage{
-corp_web_gnews(x, search = NULL, n = 30)
+clr_web_gnews(x, search = NULL, n = 30)
 
-corp_web_scrape(y, link_var = "links")
+clr_web_scrape(y, link_var = "links")
 }
 \arguments{
 \item{search}{Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"}

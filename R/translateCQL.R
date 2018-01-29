@@ -7,7 +7,7 @@
 
 #' @export
 #' @rdname translateCQL
-build_search <- function(x){
+clr_build_search <- function(x){
 
   pos <- "[A-Za-z0-9-]+"; form <- "[A-Za-z0-9-]+"; lemma <- "[A-Za-z0-9-]+"
   if (length(grep("_", x)==1)) {pos=gsub(".*_|>.*","",x)}
@@ -20,17 +20,17 @@ build_search <- function(x){
 
 #' @export
 #' @rdname translateCQL
-corp_noun_phrase <- "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
+clr_nounphrase <- "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
 
 
 #' @export
 #' @rdname translateCQL
-corp_key_phrase <- "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)?"
+clr_keyphrase <- "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)?"
 
 
 #' @export
 #' @rdname translateCQL
-corp_cql_regex <- function(x) {
+clr_cql_regex <- function(x) {
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
 

@@ -8,7 +8,7 @@
 
 #' @export
 #' @rdname prepText
-corp_prep_corpus <- function (x, hyphenate=TRUE) {
+clr_prep_corpus <- function (x, hyphenate=TRUE) {
   x <- gsub("^ *|(?<= ) | *$", "", x, perl = TRUE)
 
 

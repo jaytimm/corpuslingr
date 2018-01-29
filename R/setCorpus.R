@@ -9,7 +9,7 @@
 
 #' @export
 #' @rdname setCorpus
-set_tuple <- function(x){
+clr_set_tuple <- function(x){
   text <- paste(x$tup,collapse=" ") #TIF
   tup_bounds <- unlist(as.vector(gregexpr(pattern=" ", text)[[1]]))
   x$tupBeg <- append(1,tup_bounds+1)
@@ -21,7 +21,7 @@ set_tuple <- function(x){
 
 #' @export
 #' @rdname setCorpus
-corp_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', NER_as_tag = FALSE) { #demarc_var - ?
+clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', NER_as_tag = FALSE) { #demarc_var - ?
 
   setnames(x, old = c(doc_var,token_var,lemma_var,tag_var, pos_var,sentence_var), new = c('doc_id', 'token','lemma','tag','pos','sentence_id'))
   x$doc_id <- gsub('\\D+','text',x$doc_id)
@@ -42,7 +42,7 @@ corp_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='
 
   x$tup <- paste("<",x$token,",",x$lemma,",",x$tag,">",sep="")
   list_dfs <- split(x, f = x$doc_id)
-  lapply(list_dfs,set_tuple)
+  lapply(list_dfs,clr_set_tuple)
 }
 
 #Also - entity_consolidate() issue. Would occur previous to SetSearchCorpus().

@@ -14,7 +14,7 @@
 
 #' @export
 #' @rdname scrapeWeb
-corp_web_gnews <- function(x,search=NULL,n=30) {
+clr_web_gnews <- function(x,search=NULL,n=30) {
 
   rss <- paste("https://news.google.com/news?hl=en&q=",gsub(" ","",search),"&ie=utf-8&num=",n,"&output=rss",sep="")
 
@@ -42,7 +42,7 @@ corp_web_gnews <- function(x,search=NULL,n=30) {
 
 #' @export
 #' @rdname scrapeWeb
-corp_web_scrape <- function(y,link_var='links') {
+clr_web_scrape <- function(y,link_var='links') {
 
   raws <- sapply(y[link_var], function (x) {
     tryCatch(RCurl::getURL(x, .encoding='UTF-8', ssl.verifypeer = FALSE), error=function(e) NULL)})

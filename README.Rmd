@@ -32,33 +32,33 @@ These functions .... There are other packages/means to scrape the web.  The two 
 
 Following grammatical constructions ~ day-to-day changes, eg. Search defaults to NULL, which smounts to national headlines.
 
-###GetGoogleNewsMeta()
+###corp_web_gnews()
 ```{r}
-dailyMeta <- corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30)
+dailyMeta <- corpuslingr::corp_web_gnews (search="New Mexico",n=30)
 
 head(dailyMeta['titles'])
 ```
 
 
-###GetWebTexts()
+###corp_web_scrape()
 
-This function ... takes the output of GetGoogleNews() (or any table with links to websites) ... and returns a 'tif as corpus df'
-Text interchange formats.
+This function ... takes the output of corp_web_gnews() (or any table with links to websites) ... and returns a 'tif as corpus df'
+Text interchange formats.  Builds on top of boilerpipeR, XML, RCurl packages.
 
 ```{r}
 nm_news <- dailyMeta %>% 
-  corpuslingr::GetWebTexts(link_var='links')
+  corpuslingr::corp_web_scrape(link_var='links')
 ```
 
 
 ##Corpus preparation
 
-###PrepCorpus()
+###corp_prep_corpus
 Also, PrepText(). Although, I think it may not work on TIF.
 Hyphenated words and any excessive spacing in texts. Upstream solution.
 
 ```{r}
-nm_news <- nm_news %>% mutate(text = PrepCorpus(text, hyphenate = TRUE))
+nm_news <- nm_news %>% mutate(text = corpuslingr::corp_prep_corpus (text, hyphenate = TRUE))
 ```
 
 
@@ -69,7 +69,7 @@ ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE)
 ```
 
 
-###SetSearchCorpus()
+###corp_set_corpus()
 
 This function performs some cleaning ... It will ... any/all annotation types in theory.  Output, however, homogenizes column names to make things easier downstream. Naming conventions established in the `spacyr` package are adopted here.  The function performs two or three general tasks. Eliminates spaces.  Annotation form varies depending on the annotator, as different folks have different 
 
@@ -80,7 +80,7 @@ Lastly, the function splits corpus into a list of dataframes by doc_id.  This fa
 
 ```{r}
 lingr_corpus <- ann_corpus$token %>%
-  SetSearchCorpus(doc_var='id', 
+  corp_set_corpus(doc_var='id', 
                   token_var='word', 
                   lemma_var='lemma', 
                   tag_var='pos', 

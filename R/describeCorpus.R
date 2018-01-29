@@ -8,7 +8,7 @@
 #'
 #' @export
 #' @rdname describeCorpus
-GetDocDesc <- function (x) {
+clr_desc_corpus <- function (x) {
 
   if (!is.data.frame(x)) {x <- rbindlist(x)}
   x <- as.data.table(x)

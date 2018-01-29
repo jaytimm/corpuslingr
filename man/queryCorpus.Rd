@@ -2,19 +2,19 @@
 % Please edit documentation in R/queryCorpus.R
 \name{queryCorpus}
 \alias{queryCorpus}
-\alias{extract_context}
-\alias{corp_search_gramx}
-\alias{corp_search_context}
-\alias{corp_search_keyphrases}
+\alias{clr_extract_context}
+\alias{clr_search_gramx}
+\alias{clr_search_context}
+\alias{clr_search_keyphrases}
 \title{Get search in context}
 \usage{
-extract_context(x, search, LW, RW)
+clr_extract_context(x, search, LW, RW)
 
-corp_search_gramx(search, corp)
+clr_search_gramx(search, corp)
 
-corp_search_context(search, corp, LW, RW)
+clr_search_context(search, corp, LW, RW)
 
-corp_search_keyphrases(x, n = 5, key_var = "lemma", flatten = TRUE,
+clr_search_keyphrases(x, n = 5, key_var = "lemma", flatten = TRUE,
   jitter = TRUE)
 }
 \arguments{
