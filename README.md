@@ -102,7 +102,7 @@ A simple function for describing the corpus. As can be noted, not all of the use
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     17      11840     2754      722
+## 1:     16      10216     2384      622
 ```
 
 Text-based descritpives:
@@ -112,10 +112,10 @@ head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        289      177       14
 ## 2: text10        470      197       21
-## 3: text11        963      404       61
-## 4: text12        540      268       32
-## 5: text13        338      188       18
-## 6: text14       1516      633       76
+## 3: text11        540      268       32
+## 4: text12        338      188       18
+## 5: text13        643      334       29
+## 6: text14        985      448       48
 ```
 
 Search & aggregation functions
@@ -137,20 +137,20 @@ search1 <- "<_Vx> <up!>"
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
-##    doc_id      token     tag    lemma
-## 1: text10   step up   VB IN  step up 
-## 2: text11   stay up   VB IN  stay up 
-## 3: text11 teamed up  VBN RP  team up 
-## 4: text13  comes up  VBZ RP  come up 
-## 5: text14   Sign up   VB RP  sign up 
-## 6: text16     is up  VBZ JJ    be up
+##    doc_id         token     tag       lemma
+## 1: text10      step up   VB IN     step up 
+## 2: text12     comes up  VBZ RP     come up 
+## 3: text15        is up  VBZ JJ       be up 
+## 4: text15   partner up   VB RP  partner up 
+## 5: text15 partnered up  VBD RP  partner up 
+## 6: text15   clamber up   VB RP  clamber up
 ```
 
 ### clr\_get\_freqs()
 
 A simple function for calculating text and token frequencies of search term(s). The `agg_var` parameter allows the user to specify how frequency counts are aggregated.
 
-Note: Generic nounphrases can be include as a search term. The regex for a generic nounphrase is below, and can be specified using `_NXP`.
+Note: Generic nounphrases can be include as a search term. The regex for a generic nounphrase is below, and can be specified in the CQL query using `_NXP`.
 
 ``` r
 clr_nounphrase
@@ -164,18 +164,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token')%>%
   head()
-##                                                    token txtf docf
-## 1:               DEMOCRATIC LAWMAKERS WANT TO ELIMINATE     3    1
-## 2:                             THEY PREPARE TO RE-ENTER     2    2
-## 3: ADVERTISEMENT NMFFL JOSEPH PRESTWICH VENTURES TO SAY     1    1
-## 4:                                     I WANT TO ASSURE     1    1
-## 5:                     INDIAN CAPTIVES SOUGHT TO ESCAPE     1    1
-## 6:                                   IT COMES TO RETURN     1    1
+##                                      token txtf docf
+## 1: DEMOCRATIC LAWMAKERS WANT TO ELIMINATE     3    1
+## 2:               THEY PREPARE TO RE-ENTER     2    2
+## 3:                       I WANT TO ASSURE     1    1
+## 4:       INDIAN CAPTIVES SOUGHT TO ESCAPE     1    1
+## 5:                     IT COMES TO RETURN     1    1
+## 6:  LOUISIANA LAWMAKERS VOTED TO CONTINUE     1    1
 ```
 
 ### clr\_search\_context()
 
-A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output is an intermediary list of dataframes, including `BOW` and `KWIC` dataframe objects.
+A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe objects.
 
 ``` r
 search3 <- '<_Jx> <and!> <_Jx>'
@@ -185,31 +185,31 @@ found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW
 
 ### clr\_context\_kwic()
 
-Access `KWIC` dataframe:
+Access `KWIC` object:
 
 ``` r
 found_egs %>%
   corpuslingr::clr_context_kwic()%>%
   head()
 ##    doc_id                   lemma
-## 1: text11        third and fourth
-## 2: text12       public and tribal
-## 3: text12 irreversible and costly
-## 4: text12     efficient and safer
-## 5: text12  transparent and honest
-## 6: text12     fair and reasonable
+## 1: text11       public and tribal
+## 2: text11 irreversible and costly
+## 3: text11     efficient and safer
+## 4: text11  transparent and honest
+## 5: text11     fair and reasonable
+## 6: text13   belonging and genetic
 ##                                                                                            kwic
-## 1:          1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
-## 2: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
-## 3: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
-## 4:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
-## 5: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
-## 6:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
+## 1: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
+## 2: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
+## 3:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
+## 4: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
+## 5:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
+## 6:             Dakota who writes about tribal <mark> belonging and genetic </mark> . " I do n't
 ```
 
 ### clr\_context\_bow()
 
-Access 'BOW\` dataframe object:
+Access `BOW` object:
 
 ``` r
 search3 <- c('<Santa&> <Fe&>','<Albuquerque&>')
@@ -218,17 +218,17 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
 ##    searchLemma       lemma cofreq
-## 1: ALBUQUERQUE         NEW     17
-## 2: ALBUQUERQUE      MEXICO     13
-## 3: ALBUQUERQUE        N.M.     11
-## 4: ALBUQUERQUE        2018      8
-## 5: ALBUQUERQUE ALBUQUERQUE      6
+## 1: ALBUQUERQUE        N.M.      9
+## 2: ALBUQUERQUE         NEW      8
+## 3: ALBUQUERQUE ALBUQUERQUE      6
+## 4: ALBUQUERQUE      MEXICO      6
+## 5: ALBUQUERQUE        2018      5
 ## 6: ALBUQUERQUE        MORE      5
 ```
 
 ### clr\_search\_keyphrases()
 
-Function for extracting keyphrases for each text in a corpus based on tf-idf weights. The methods and logic underlying this function are described more thoroughly in [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
+Function for extracting keyphrases for each text in a corpus based on tf-idf weights. The methods and logic underlying this function are described more thoroughly [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
 The regex for keyphrase search:
 
@@ -238,6 +238,8 @@ clr_keyphrase
 ```
 
 The use can specify the number of keyphrases to extract,
+
+For super small corpora (as our demo corpus is), results will likely be less favorable.
 
 ``` r
 lingr_corpus %>%
@@ -250,13 +252,13 @@ lingr_corpus %>%
 ## 4: text12
 ## 5: text13
 ## 6: text14
-##                                                                                       keyphrases
-## 1:                                    Morale | meals on wheels | Services | senior | allegation 
-## 2: New Mexico House | democratic lawmaker | dollar to New Mexico | official | Russell Contreras 
-## 3:                                  event | Aggy | Lobos | individual win | NEW MEXICO Saturday 
-## 4:                                                  lands | dollar | measure | Martinez | State 
-## 5:                                             point | Colorado State | Rams | minute | Jackson 
-## 6:                                           slave | Trujillo | descendant | Hispanic | Malcolm
+##                                                                                      keyphrases
+## 1:                             Morale | senior | Services | meals on wheels | critical service 
+## 2: democratic lawmaker | New Mexico House | dollar to New Mexico | Russell Contreras | Maestas 
+## 3:                                             lands | dollar | measure | State | New Mexicans 
+## 4:                                           point | Colorado State | Rams | minute | Saturday 
+## 5:                                     slave | Continue | indian captive | Hispanic | Trujillo 
+## 6:                                inmate | Valencia | corrections Department | document | July
 ```
 
 Multi-term search
