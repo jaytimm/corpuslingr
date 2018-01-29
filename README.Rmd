@@ -12,15 +12,19 @@ knitr::opts_chunk$set(
   fig.path = "README-")
 ```
 
-#corpuslingr: 
+#corpuslingr: an R package for complex corpus search and web-based corpus creation
 
-Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions in context. 
+This package:
 
-The two sets of functions can be used in conjunction, or independently.  In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using r-pacakges `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammatical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
+* facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported.  Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
 
-The package facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported.  Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. 
+* facilitates quick/easy web scraping of news sources, as a dataframe in text interchange format...
+
+subsequently search the corpus for complex grammatical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
 
 The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
+
+Here, we walk through a simple workflow from corpus creation using `corpuslingr`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.  
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
@@ -160,7 +164,7 @@ lingr_corpus %>%
 
 ###clr_search_context()
 
-A function that returns search terms with user-specified left and right contexts (`LW` and `RW`).  Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe objects.  
+A function that returns search terms with user-specified left and right contexts (`LW` and `RW`).  Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe object.  
 
 ```{r}
 search3 <- '<_Jx> <and!> <_Jx>'
@@ -194,7 +198,7 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
 
 ###clr_search_keyphrases()
 
-Function for extracting keyphrases for each text in a corpus based on tf-idf weights.  The methods and logic underlying this function are described more thoroughly [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
+Function for extracting keyphrases for each text in a corpus based on tf-idf weights.  The methods and logic underlying this function are described in more detail [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
 The regex for keyphrase search:
 ```{r}

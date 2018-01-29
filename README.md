@@ -1,13 +1,17 @@
-corpuslingr:
-============
+corpuslingr: an R package for complex corpus search and web-based corpus creation
+=================================================================================
 
-Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions in context.
+This package:
 
-The two sets of functions can be used in conjunction, or independently. In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using r-pacakges `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammatical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
+-   facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported. Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
 
-The package facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported. Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
+-   facilitates quick/easy web scraping of news sources, as a dataframe in text interchange format...
+
+subsequently search the corpus for complex grammatical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
 
 The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
+
+Here, we walk through a simple workflow from corpus creation using `corpuslingr`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.
 
 ``` r
 library(tidyverse)
@@ -38,7 +42,7 @@ First six article titles:
 head(dailyMeta['titles'])
 ##                                                                              titles
 ## 2                        Legal Challenge Targets New Mexico Driver's License System
-## 3              Publicly-Funded New Mexico Spaceport Seeks Confidentiality | New ...
+## 3                        Publicly-Funded New Mexico Spaceport Seeks Confidentiality
 ## 4 Indian Slavery Once Thrived in New Mexico. Latinos Are Finding Family Ties to It.
 ## 5                      University of New Mexico Ranked 7th for Application Increase
 ## 6                   New Mexico lawmaker seeks funding for school security | The ...
@@ -102,7 +106,7 @@ A simple function for describing the corpus. As can be noted, not all of the use
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     16      10216     2384      622
+## 1:     16      10842     2549      667
 ```
 
 Text-based descritpives:
@@ -111,7 +115,7 @@ Text-based descritpives:
 head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        289      177       14
-## 2: text10        470      197       21
+## 2: text10        963      404       61
 ## 3: text11        540      268       32
 ## 4: text12        338      188       18
 ## 5: text13        643      334       29
@@ -138,12 +142,12 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
 ##    doc_id         token     tag       lemma
-## 1: text10      step up   VB IN     step up 
-## 2: text12     comes up  VBZ RP     come up 
-## 3: text15        is up  VBZ JJ       be up 
-## 4: text15   partner up   VB RP  partner up 
-## 5: text15 partnered up  VBD RP  partner up 
-## 6: text15   clamber up   VB RP  clamber up
+## 1: text10      stay up   VB IN     stay up 
+## 2: text10    teamed up  VBN RP     team up 
+## 3: text12     comes up  VBZ RP     come up 
+## 4: text15        is up  VBZ JJ       be up 
+## 5: text15   partner up   VB RP  partner up 
+## 6: text15 partnered up  VBD RP  partner up
 ```
 
 ### clr\_get\_freqs()
@@ -175,7 +179,7 @@ lingr_corpus %>%
 
 ### clr\_search\_context()
 
-A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe objects.
+A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe object.
 
 ``` r
 search3 <- '<_Jx> <and!> <_Jx>'
@@ -192,19 +196,19 @@ found_egs %>%
   corpuslingr::clr_context_kwic()%>%
   head()
 ##    doc_id                   lemma
-## 1: text11       public and tribal
-## 2: text11 irreversible and costly
-## 3: text11     efficient and safer
-## 4: text11  transparent and honest
-## 5: text11     fair and reasonable
-## 6: text13   belonging and genetic
+## 1: text10        third and fourth
+## 2: text11       public and tribal
+## 3: text11 irreversible and costly
+## 4: text11     efficient and safer
+## 5: text11  transparent and honest
+## 6: text11     fair and reasonable
 ##                                                                                            kwic
-## 1: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
-## 2: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
-## 3:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
-## 4: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
-## 5:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
-## 6:             Dakota who writes about tribal <mark> belonging and genetic </mark> . " I do n't
+## 1:          1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
+## 2: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
+## 3: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
+## 4:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
+## 5: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
+## 6:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
 ```
 
 ### clr\_context\_bow()
@@ -218,17 +222,17 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
 ##    searchLemma       lemma cofreq
-## 1: ALBUQUERQUE        N.M.      9
-## 2: ALBUQUERQUE         NEW      8
-## 3: ALBUQUERQUE ALBUQUERQUE      6
-## 4: ALBUQUERQUE      MEXICO      6
-## 5: ALBUQUERQUE        2018      5
+## 1: ALBUQUERQUE         NEW     14
+## 2: ALBUQUERQUE      MEXICO     11
+## 3: ALBUQUERQUE        N.M.     10
+## 4: ALBUQUERQUE        2018      6
+## 5: ALBUQUERQUE ALBUQUERQUE      6
 ## 6: ALBUQUERQUE        MORE      5
 ```
 
 ### clr\_search\_keyphrases()
 
-Function for extracting keyphrases for each text in a corpus based on tf-idf weights. The methods and logic underlying this function are described more thoroughly [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
+Function for extracting keyphrases for each text in a corpus based on tf-idf weights. The methods and logic underlying this function are described in more detail [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
 The regex for keyphrase search:
 
@@ -245,20 +249,13 @@ For super small corpora (as our demo corpus is), results will likely be less fav
 lingr_corpus %>%
   corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
   head()
-##    doc_id
-## 1:  text1
-## 2: text10
-## 3: text11
-## 4: text12
-## 5: text13
-## 6: text14
-##                                                                                      keyphrases
-## 1:                             Morale | senior | Services | meals on wheels | critical service 
-## 2: democratic lawmaker | New Mexico House | dollar to New Mexico | Russell Contreras | Maestas 
-## 3:                                             lands | dollar | measure | State | New Mexicans 
-## 4:                                           point | Colorado State | Rams | minute | Saturday 
-## 5:                                     slave | Continue | indian captive | Hispanic | Trujillo 
-## 6:                                inmate | Valencia | corrections Department | document | July
+##    doc_id                                                     keyphrases
+## 1:  text1         Morale | meals on wheels | Services | senior | Office 
+## 2: text10                 Aggy | event | Lobos | individual win | diver 
+## 3: text11                lands | measure | dollar | Martinez | resource 
+## 4: text12 point | Colorado State | Rams | minute | Wyoming on Wednesday 
+## 5: text13         slave | Americas | Trujillo | indian captive | origin 
+## 6: text14  Valencia | inmate | document | corrections Department | July
 ```
 
 Multi-term search
