@@ -42,7 +42,7 @@ head(dailyMeta['titles'])
 ## 4 Indian Slavery Once Thrived in New Mexico. Latinos Are Finding Family Ties to It.
 ## 5                      University of New Mexico Ranked 7th for Application Increase
 ## 6                   New Mexico lawmaker seeks funding for school security | The ...
-## 7                         New Mexico Art Exhibit Highlights Presidents' Word Choice
+## 7             New Mexico holds hundreds of people in prison past their release date
 ```
 
 ### clr\_web\_scrape()
@@ -102,7 +102,7 @@ A simple function for describing the corpus. As can be noted, not all of the use
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     16      10004     2345      617
+## 1:     17      11840     2754      722
 ```
 
 Text-based descritpives:
@@ -112,16 +112,16 @@ head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        289      177       14
 ## 2: text10        470      197       21
-## 3: text11        540      268       32
-## 4: text12        338      188       18
-## 5: text13        643      334       29
-## 6: text14        985      448       48
+## 3: text11        963      404       61
+## 4: text12        540      268       32
+## 5: text13        338      188       18
+## 6: text14       1516      633       76
 ```
 
 Search & aggregation functions
 ------------------------------
 
-### An in-house corpus querying language (CQL)
+### A corpus querying language (CQL)
 
 A fairly crude corpus querying language is utilized/included in the package.
 
@@ -137,99 +137,107 @@ search1 <- "<_Vx> <up!>"
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
-##    doc_id         token     tag       lemma
-## 1: text10      step up   VB IN     step up 
-## 2: text12     comes up  VBZ RP     come up 
-## 3: text15        is up  VBZ JJ       be up 
-## 4: text15   partner up   VB RP  partner up 
-## 5: text15 partnered up  VBD RP  partner up 
-## 6: text15   clamber up   VB RP  clamber up
+##    doc_id      token     tag    lemma
+## 1: text10   step up   VB IN  step up 
+## 2: text11   stay up   VB IN  stay up 
+## 3: text11 teamed up  VBN RP  team up 
+## 4: text13  comes up  VBZ RP  come up 
+## 5: text14   Sign up   VB RP  sign up 
+## 6: text16     is up  VBZ JJ    be up
 ```
 
 ### clr\_get\_freqs()
 
-``` r
-search2 <- ""
+A simple function for calculating text and token frequencies of search term(s). The `agg_var` parameter allows the user to specify how frequency counts are aggregated.
 
-lingr_corpus %>%
-  corpuslingr::clr_search_gramx(search=search1)%>%
-  corpuslingr::clr_get_freq(agg_var = 'lemma')%>%
-  head()
-##          lemma txtf docf
-## 1:    GROW UP     4    2
-## 2:    SHOW UP     3    1
-## 3: PARTNER UP     2    1
-## 4:    STEP UP     2    2
-## 5:      BE UP     1    1
-## 6: CLAMBER UP     1    1
-```
-
-### clr\_search\_context()
-
-This function allows ... output includes a list of data.frames. `BOW` and `KWIC`
-
-``` r
-search2 <- '<all!> <> <of!>'
-
-found_egs <- corpuslingr::clr_search_context(search=search2,corp=lingr_corpus,LW=5, RW = 5)
-```
+Note: Generic nounphrases can be include as a search term. The regex for a generic nounphrase is below, and can be specified using `_NXP`.
 
 ``` r
 clr_nounphrase
 ## [1] "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
 ```
 
-### clr\_context\_kwic()
+``` r
+search2 <- "<_NXP> <_Vx> <to!> <_Vx>"
+
+lingr_corpus %>%
+  corpuslingr::clr_search_gramx(search=search2)%>%
+  corpuslingr::clr_get_freq(agg_var = 'token')%>%
+  head()
+##                                                    token txtf docf
+## 1:               DEMOCRATIC LAWMAKERS WANT TO ELIMINATE     3    1
+## 2:                             THEY PREPARE TO RE-ENTER     2    2
+## 3: ADVERTISEMENT NMFFL JOSEPH PRESTWICH VENTURES TO SAY     1    1
+## 4:                                     I WANT TO ASSURE     1    1
+## 5:                     INDIAN CAPTIVES SOUGHT TO ESCAPE     1    1
+## 6:                                   IT COMES TO RETURN     1    1
+```
+
+### clr\_search\_context()
+
+A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output is an intermediary list of dataframes, including `BOW` and `KWIC` dataframe objects.
 
 ``` r
-search4 <- "<_Jx> <and!> <_Jx>"
+search3 <- '<_Jx> <and!> <_Jx>'
 
-corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
+found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=5, RW = 5)
+```
+
+### clr\_context\_kwic()
+
+Access `KWIC` dataframe:
+
+``` r
+found_egs %>%
   corpuslingr::clr_context_kwic()%>%
   head()
 ##    doc_id                   lemma
-## 1: text11       public and tribal
-## 2: text11 irreversible and costly
-## 3: text11     efficient and safer
-## 4: text11  transparent and honest
-## 5: text11     fair and reasonable
-## 6: text13   belonging and genetic
+## 1: text11        third and fourth
+## 2: text12       public and tribal
+## 3: text12 irreversible and costly
+## 4: text12     efficient and safer
+## 5: text12  transparent and honest
+## 6: text12     fair and reasonable
 ##                                                                                            kwic
-## 1: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
-## 2: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
-## 3:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
-## 4: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
-## 5:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
-## 6:             Dakota who writes about tribal <mark> belonging and genetic </mark> . " I do n't
+## 1:          1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
+## 2: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
+## 3: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
+## 4:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
+## 5: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
+## 6:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
 ```
 
 ### clr\_context\_bow()
 
-Vector space model, or word embedding
+Access 'BOW\` dataframe object:
 
 ``` r
-corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
-  corpuslingr::clr_context_bow()%>%
+search3 <- c('<Santa&> <Fe&>','<Albuquerque&>')
+
+corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
+  corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
-##             lemma   pos cofreq
-## 1:         MEXICO PROPN      3
-## 2:            NEW PROPN      3
-## 3: COMMUNITY-BASE  VERB      2
-## 4:             GO  VERB      2
-## 5:           KNOW  VERB      2
-## 6:         OPTION  NOUN      2
+##    searchLemma       lemma cofreq
+## 1: ALBUQUERQUE         NEW     17
+## 2: ALBUQUERQUE      MEXICO     13
+## 3: ALBUQUERQUE        N.M.     11
+## 4: ALBUQUERQUE        2018      8
+## 5: ALBUQUERQUE ALBUQUERQUE      6
+## 6: ALBUQUERQUE        MORE      5
 ```
 
 ### clr\_search\_keyphrases()
 
-most of this is described more thoroughly in this [post](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
+Function for extracting keyphrases for each text in a corpus based on tf-idf weights. The methods and logic underlying this function are described more thoroughly in [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
-The function leverages `clr_search_gramx()` .... uses tf-idf weights to extract keyphrases from each text comprising corpus. The user can specify ...
+The regex for keyphrase search:
 
 ``` r
 clr_keyphrase
 ## [1] "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)?"
 ```
+
+The use can specify the number of keyphrases to extract,
 
 ``` r
 lingr_corpus %>%
@@ -242,17 +250,14 @@ lingr_corpus %>%
 ## 4: text12
 ## 5: text13
 ## 6: text14
-##                                                                        keyphrases
-## 1:                          Morale | Services | meals on wheels | senior | Aging 
-## 2: democratic lawmaker | New Mexico House | dollar to New Mexico | Maestas | NBC 
-## 3:                                   lands | dollar | measure | State | resource 
-## 4:                                point | Colorado State | minute | Rams | Paige 
-## 5:                     slave | descendant | indian captive | Americas | Continue 
-## 6:                  Valencia | inmate | document | corrections Department | date
+##                                                                                       keyphrases
+## 1:                                    Morale | meals on wheels | Services | senior | allegation 
+## 2: New Mexico House | democratic lawmaker | dollar to New Mexico | official | Russell Contreras 
+## 3:                                  event | Aggy | Lobos | individual win | NEW MEXICO Saturday 
+## 4:                                                  lands | dollar | measure | Martinez | State 
+## 5:                                             point | Colorado State | Rams | minute | Jackson 
+## 6:                                           slave | Trujillo | descendant | Hispanic | Malcolm
 ```
-
-?Reference corpus.
-~Perhaps using SOTU.
 
 Multi-term search
 -----------------
@@ -262,8 +267,8 @@ Multi-term search
 search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ```
 
-Corpus workflow with corpuslingr, cleanNLP, & tidy
---------------------------------------------------
+Corpus workflow with corpuslingr, cleanNLP, & magrittr
+------------------------------------------------------
 
 ``` r
 corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
