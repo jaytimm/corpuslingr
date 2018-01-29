@@ -37,7 +37,7 @@ clr_cql_regex <- function(x) {
   x <- gsub("<_NXP>",clr_nounphrase,x)
 
   y <- unlist(strsplit(x," "))
-  y <- lapply(y,build_search)
+  y <- lapply(y,clr_build_search)
   y <- paste(y, collapse="")
   gsub(">","> ",y)}
 
