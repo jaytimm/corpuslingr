@@ -34,7 +34,7 @@ clr_cql_regex <- function(x) {
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
 
-  x <- gsub("<_NXP>",nounPhrase,x)
+  x <- gsub("<_NXP>",clr_nounphrase,x)
 
   y <- unlist(strsplit(x," "))
   y <- lapply(y,build_search)
