@@ -27,19 +27,17 @@ dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
 
 head(dailyMeta['titles'])
 ##                                                                              titles
-## 2 Indian Slavery Once Thrived in New Mexico. Latinos Are Finding Family Ties to It.
-## 3                        Publicly-Funded New Mexico Spaceport Seeks Confidentiality
+## 2              Publicly-Funded New Mexico Spaceport Seeks Confidentiality | New ...
+## 3 Indian Slavery Once Thrived in New Mexico. Latinos Are Finding Family Ties to It.
 ## 4                      University of New Mexico Ranked 7th for Application Increase
 ## 5                       Lawsuit Targets New Mexico's Two-Tier Identification System
-## 6                             New Mexico lawmaker seeks funding for school security
-## 7             New Mexico holds hundreds of people in prison past their release date
+## 6                   New Mexico lawmaker seeks funding for school security | The ...
+## 7                         New Mexico Art Exhibit Highlights Presidents' Word Choice
 ```
 
 ### clr\_web\_scrape()
 
-The second function, `clr_web_scrape`, scrapes text from a vector of web addresses. This can be supplied by the output from `clr_web_gnews`, or any dataframe with links to websites.
-
-The function returns a [TIF]()-compliant dataframe, with each scraped text represented as a single row. Metadata from output of `clr_web_gnews` is also included.
+The second function, `clr_web_scrape`, scrapes text from a vector of web addresses. This can be supplied by the output from `clr_web_gnews`, or any dataframe with links to websites. The function returns a [TIF](https://github.com/ropensci/tif#text-interchange-formats)-compliant dataframe, with each scraped text represented as a single row. Metadata from output of `clr_web_gnews` is also included.
 
 Both functions depend on functionality made available in the `boilerpipeR`, `XML`, and `RCurl` packages.
 
@@ -53,7 +51,7 @@ Corpus preparation
 
 ### clr\_prep\_corpus
 
-This function performs two tasks. It elminates unnecessary whitespace from the text column of the corpus dataframe object. Additionally, it attempts to trick annotators into treating hyphenated words as a single token. With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens. For folks interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
+This function performs two tasks. It elminates unnecessary whitespace from the text column of a corpus dataframe object. Additionally, it attempts to trick annotators into treating hyphenated words as a single token. With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens. For linguists interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
 
 ``` r
 nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
@@ -70,11 +68,9 @@ ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE)
 
 ### clr\_set\_corpus()
 
-This function performs some cleaning ... It will ... any/all annotation types in theory. Output, however, homogenizes column names to make things easier downstream. Naming conventions established in the `spacyr` package are adopted here. The function performs two or three general tasks. Eliminates spaces. Annotation form varies depending on the annotator, as different folks have different
+This function gets the corpus ready for compex, tuple-based search. Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, to make things easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.
 
-Adds tuples and their chraracter onsets/offsets. A fairly crude corpus querying language
-
-Lastly, the function splits corpus into a list of dataframes by doc\_id. This facilitates ... any easy solution to ...
+Lastly, the function splits the corpus into a list of dataframes by document. This is ultimately a search convenience.
 
 ``` r
 lingr_corpus <- ann_corpus$token %>%
@@ -89,21 +85,23 @@ lingr_corpus <- ann_corpus$token %>%
 
 ### clr\_desc\_corpus()
 
+This function ... As can be noted, not all of the user-specified (n=30) links were successfully scraped. Not all websites care to be scraped.
+
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     16      10373     2465      605
+## 1:     17      10979     2574      674
 ```
 
 ``` r
 head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
-## 1:  text1        958      346       56
-## 2: text10        791      356       39
-## 3: text11        540      268       32
-## 4: text12        338      188       18
-## 5: text13        643      334       29
-## 6: text14        985      448       48
+## 1:  text1        289      177       14
+## 2: text10        470      197       21
+## 3: text11        963      404       61
+## 4: text12        540      268       32
+## 5: text13        338      188       18
+## 6: text14        643      334       29
 ```
 
 Search & aggregation functions
@@ -111,9 +109,14 @@ Search & aggregation functions
 
 We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.
 
+``` r
+paste(lingr_corpus[[5]]$tup[1:30], sep=" ",collapse=" ")
+## [1] "<Colorado,Colorado,NNP> <State,State,NNP> <comes,come,VBZ> <up,up,RP> <short,short,JJ> <against,against,IN> <New,New,NNP> <Mexico,Mexico,NNP> <Up,Up,NNP> <next,next,IN> <:,:,:> <Colorado,Colorado,NNP> <State,State,NNP> <is,be,VBZ> <home,home,RB> <against,against,IN> <Wyoming,Wyoming,NNP> <on,on,IN> <Wednesday,Wednesday,NNP> <Share,share,VB> <this,this,DT> <:,:,:> <By,by,IN> <Glen,Glen,NNP> <Rosales,Rosales,NNP> <The,the,DT> <Associated,Associated,NNP> <Press,Press,NNP> <January,January,NNP> <27,27,CD>"
+```
+
 ### An in-house corpus querying language (CQL)
 
-Should be 'copy and paste' at his point. See 'Corpus design' post. Tuples and complex corpus search.?
+A fairly crude corpus querying language Should be 'copy and paste' at his point. See 'Corpus design' post. Tuples and complex corpus search.?
 
 ### clr\_search\_gramx()
 
@@ -123,13 +126,13 @@ search1 <- "<_Vx> <up!>"
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
-##    doc_id         token     tag       lemma
-## 1:  text1      sets up  VBZ RP      set up 
-## 2: text10   setting up  VBG RP      set up 
-## 3: text12     comes up  VBZ RP     come up 
-## 4: text15        is up  VBZ JJ       be up 
-## 5: text15   partner up   VB RP  partner up 
-## 6: text15 partnered up  VBD RP  partner up
+##    doc_id       token     tag       lemma
+## 1: text10    step up   VB IN     step up 
+## 2: text11    stay up   VB IN     stay up 
+## 3: text11  teamed up  VBN RP     team up 
+## 4: text13   comes up  VBZ RP     come up 
+## 5: text16      is up  VBZ JJ       be up 
+## 6: text16 partner up   VB RP  partner up
 ```
 
 ### clr\_search\_context()
@@ -155,8 +158,8 @@ lingr_corpus %>%
   head()
 ##          lemma txtf docf
 ## 1:    GROW UP     4    2
-## 2: PARTNER UP     2    1
-## 3:     SET UP     2    2
+## 2:    SHOW UP     3    1
+## 3: PARTNER UP     2    1
 ## 4:    STEP UP     2    2
 ## 5:      BE UP     1    1
 ## 6: CLAMBER UP     1    1
@@ -171,19 +174,19 @@ corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>
   corpuslingr::clr_context_kwic()%>%
   head()
 ##    doc_id                   lemma
-## 1: text10        warmer and drier
-## 2: text10        early and active
-## 3: text11       public and tribal
-## 4: text11 irreversible and costly
-## 5: text11     efficient and safer
-## 6: text11  transparent and honest
+## 1: text11        third and fourth
+## 2: text12       public and tribal
+## 3: text12 irreversible and costly
+## 4: text12     efficient and safer
+## 5: text12  transparent and honest
+## 6: text12     fair and reasonable
 ##                                                                                            kwic
-## 1:        through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
-## 2:          We are preparing for an <mark> early and active </mark> and bringing some and crews
-## 3: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
-## 4: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
-## 5:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
-## 6: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
+## 1:          1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
+## 2: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
+## 3: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
+## 4:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
+## 5: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
+## 6:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
 ```
 
 ### clr\_context\_bow()
@@ -198,9 +201,9 @@ corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>
 ## 1:         MEXICO PROPN      3
 ## 2:            NEW PROPN      3
 ## 3: COMMUNITY-BASE  VERB      2
-## 4:         OPTION  NOUN      2
-## 5:           RATE  NOUN      2
-## 6:          WOMAN  NOUN      2
+## 4:             GO  VERB      2
+## 5:           KNOW  VERB      2
+## 6:         OPTION  NOUN      2
 ```
 
 ### clr\_search\_keyphrases()
@@ -218,13 +221,20 @@ clr_keyphrase
 lingr_corpus %>%
   corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
   head()
-##    doc_id                                                    keyphrases
-## 1:  text1        West Texas | Buffs | western New Mexico | Evans | WNm 
-## 2: text10              La | condition | Thursday | Fontenot | Pajarito 
-## 3: text11           lands | New Mexicans | dollar | measure | resource 
-## 4: text12              Colorado State | Rams | point | Jackson | Paige 
-## 5: text13          slave | Americas | Hispanic | descendant | Trujillo 
-## 6: text14 inmate | Valencia | document | corrections Department | July
+##    doc_id
+## 1:  text1
+## 2: text10
+## 3: text11
+## 4: text12
+## 5: text13
+## 6: text14
+##                                                                             keyphrases
+## 1:                          Morale | meals on wheels | Services | senior | Bernalillo 
+## 2: democratic lawmaker | dollar to New Mexico | New Mexico House | official | Maestas 
+## 3:                                    event | Aggy | Lobos | individual win | McGowan 
+## 4:                                        lands | measure | dollar | Martinez | State 
+## 5:                                      point | Colorado State | minute | Rams | game 
+## 6:                                    slave | Hispanic | Trujillo | Continue | origin
 ```
 
 ?Reference corpus.

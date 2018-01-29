@@ -44,9 +44,7 @@ head(dailyMeta['titles'])
 
 ###clr_web_scrape()
 
-The second function, `clr_web_scrape`, scrapes text from a vector of web addresses.  This can be supplied by the output from `clr_web_gnews`, or any dataframe with links to websites.
-
-The function returns a [TIF]()-compliant dataframe, with each scraped text represented as a single row.  Metadata from output of `clr_web_gnews` is also included.
+The second function, `clr_web_scrape`, scrapes text from a vector of web addresses.  This can be supplied by the output from `clr_web_gnews`, or any dataframe with links to websites.  The function returns a [TIF](https://github.com/ropensci/tif#text-interchange-formats)-compliant dataframe, with each scraped text represented as a single row.  Metadata from output of `clr_web_gnews` is also included.
 
 Both functions depend on functionality made available in the `boilerpipeR`, `XML`, and `RCurl` packages.
 
@@ -60,7 +58,7 @@ nm_news <- dailyMeta %>%
 
 ###clr_prep_corpus
 
-This function performs two tasks.  It elminates unnecessary whitespace from the text column of the corpus dataframe object.  Additionally, it attempts to trick annotators into treating hyphenated words as a single token.  With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens.  For folks interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
+This function performs two tasks.  It elminates unnecessary whitespace from the text column of a corpus dataframe object.  Additionally, it attempts to trick annotators into treating hyphenated words as a single token.  With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens.  For linguists interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
 
 ```{r}
 nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
@@ -79,12 +77,9 @@ ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE)
 
 ###clr_set_corpus()
 
-This function performs some cleaning ... It will ... any/all annotation types in theory.  Output, however, homogenizes column names to make things easier downstream. Naming conventions established in the `spacyr` package are adopted here.  The function performs two or three general tasks. Eliminates spaces.  Annotation form varies depending on the annotator, as different folks have different 
+This function gets the corpus ready for compex, tuple-based search.  Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, to make things easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.    
 
-Adds tuples and their chraracter onsets/offsets. A fairly crude corpus querying language  
-
-Lastly, the function splits corpus into a list of dataframes by doc_id.  This facilitates ... any easy solution to ...
-
+Lastly, the function splits the corpus into a list of dataframes by document.  This is ultimately a search convenience.
 
 ```{r}
 lingr_corpus <- ann_corpus$token %>%
@@ -100,9 +95,12 @@ lingr_corpus <- ann_corpus$token %>%
 
 ###clr_desc_corpus() 
 
+This function ... As can be noted, not all of the user-specified (n=30) links were successfully scraped.  Not all websites care to be scraped.
 ```{r}
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ```
+
+
 ```{r}
 head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ```
@@ -112,10 +110,14 @@ head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##Search & aggregation functions
 
 We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.  
+```{r}
+paste(lingr_corpus[[5]]$tup[1:30], sep=" ",collapse=" ")
+```
 
 
 ###An in-house corpus querying language (CQL)
 
+A fairly crude corpus querying language
 Should be 'copy and paste' at his point. See 'Corpus design' post. Tuples and complex corpus search.?
 
 ###clr_search_gramx()
