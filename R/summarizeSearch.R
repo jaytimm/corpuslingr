@@ -29,8 +29,8 @@ clr_get_freq <- function (x,agg_var=c('lemma','token')) {
   freqs$lemma <- toupper(freqs$lemma)
   freqs$token <- toupper(freqs$token)
 
-  freqs <-  freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=aggBy]
-  freqs <- setorderv(freqs,c('txtf',aggBy),c(-1,rep(1,length(aggBy))))
+  freqs <-  freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]
+  freqs <- setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
   return(freqs)
     }
 
@@ -58,7 +58,7 @@ clr_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
 
   bow[,c('lemma','token','searchLemma','searchToken')] <- lapply(bow[,c('lemma','token','searchLemma','searchToken')], toupper)
 
-  bow <- bow[place!='token', list(cofreq=length(eg)), by=aggBy]
-  bow <- setorderv(bow,c('cofreq',aggBy),c(-1,rep(1,length(aggBy))))
+  bow <- bow[place!='token', list(cofreq=length(eg)), by=agg_var]
+  bow <- setorderv(bow,c('cofreq',agg_var),c(-1,rep(1,length(agg_var))))
 
   return(bow)}
