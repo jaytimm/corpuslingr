@@ -12,11 +12,15 @@ knitr::opts_chunk$set(
   fig.path = "README-")
 ```
 
-##corpuslingr: 
+#corpuslingr: 
 
-Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions. 
+Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions in context. 
 
-High Level utility. Hypothetical workflows. Independently or in conjunction.  Academic linguists and digital humanists.
+The two sets of functions can be used in conjunction, or independently.  In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammtical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
+
+The package facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported.  Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. 
+
+The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized (personal) corpora.
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
@@ -194,7 +198,7 @@ search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ##Corpus workflow with corpuslingr, cleanNLP, & tidy
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
-corpuslingr::corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
+corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
   corpuslingr::clr_web_scrape(link_var='links') %>%
   cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
   corpuslingr::clr_set_corpus(doc_var='id', 

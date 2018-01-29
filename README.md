@@ -1,9 +1,13 @@
 corpuslingr:
-------------
+============
 
-Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions.
+Some r functions for (1) quick web scraping and (2) corpus seach of complex grammatical constructions in context.
 
-High Level utility. Hypothetical workflows. Independently or in conjunction. Academic linguists and digital humanists.
+The two sets of functions can be used in conjunction, or independently. In theory, one could build a corpus of the days news (as a dataframe in text interchange format), annotate the corpus using `cleanNLP`, `spacyr`, or `udap`, and subsequently search the corpus for complex grammtical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
+
+The package facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported. Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
+
+The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized (personal) corpora.
 
 ``` r
 library(tidyverse)
@@ -27,10 +31,10 @@ head(dailyMeta['titles'])
 ##                                                                              titles
 ## 2 Indian Slavery Once Thrived in New Mexico. Latinos Are Finding Family Ties to It.
 ## 3                        Publicly-Funded New Mexico Spaceport Seeks Confidentiality
-## 4                             New Mexico lawmaker seeks funding for school security
-## 5                         New Mexico Art Exhibit Highlights Presidents' Word Choice
-## 6             New Mexico holds hundreds of people in prison past their release date
-## 7                                  Colorado State comes up short against New Mexico
+## 4                      University of New Mexico Ranked 7th for Application Increase
+## 5                       Lawsuit Targets New Mexico's Two-Tier Identification System
+## 6                             New Mexico lawmaker seeks funding for school security
+## 7                         New Mexico Art Exhibit Highlights Presidents' Word Choice
 ```
 
 ### clr\_web\_scrape()
@@ -84,18 +88,18 @@ lingr_corpus <- ann_corpus$token %>%
 ``` r
 corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ##    n_docs textLength textType textSent
-## 1:     21      11773     2759      684
+## 1:     16      11007     2526      641
 ```
 
 ``` r
 head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ##    doc_id textLength textType textSent
 ## 1:  text1        958      346       56
-## 2: text10        137       88       10
-## 3: text11        470      197       21
-## 4: text12        419      216       17
-## 5: text13        963      404       61
-## 6: text14        791      356       39
+## 2: text10        759      327       41
+## 3: text11        540      268       32
+## 4: text12        338      188       18
+## 5: text13        643      334       29
+## 6: text14        985      448       48
 ```
 
 Search & aggregation functions
@@ -115,13 +119,13 @@ search1 <- "<_Vx> <up!>"
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
-##    doc_id       token     tag    lemma
-## 1:  text1    sets up  VBZ RP   set up 
-## 2: text11    step up   VB IN  step up 
-## 3: text13    stay up   VB IN  stay up 
-## 4: text13  teamed up  VBN RP  team up 
-## 5: text14 setting up  VBG RP   set up 
-## 6: text16   comes up  VBZ RP  come up
+##    doc_id         token     tag       lemma
+## 1:  text1      sets up  VBZ RP      set up 
+## 2: text10      come up   VB RP     come up 
+## 3: text12     comes up  VBZ RP     come up 
+## 4: text15        is up  VBZ JJ       be up 
+## 5: text15   partner up   VB RP  partner up 
+## 6: text15 partnered up  VBD RP  partner up
 ```
 
 ### clr\_search\_context()
@@ -147,9 +151,9 @@ lingr_corpus %>%
   head()
 ##          lemma txtf docf
 ## 1:    GROW UP     4    2
-## 2: PARTNER UP     2    1
-## 3:     SET UP     2    2
-## 4:    STEP UP     2    2
+## 2:    COME UP     2    2
+## 3: PARTNER UP     2    1
+## 4:     SET UP     2    2
 ## 5:      BE UP     1    1
 ## 6: CLAMBER UP     1    1
 ```
@@ -163,19 +167,19 @@ corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>
   corpuslingr::clr_context_kwic()%>%
   head()
 ##    doc_id                   lemma
-## 1: text13        third and fourth
-## 2: text14        warmer and drier
-## 3: text14        early and active
-## 4: text15       public and tribal
-## 5: text15 irreversible and costly
-## 6: text15     efficient and safer
-##                                                                                            kwic
-## 1:          1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
-## 2:        through early , so continued <mark> warmer and drier </mark> than normal , " Fontenot
-## 3:          We are preparing for an <mark> early and active </mark> and bringing some and crews
-## 4: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
-## 5: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
-## 6:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
+## 1: text10        strong and broad
+## 2: text10     different and local
+## 3: text11       public and tribal
+## 4: text11 irreversible and costly
+## 5: text11     efficient and safer
+## 6: text11  transparent and honest
+##                                                                                               kwic
+## 1: Florida and Virginia had very <mark> strong and broad </mark> protections for companies that go
+## 2:           decides on a . Sometimes <mark> different and local </mark> laws pose a for companies
+## 3:    emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
+## 4:    full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
+## 5:          Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
+## 6:    operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
 ```
 
 ### clr\_context\_bow()
@@ -190,9 +194,9 @@ corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>
 ## 1:         MEXICO PROPN      3
 ## 2:            NEW PROPN      3
 ## 3: COMMUNITY-BASE  VERB      2
-## 4:         OPTION  NOUN      2
-## 5:           RATE  NOUN      2
-## 6:          WOMAN  NOUN      2
+## 4:        COMPANY  NOUN      2
+## 5:             GO  VERB      2
+## 6:         OPTION  NOUN      2
 ```
 
 ### clr\_search\_keyphrases()
@@ -210,20 +214,13 @@ clr_keyphrase
 lingr_corpus %>%
   corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
   head()
-##    doc_id
-## 1:  text1
-## 2: text10
-## 3: text11
-## 4: text12
-## 5: text13
-## 6: text14
-##                                                                                    keyphrases
-## 1:                                     West Texas | western New Mexico | Evans | Buffs | WNm 
-## 2: Mortensen | Bloomfield | Steven Mortensen | prosecutor | San Juan Regional Medical Center 
-## 3:   New Mexico House | democratic lawmaker | dollar to New Mexico | NBC | Russell Contreras 
-## 4:                                           Rams | Colorado State | Lobos | point | rebound 
-## 5:                               Aggy | event | Lobos | NEW MEXICO Saturday | individual win 
-## 6:                                                    La | condition | Thursday | fire | run
+##    doc_id                                                      keyphrases
+## 1:  text1          West Texas | western New Mexico | Buffs | Evans | WNm 
+## 2: text10              company | Hicks | open rule | DiBello | operation 
+## 3: text11           lands | measure | New Mexicans | resource | Martinez 
+## 4: text12 Colorado State | Rams | point | Jackson | Wyoming on Wednesday 
+## 5: text13            slave | Americas | descendant | Hispanic | Trujillo 
+## 6: text14   inmate | Valencia | document | corrections Department | July
 ```
 
 ?Reference corpus.
@@ -241,7 +238,7 @@ Corpus workflow with corpuslingr, cleanNLP, & tidy
 --------------------------------------------------
 
 ``` r
-corpuslingr::corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
+corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
   corpuslingr::clr_web_scrape(link_var='links') %>%
   cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
   corpuslingr::clr_set_corpus(doc_var='id', 
