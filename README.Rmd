@@ -21,7 +21,6 @@ High Level utility. Hypothetical workflows. Independently or in conjunction.  Ac
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
 library(cleanNLP)
-library(stringi)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 ```
 
@@ -34,7 +33,7 @@ Following grammatical constructions ~ day-to-day changes, eg. Search defaults to
 
 ###corp_web_gnews()
 ```{r}
-dailyMeta <- corpuslingr::corp_web_gnews (search="New Mexico",n=30)
+dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
 
 head(dailyMeta['titles'])
 ```
@@ -47,7 +46,7 @@ Text interchange formats.  Builds on top of boilerpipeR, XML, RCurl packages.
 
 ```{r}
 nm_news <- dailyMeta %>% 
-  corpuslingr::corp_web_scrape(link_var='links')
+  corpuslingr::clr_web_scrape(link_var='links')
 ```
 
 
@@ -58,7 +57,7 @@ Also, PrepText(). Although, I think it may not work on TIF.
 Hyphenated words and any excessive spacing in texts. Upstream solution.
 
 ```{r}
-nm_news <- nm_news %>% mutate(text = corpuslingr::corp_prep_corpus (text, hyphenate = TRUE))
+nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
 ```
 
 
@@ -69,7 +68,7 @@ ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE)
 ```
 
 
-###corp_set_corpus()
+###clr_set_corpus()
 
 This function performs some cleaning ... It will ... any/all annotation types in theory.  Output, however, homogenizes column names to make things easier downstream. Naming conventions established in the `spacyr` package are adopted here.  The function performs two or three general tasks. Eliminates spaces.  Annotation form varies depending on the annotator, as different folks have different 
 
@@ -80,7 +79,7 @@ Lastly, the function splits corpus into a list of dataframes by doc_id.  This fa
 
 ```{r}
 lingr_corpus <- ann_corpus$token %>%
-  corp_set_corpus(doc_var='id', 
+  clr_set_corpus(doc_var='id', 
                   token_var='word', 
                   lemma_var='lemma', 
                   tag_var='pos', 
@@ -90,14 +89,14 @@ lingr_corpus <- ann_corpus$token %>%
 ```
 
 
-###GetDocDesc() 
+###clr_desc_corpus() 
 
-
+clr
 ```{r}
-corpuslingr::GetDocDesc(lingr_corpus)$corpus
+corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
 ```
 ```{r}
-head(corpuslingr::GetDocDesc(lingr_corpus)$text)
+head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
 ```
 
 
@@ -111,66 +110,74 @@ We also need to discuss special search terms, eg, `keyPhrase` and `nounPhrase`.
 
 Should be 'copy and paste' at his point. See 'Corpus design' post. Tuples and complex corpus search.?
 
-###SimpleSearch()
+###clr_search_gramx()
 ```{r}
 search1 <- "<_Vx> <up!>"
 
 lingr_corpus %>%
-  corpuslingr::SimpleSearch(search=search1)%>%
+  corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
 ```
 
-###GetContexts()
+###clr_search_contexts()
 
 This function allows ... output includes a list of data.frames.  `BOW` and `KWIC`
 
 ```{r}
 search2 <- '<all!> <> <of!>'
-corpuslingr::GetContexts(search=search2,corp=lingr_corpus,LW=5, RW = 5)%>%
-  corpuslingr::GetKWIC()
+found_egs <- corpuslingr::clr_search_context(search=search2,corp=lingr_corpus,LW=5, RW = 5)
 ```
 
 
 
 ```{r}
-nounPhrase
+clr_nounphrase
 ```
 
 
-###GetSearchFreqs()
+###clr_get_freqs()
 ```{r}
 lingr_corpus %>%
-  corpuslingr::SimpleSearch(search=search1)%>%
-  corpuslingr::GetSearchFreqs(aggBy = 'lemma')%>%
+  corpuslingr::clr_search_gramx(search=search1)%>%
+  corpuslingr::clr_get_freq(agg_var = 'lemma')%>%
   head()
 ```
 
 
-###GetKWIC()
+###clr_context_kwic()
 ```{r}
 search4 <- "<_Jx> <and!> <_Jx>"
 
-corpuslingr::GetContexts(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
-  corpuslingr::GetKWIC()%>%
+corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
+  corpuslingr::clr_context_kwic()%>%
   head()
 ```
 
-###GetBOW()
+
+###clr_context_bow()
 Vector space model, or word embedding
+```{r}
+corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=5, RW = 5)%>%
+  corpuslingr::clr_context_bow()%>%
+  head()
+```
 
 
-###GetKeyphrases()
+###clr_search_keyphrases()
 
 most of this is described more thoroughly in this [post](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
-The function leverages `SimpleSearch()` .... uses tf-idf weights to extract keyphrases from each text comprising corpus.  The user can specify ... 
+The function leverages `clr_search_gramx()` .... uses tf-idf weights to extract keyphrases from each text comprising corpus.  The user can specify ... 
 
 ```{r}
-keyPhrase
+clr_keyphrase
 ```
+
+
+
 ```{r}
 lingr_corpus %>%
-  GetKeyPhrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
+  corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
   head()
 ```
 
@@ -188,18 +195,18 @@ search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ##Corpus workflow with corpuslingr, cleanNLP, & tidy
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
-corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30) %>%
-  corpuslingr::GetWebTexts(link_var='links') %>%
+corpuslingr::corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
+  corpuslingr::clr_web_scrape(link_var='links') %>%
   cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
-  corpuslingr::SetSearchCorpus(doc_var='id', 
+  corpuslingr::clr_set_corpus(doc_var='id', 
                   token_var='word', 
                   lemma_var='lemma', 
                   tag_var='pos', 
                   pos_var='upos',
                   sentence_var='sid',
                   NER_as_tag = FALSE) %>%
-  corpuslingr::GetContexts(search=search2,LW=5, RW = 5)%>%
-  corpuslingr::GetKWIC()
+  corpuslingr::clr_search_context(search=search2,LW=5, RW = 5)%>%
+  corpuslingr::clr_context_kwic()
 ```
 
 
