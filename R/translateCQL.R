@@ -7,7 +7,7 @@
 
 #' @export
 #' @rdname translateCQL
-buildSearch <- function(x){
+build_search <- function(x){
 
   pos <- "[A-Za-z0-9-]+"; form <- "[A-Za-z0-9-]+"; lemma <- "[A-Za-z0-9-]+"
   if (length(grep("_", x)==1)) {pos=gsub(".*_|>.*","",x)}
@@ -20,24 +20,24 @@ buildSearch <- function(x){
 
 #' @export
 #' @rdname translateCQL
-nounPhrase <- "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
+corp_noun_phrase <- "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
 
 
 #' @export
 #' @rdname translateCQL
-keyPhrase <- "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)?"
+corp_key_phrase <- "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)?"
 
 
 #' @export
 #' @rdname translateCQL
-CQLtoRegex <- function(x) {
+corp_cql_regex <- function(x) {
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
 
   x <- gsub("<_NXP>",nounPhrase,x)
 
   y <- unlist(strsplit(x," "))
-  y <- lapply(y,buildSearch)
+  y <- lapply(y,build_search)
   y <- paste(y, collapse="")
   gsub(">","> ",y)}
 

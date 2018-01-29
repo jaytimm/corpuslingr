@@ -190,7 +190,6 @@ search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 corpuslingr::GetGoogleNewsMeta (search="New Mexico",n=30) %>%
   corpuslingr::GetWebTexts(link_var='links') %>%
-  mutate(txt=stringi::stri_enc_toutf8(txt))%>%
   cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
   corpuslingr::SetSearchCorpus(doc_var='id', 
                   token_var='word', 

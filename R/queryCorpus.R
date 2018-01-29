@@ -12,7 +12,7 @@
 
 #' @export
 #' @rdname queryCorpus
-extractContext <- function(x,search,LW,RW) {
+extract_context <- function(x,search,LW,RW) {
   locations <- gregexpr(pattern= search, paste(x$tup, collapse=" "), ignore.case=TRUE)
   tupBeg <- unlist(as.vector(locations[[1]]))
   tupEnd <- tupBeg + attr(locations[[1]],"match.length") -1
@@ -39,7 +39,7 @@ return(df_locs)
 
 #' @export
 #' @rdname queryCorpus
-SimpleSearch <- function(search,corp){
+corp_search_gramx <- function(search,corp){
 
 searchTerms <- unlist(lapply(search, CQLtoRegex))
 
@@ -73,11 +73,11 @@ return(found)
 
 #' @export
 #' @rdname queryCorpus
-GetContexts <- function(search,corp,LW,RW){
+corp_search_context <- function(search,corp,LW,RW){
 
-  searchTerms <-  CQLtoRegex(search)
+  searchTerms <-  corp_cql_regex(search)
 
-  found <- lapply(corp,extractContext,search=searchTerms,LW,RW)
+  found <- lapply(corp,extract_context,search=searchTerms,LW,RW)
   found <- Filter(length,found)
 
   if (length(found) >0 ) {
@@ -109,9 +109,9 @@ GetContexts <- function(search,corp,LW,RW){
 
 #' @export
 #' @rdname queryCorpus
-GetKeyPhrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE) {
+corp_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE) {
 
-  keys <- corpuslingr::SimpleSearch(x,search=keyPhrase)
+  keys <- corpuslingr::core_search_gramx(x,search=keyPhrase)
 
   doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
   txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]

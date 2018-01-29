@@ -8,7 +8,7 @@
 #'
 #' @export
 #' @rdname summarizeSearch
-FlattenContexts <- function(x) {
+flatten_contexts <- function(x) {
 
   pats <- x[place=='token', list(lemma=paste(lemma, collapse=" "),tag=paste(tag, collapse=" "),pos=paste(pos, collapse=" ")), by=list(doc_id,eg)]
 
@@ -22,7 +22,7 @@ FlattenContexts <- function(x) {
 
 #' @export
 #' @rdname summarizeSearch
-GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
+corp_get_freq <- function (x,agg_var=c('lemma','token')) {
   if(!is.data.frame(x)){x <- x$KWIC}
 
   freqs <- as.data.table(x)
@@ -38,7 +38,7 @@ GetSearchFreqs <- function (x,aggBy=c('lemma','token')) {
 
 #' @export
 #' @rdname summarizeSearch
-GetKWIC <- function (x,include=c('doc_id','lemma')) {
+corp_context_kwic <- function (x,include=c('doc_id','lemma')) {
   if(!is.data.frame(x)){x <- x$KWIC}
 
   kwic_table <- as.data.table(x)
@@ -50,7 +50,7 @@ GetKWIC <- function (x,include=c('doc_id','lemma')) {
 
 #' @export
 #' @rdname summarizeSearch
-GetBOW <- function (x,contentOnly=TRUE, aggBy=c('lemma','pos')) {
+corp_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
   if(!is.data.frame(x)){x <- x$BOW}
 
   if (contentOnly==TRUE) {
