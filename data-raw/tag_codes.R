@@ -7,4 +7,4 @@ clr_upos_codes <- read.csv("C:\\Users\\jtimm\\Google Drive\\GitHub\\packages\\co
 
 #Output
 devtools::use_data(clr_tag_codes, overwrite=TRUE)
-devtools::use_data(clr_pos_codes, overwrite=TRUE)
+devtools::use_data(clr_upos_codes, overwrite=TRUE)
