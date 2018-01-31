@@ -9,6 +9,13 @@
 
 #' @export
 #' @rdname setCorpus
+clr_prep_corpus <- function (x, text_var = 'text',hyphenate=TRUE) {
+  x$text <- gsub("^ *|(?<= ) | *$", "", x$text, perl = TRUE)
+
+  if (hyphenate==TRUE) {
+    x$text <- gsub("([[:alpha:]])-([[:alpha:]])",'\\1xxx\\2',x$text, perl=TRUE)}}
+
+
 clr_set_tuple <- function(x){
   text <- paste(x$tup,collapse=" ") #TIF
   tup_bounds <- unlist(as.vector(gregexpr(pattern=" ", text)[[1]]))

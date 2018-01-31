@@ -2,11 +2,11 @@
 % Please edit documentation in R/setCorpus.R
 \name{setCorpus}
 \alias{setCorpus}
-\alias{clr_set_tuple}
+\alias{clr_prep_corpus}
 \alias{clr_set_corpus}
 \title{Modify text annotations for more robust corpus search}
 \usage{
-clr_set_tuple(x)
+clr_prep_corpus(x, text_var = "text", hyphenate = TRUE)
 
 clr_set_corpus(x, doc_var = "doc_id", token_var = "token",
   lemma_var = "lemma", tag_var = "tag", pos_var = "pos",
