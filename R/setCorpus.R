@@ -10,6 +10,8 @@
 #' @export
 #' @rdname setCorpus
 clr_prep_corpus <- function (x, text_var = 'text',hyphenate=TRUE) {
+  x$text <- as.character(x$text)
+  #Could set encoding as well.
   x$text <- gsub("^ *|(?<= ) | *$", "", x$text, perl = TRUE)
 
   if (hyphenate==TRUE) {
