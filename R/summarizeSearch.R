@@ -54,7 +54,7 @@ clr_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
   if(!is.data.frame(x)){x <- x$BOW}
 
   if (content_only==TRUE) {
-    bow <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") | !x$lemma %in% corpusdatr::stops, ]}
+    bow <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") | !x$lemma %in% corpusdatr::cdr_stops, ]}
 
   bow[,c('lemma','token','searchLemma','searchToken')] <- lapply(bow[,c('lemma','token','searchLemma','searchToken')], toupper)
 
