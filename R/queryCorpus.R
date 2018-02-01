@@ -67,7 +67,7 @@ found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 return(found)
 
 } else
-{return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
+{"SEARCH TERM(S) NOT FOUND IN CORPUS"}
 }
 
 
