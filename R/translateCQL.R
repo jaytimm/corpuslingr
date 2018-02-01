@@ -9,8 +9,8 @@
 #' @rdname translateCQL
 clr_build_search <- function(x){
 
-  pos <- "[A-Za-z0-9-_]+"; form <- "[A-Za-z0-9-_]+"; lemma <- "[A-Za-z0-9-_]+"
-  if (length(grep("_", x)==1)) {pos=gsub(".*_|>.*","",x)}
+  pos <- "[A-Za-z0-9\-\_]+"; form <- "[A-Za-z0-9\-\_]+"; lemma <- "[A-Za-z0-9\-\_]+"
+  if (length(grep("~", x)==1)) {pos=gsub(".*~|>.*","",x)}
   if (length(grep("x", pos)==1)) {pos=gsub("x","[A-Z]{1,10}",pos)}
   #Add replace tilde ~
   if (length(grep("&", x)==1)) {lemma=gsub(".*<|&.*","",x)}
@@ -20,12 +20,12 @@ clr_build_search <- function(x){
 
 #' @export
 #' @rdname translateCQL
-clr_nounphrase <- "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
+clr_nounphrase <- "(?:(?:<~DT> )?(?:<~Jx> )*)?(?:((<~Nx> )+|<~PRP> ))"
 
 
 #' @export
 #' @rdname translateCQL
-clr_keyphrase <- "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)?"
+clr_keyphrase <- "(<~JJ> )*(<~N[A-Z]{1,10}> )+((<~IN> )(<~JJ> )*(<~N[A-Z]{1,10}> )+)?"
 
 
 #' @export
@@ -34,7 +34,7 @@ clr_cql_regex <- function(x) {
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
 
-  x <- gsub("<_NXP>",clr_nounphrase,x)
+  x <- gsub("<~NXP>",clr_nounphrase,x)
 
   y <- unlist(strsplit(x," "))
   y <- lapply(y,clr_build_search)

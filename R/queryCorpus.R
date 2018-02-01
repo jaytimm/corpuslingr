@@ -59,9 +59,9 @@ if(length(found)>0) {
 found <- rbindlist(found, idcol='doc_id')
 colnames(found)[2] <- 'eg'
 
-found$token <- gsub("<([A-Za-z0-9-]+),\\S+>","\\1",found$eg)
-found$tag <- gsub("<\\S+,([A-Za-z0-9-]+)>","\\1",found$eg)
-found$lemma <- gsub("\\S+,([A-Za-z0-9-]+),\\S+","\\1",found$eg)
+found$token <- gsub("<([A-Za-z0-9\-\_]+),\\S+>","\\1",found$eg)
+found$tag <- gsub("<\\S+,([A-Za-z0-9\-\_]+)>","\\1",found$eg)
+found$lemma <- gsub("\\S+,([A-Za-z0-9\-\_]+),\\S+","\\1",found$eg)
 
 found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 return(found)
