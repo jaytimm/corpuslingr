@@ -54,11 +54,11 @@ clr_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
   if(!is.data.frame(x)){x <- x$BOW}
 
   if (content_only==TRUE) {
-    bow <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") & !x$lemma %in% corpusdatr::cdr_stops, ]}
+    x <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") & !x$lemma %in% corpusdatr::cdr_stops, ]}
 
-  bow[,c('lemma','token','searchLemma','searchToken')] <- lapply(bow[,c('lemma','token','searchLemma','searchToken')], toupper)
+  x[,c('lemma','token','searchLemma','searchToken')] <- lapply(x[,c('lemma','token','searchLemma','searchToken')], toupper)
 
-  bow <- bow[place!='token', list(cofreq=length(eg)), by=agg_var]
-  bow <- setorderv(bow,c('cofreq',agg_var),c(-1,rep(1,length(agg_var))))
+  x <- x[place!='token', list(cofreq=length(eg)), by=agg_var]
+  x <- setorderv(x,c('cofreq',agg_var),c(-1,rep(1,length(agg_var))))
 
-  return(bow)}
+  return(x)}
