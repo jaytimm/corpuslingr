@@ -9,7 +9,7 @@
 #' @rdname translateCQL
 clr_build_search <- function(x){
 
-  pos <- "[A-Za-z0-9\-\_]+"; form <- "[A-Za-z0-9\-\_]+"; lemma <- "[A-Za-z0-9\-\_]+"
+  pos <- "[A-Za-z0-9-_]+"; form <- "[A-Za-z0-9-_]+"; lemma <- "[A-Za-z0-9-_]+"
   if (length(grep("~", x)==1)) {pos=gsub(".*~|>.*","",x)}
   if (length(grep("x", pos)==1)) {pos=gsub("x","[A-Z]{1,10}",pos)}
   #Add replace tilde ~
