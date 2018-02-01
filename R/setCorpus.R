@@ -44,7 +44,7 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
   x$lemma <- gsub("xxx", "-", x$lemma)
   x$token <- gsub("xxx", "-", x$token)
 
-  x <- x[!(x$tag=='NN'| x$tag=='NFP' | x$pos == 'SPACE' | x$token =="" | x$token==" "),]
+  x <- x[!(x$tag=='SP'| x$tag=='NFP' | x$pos == 'SPACE' | x$token =="" | x$token==" "),]
 
   if (NER_as_tag == TRUE) {}
   #x$tag = ifelse(x$tag=="ENTITY",paste("NN",x$entity_type,sep=""),x$tag)
