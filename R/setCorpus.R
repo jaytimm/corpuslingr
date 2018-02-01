@@ -39,7 +39,7 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
   x$lemma <- gsub("[[:space:]]+", "",x$lemma)
   x$token <- gsub("[[:space:]]+", "",x$token)
 
-  x$lemma <- ifelse(x$pos=="PROPN"|x$pos=="ENTITY",x$token,x$lemma)
+  x$lemma <- ifelse(x$pos=="PROPN"|x$pos=="ENTITY"|x$lemma=="-PRON-",x$token,x$lemma)
 
   x$lemma <- gsub("xxx", "-", x$lemma)
   x$token <- gsub("xxx", "-", x$token)
