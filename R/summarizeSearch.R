@@ -58,7 +58,7 @@ clr_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
 
   x[,c('lemma','token','searchLemma','searchToken')] <- lapply(x[,c('lemma','token','searchLemma','searchToken')], toupper)
 
-  x <- x[place!='token', list(cofreq==.N), by=agg_var]
+  x <- x[place!='token', list(cofreq=.N), by=agg_var]
   x <- setorderv(x,c('cofreq',agg_var),c(-1,rep(1,length(agg_var))))
 
   return(x)}
