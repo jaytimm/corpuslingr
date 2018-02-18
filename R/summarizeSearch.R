@@ -41,7 +41,7 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
     setkeyv(txt,agg_var2)
     freqs <- doc[txt]
     freqs <- setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
-    freqs <- freqs[, c(agg_vars,'txtf','docf'), with = FALSE]
+    freqs <- freqs[, c(agg_var,'txtf','docf'), with = FALSE]
 
     } else{
 
