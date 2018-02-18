@@ -47,17 +47,6 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
   return(freqs)
     }
 
-  doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
-  txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
-
-  corp <- rbindlist(x)
-  freqs <-  corp[, list(textLength=length(key_var)),by=doc_id]
-  setkeyv(doc,key_var)
-  setkeyv(txt,key_var)
-
-  k1 <- doc[txt]
-
-
 
 #' @export
 #' @rdname summarizeSearch
