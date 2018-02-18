@@ -32,8 +32,8 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
     freqs$token <- toupper(freqs$token)}
 
   if ('doc_id' %in% agg_var){
-    doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
-    txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
+    doc <-  freqs[, list(docf=length(unique(doc_id))),by=key_var]
+    txt <-  freqs[, list(txtf=length(tag)),by=c('doc_id',key_var)]
     setkeyv(doc,key_var)
     setkeyv(txt,key_var)
     freqs <- doc[txt]
