@@ -22,17 +22,40 @@ clr_flatten_contexts <- function(x) {
 
 #' @export
 #' @rdname summarizeSearch
-clr_get_freq <- function (x,agg_var=c('lemma','token')) {
+clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
   if(!is.data.frame(x)){x <- x$KWIC}
 
   freqs <- as.data.table(x)
-  freqs$lemma <- toupper(freqs$lemma)
-  freqs$token <- toupper(freqs$token)
 
-  freqs <-  freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]
-  freqs <- setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
+  if (toupper==TRUE){
+    freqs$lemma <- toupper(freqs$lemma)
+    freqs$token <- toupper(freqs$token)}
+
+  if ('doc_id' %in% agg_var){
+    doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
+    txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
+    setkeyv(doc,key_var)
+    setkeyv(txt,key_var)
+    freqs <- doc[txt]
+    freqs <- setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
+    } else{
+
+    freqs <-  freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]
+    freqs <- setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
+    }
+
   return(freqs)
     }
+
+  doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
+  txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
+
+  corp <- rbindlist(x)
+  freqs <-  corp[, list(textLength=length(key_var)),by=doc_id]
+  setkeyv(doc,key_var)
+  setkeyv(txt,key_var)
+
+  k1 <- doc[txt]
 
 
 
