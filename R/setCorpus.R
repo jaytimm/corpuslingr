@@ -14,6 +14,9 @@ clr_prep_corpus <- function (x, text_var = 'text',hyphenate=TRUE) {
   #Could set encoding as well.
   x$text <- gsub("^ *|(?<= ) | *$", "", x$text, perl = TRUE)
 
+  x$text <- gsub("(--)([[:alpha:]])","\\1 \\2",x$text, perl=TRUE)
+  x$text <- gsub("([[:alpha:]])(--)","\\1 \\2",x$text, perl=TRUE)
+
   if (hyphenate==TRUE) {
     x$text <- gsub("([[:alpha:]])-([[:alpha:]])",'\\1xxx\\2',x$text, perl=TRUE)}
   return(x)}
