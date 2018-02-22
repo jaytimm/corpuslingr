@@ -132,13 +132,15 @@ clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=
 
   k1$tf_idf <- (k1$txtf/k1$textLength)*log(k1$docsInCorpus/(k1$docf+1))
 
-  if (jitter==TRUE) {k1$tf_idf <- jitter(k1$tf_idf)}
+  if (jitter==TRUE) {
+    set.seed(99)
+    k1$tf_idf <- jitter(k1$tf_idf)}
 
   k1 <- k1[,.SD[order(-tf_idf)[1:n]],by=doc_id]
   colnames(k1)[3] <- 'keyphrases'
 
   if (flatten == TRUE) {
-    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse="| ")), by=list(doc_id)]
+    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]
     }
 
   return(k1)
