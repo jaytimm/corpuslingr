@@ -55,7 +55,8 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
 
   x$tup <- paste("<",x$token,"~",x$lemma,"~",x$tag,">",sep="")
   list_dfs <- split(x, f = x$doc_id)
-  lapply(list_dfs,clr_set_tuple)
+  list_dfs <- lapply(list_dfs,clr_set_tuple)
+  list_dfs[order(as.numeric(names(list_dfs)))]
 }
 
 #Also - entity_consolidate() issue. Would occur previous to SetSearchCorpus().
