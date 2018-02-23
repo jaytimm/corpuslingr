@@ -110,7 +110,7 @@ clr_search_context <- function(search,corp,LW,RW){
 
 #' @export
 #' @rdname queryCorpus
-clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE) {
+clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE,remove_nums = TRUE) {
 
   keys <- corpuslingr::clr_search_gramx(x,search= clr_keyphrase)
 
@@ -129,6 +129,9 @@ clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=
 
   k1 <- freqs[k1]
   k1$docsInCorpus <- nrow(freqs)
+
+  if (remove_nums=TRUE) {
+    k1 <- k1[grepl("[0-9]",k1$token)==FALSE,]}
 
   k1$tf_idf <- (k1$txtf/k1$textLength)*log(k1$docsInCorpus/(k1$docf+1))
 
