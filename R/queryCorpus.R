@@ -60,7 +60,7 @@ found <- rbindlist(found, idcol='doc_id')
 colnames(found)[2] <- 'eg'
 found$eg <- gsub(" $","",found$eg)
 
-found$token <- gsub("<\\S+~(\\S+)~\\S+>","\\1",found$eg)
+found$token <- gsub("<(\\S+)~\\S+>","\\1",found$eg)
 found$tag <- gsub("<\\S+~(\\S+)>","\\1",found$eg)
 found$lemma <- gsub("\\S+~(\\S+)~\\S+","\\1",found$eg)
 
