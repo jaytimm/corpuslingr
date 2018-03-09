@@ -2,11 +2,13 @@
 #'
 #' These functions enable easy access to GoogleNews rss feed, and subsequent scraping.
 #' @name scrapeWeb
-#' @param search Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"
-#' @param n Number of articles to get; max = 30.
+#' @param language Language locale code
+#' @param country Country two letter code
+#' @param type Search type: topic, topstories, term
+#' @param search if type = term/topic, the topic or term to be searched.  Sets to NULL when type = topstories.
 #' @return A dataframe of meta for articles collected.
 #' @import data.table
-#' @importFrom XML xpathSApply xmlParse xmlValue
+#' @importFrom xml2 xml_text xml_find_all
 #' @importFrom boilerpipeR ArticleExtractor
 #' @importFrom RCurl getURL
 
@@ -14,7 +16,7 @@
 
 #' @export
 #' @rdname scrapeWeb
-clr_web_gnews <- function(x,language='en',country='us',type='tops',search=NULL) {
+clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=NULL) {
 
   ned <- country
   hl2 <- ""
@@ -34,52 +36,53 @@ clr_web_gnews <- function(x,language='en',country='us',type='tops',search=NULL) 
 
   if(type=='topstories') rss <- paste0(base,ned,hl1,gl,hl2)
 
-  if(type=='topic') rss <- paste0(base,section,toupper(topic),ned,hl1,gl,hl2)
+  if(type=='topic') rss <- paste0(base,section,toupper(search),ned,hl1,gl,hl2)
 
   if(type=='term') {
     search1 <- paste("/",gsub(" ","",search),sep="")
     rss <- paste0(base,q,search1,search1,hl1,gl,ned) }
 
-  doc <- RCurl::getURL(rss, ssl.verifypeer = FALSE)
-  doc <- XML::xmlParse(doc)
+  doc <- xml2::read_xml(rss)
 
-  titles <- XML::xpathSApply(doc,'//item/title',xmlValue)
-  source <- gsub("^.* - ","",titles)
-  titles <-  gsub(" - .*$","",titles)
-  links <- XML::xpathSApply(doc,'//item/link',xmlValue)
-  links <- gsub("^.*url=","",links)
-  pubdates <- XML::xpathSApply(doc,'//item/pubDate',xmlValue)
+  title <- xml2::xml_text(xml2::xml_find_all(doc,"//item/title"))
+  link <- xml2::xml_text(xml2::xml_find_all(doc,"//item/link"))
+  pubDate <- xml2::xml_text(xml2::xml_find_all(doc,"//item/pubDate"))
+  source <- gsub("(htt[a-z]*://)(www\\.)?(\\S+\\.[a-z]+)/\\S+$","\\3",link)
 
-  date <- gsub("^.+, ","",pubdates)
+  date <- gsub("^.+, ","",pubDate)
   date <- gsub(" [0-9]*:.+$","", date)
 
+  out <- as.data.frame(cbind(date,source,title,link))
+  out$lang <- language
+  out$country <- country
+  out$search <- ifelse(type=='topic'|type=='term',paste(type,search,sep="_"), 'topstories')
 
-  out <- as.data.frame(cbind(source,titles,links,pubdates,date))
+  out[,c('date','source','title','link')] <- lapply(out[,c('date','source','title','link')], as.character)
 
-  out[,c('source','titles','links','pubdates','date')] <- lapply(out[,c('source','titles','links','pubdates','date')], as.character)
+  out[, c(5:7,1:4)]
+}
 
-  out[out$source != "This RSS feed URL is deprecated",]
 }
 
 
 #' @export
 #' @rdname scrapeWeb
-clr_web_scrape <- function(y,link_var='links') {
+clr_web_scrape <- function(y,link_var='link') {
 
   raws <- sapply(y[link_var], function (x) {
     tryCatch(RCurl::getURL(x, .encoding='UTF-8', ssl.verifypeer = FALSE), error=function(e) NULL)})
 
   cleaned <- lapply(raws, function(z) {
     x <- lapply(z, boilerpipeR::ArticleExtractor)
-    x <- gsub("\\\n"," ",x, perl=TRUE)
+    x <- gsub("\\\n"," ",x, perl=TRUE) #Note. Kills text structure.
     gsub("\\\"","\"",x, perl=TRUE)
       })
 
   names(cleaned) <- y[[link_var]]
   tif <- melt(unlist(cleaned),value.name='text')
   setDT(tif, keep.rownames = TRUE)[]
-  colnames(tif)[1] <- 'links'
-  tif <- merge(y,tif,by.x=c(link_var),by.y=c('links'))
+  colnames(tif)[1] <- 'link'
+  tif <- merge(y,tif,by.x=c(link_var),by.y=c('link'))
   tif$text <- as.character(tif$text)
   tif$text <- enc2utf8(tif$text)
 
