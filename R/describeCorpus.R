@@ -8,14 +8,14 @@
 #'
 #' @export
 #' @rdname describeCorpus
-clr_desc_corpus <- function (x,doc_id ='doc_id',sentence_id='sentence_id', token='token') {
+clr_desc_corpus <- function (x,doc ='id',sent='sid', tok='word',upos='upos') {
 
   if (!is.data.frame(x)) {x <- rbindlist(x)}
   x <- as.data.table(x)
 
-  byText <- x[pos!="PUNCT", list(textLength=length(token),textType=length(unique(token)),textSent=length(unique(sentence_id))), by=list(doc_id)]
+  byText <- x[upos!="PUNCT", list(textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(get(sent)))), by=doc]
 
-  corpus <- x[pos!="PUNCT", list(n_docs=length(unique(doc_id)),textLength=length(token),textType=length(unique(token)),textSent=length(unique(paste(doc_id,sentence_id, sep=""))))]
+  corpus <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep=""))))]
 
   out <- list("text" = byText, "corpus" = corpus)
   return(out)
