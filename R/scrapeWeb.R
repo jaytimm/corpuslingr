@@ -73,7 +73,8 @@ clr_web_scrape <- function(y,link_var='link') {
   cleaned <- lapply(raws, function(z) {
     x <- lapply(z, boilerpipeR::ArticleExtractor)
     x <- gsub("\\\n"," ",x, perl=TRUE) #Note. Kills text structure.
-    gsub("\\\"","\"",x, perl=TRUE)
+    x <- gsub("\\\"","\"",x, perl=TRUE)
+    gsub('share menu.*$|sharemenu.*$','',x)
       })
 
   names(cleaned) <- y[[link_var]]
