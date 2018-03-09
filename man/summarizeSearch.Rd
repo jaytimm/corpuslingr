@@ -10,7 +10,7 @@
 \usage{
 clr_flatten_contexts(x)
 
-clr_get_freq(x, agg_var = c("lemma", "token"))
+clr_get_freq(x, agg_var = c("lemma", "token"), toupper = FALSE)
 
 clr_context_kwic(x, include = c("doc_id", "lemma"))
 

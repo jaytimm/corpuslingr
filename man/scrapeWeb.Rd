@@ -6,14 +6,19 @@
 \alias{clr_web_scrape}
 \title{Access GoogleNews quickly}
 \usage{
-clr_web_gnews(x, search = NULL, n = 30)
+clr_web_gnews(x, language = "en", country = "us", type = "topstories",
+  search = NULL)
 
-clr_web_scrape(y, link_var = "links")
+clr_web_scrape(y, link_var = "link")
 }
 \arguments{
-\item{search}{Search topic for GoogleNews.  Defaults to NULL, which amounts to "Top Stories"}
+\item{language}{Language locale code}
 
-\item{n}{Number of articles to get; max = 30.}
+\item{country}{Country two letter code}
+
+\item{type}{Search type: topic, topstories, term}
+
+\item{search}{if type = term/topic, the topic or term to be searched.  Sets to NULL when type = topstories.}
 }
 \value{
 A dataframe of meta for articles collected.

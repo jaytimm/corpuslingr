@@ -62,8 +62,6 @@ clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=
   out[, c(5:7,1:4)]
 }
 
-}
-
 
 #' @export
 #' @rdname scrapeWeb

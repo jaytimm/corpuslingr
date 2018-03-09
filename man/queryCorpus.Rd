@@ -15,7 +15,7 @@ clr_search_gramx(search, corp)
 clr_search_context(search, corp, LW, RW)
 
 clr_search_keyphrases(x, n = 5, key_var = "lemma", flatten = TRUE,
-  jitter = TRUE)
+  jitter = TRUE, remove_nums = TRUE)
 }
 \arguments{
 \item{search}{Gram/lexical pattern to be searched for}
