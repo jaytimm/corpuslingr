@@ -59,7 +59,6 @@ clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=
 
   out[,c('date','source','title','link')] <- lapply(out[,c('date','source','title','link')], as.character)
 
-  out <- subset(out,source != 'wsj.com')
   out[, c(5:7,1:4)]
 }
 
@@ -68,6 +67,7 @@ clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=
 #' @rdname scrapeWeb
 clr_web_scrape <- function(y,link_var='link') {
 
+  y <- subset(y,source != 'wsj.com')
   raws <- sapply(y[link_var], function (x) {
     tryCatch(RCurl::getURL(x, .encoding='UTF-8', ssl.verifypeer = FALSE), error=function(e) NULL)})
 
