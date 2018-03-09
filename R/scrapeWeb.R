@@ -84,7 +84,7 @@ clr_web_scrape <- function(y,link_var='link') {
   tif$text <- as.character(tif$text)
   tif$text <- enc2utf8(tif$text)
 
-  tif <- tif[nchar(tif$text)>250,]
+  tif <- tif[nchar(tif$text)>500,]
   tif <- tif[complete.cases(tif),]
   tif$doc_id <- as.character(seq.int(nrow(tif)))
   tif$date <- as.Date(tif$date, "%d %b %Y")
