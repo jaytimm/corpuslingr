@@ -14,9 +14,31 @@
 
 #' @export
 #' @rdname scrapeWeb
-clr_web_gnews <- function(x,search=NULL,n=30) {
+clr_web_gnews <- function(x,language='en',country='us',type='tops',search=NULL) {
 
-  rss <- paste("https://news.google.com/news?hl=en&q=",gsub(" ","",search),"&ie=utf-8&num=",n,"&output=rss",sep="")
+  ned <- country
+  hl2 <- ""
+  base <- "https://news.google.com/news/rss/"
+  q <- "search/section/q"
+  section <- "headlines/section/topic/"
+
+  if (language == 'es') {
+    ned <- paste(language,country,sep="_")
+    language <- 'es-419'}
+
+  if (language == 'es-419' & country == 'us') hl2 = "&hl=US"
+
+  hl1 <- paste0("&hl=", language)
+  ned <- paste0("?ned=",ned)
+  gl <- paste0("&gl=",country)
+
+  if(type=='topstories') rss <- paste0(base,ned,hl1,gl,hl2)
+
+  if(type=='topic') rss <- paste0(base,section,toupper(topic),ned,hl1,gl,hl2)
+
+  if(type=='term') {
+    search1 <- paste("/",gsub(" ","",search),sep="")
+    rss <- paste0(base,q,search1,search1,hl1,gl,ned) }
 
   doc <- RCurl::getURL(rss, ssl.verifypeer = FALSE)
   doc <- XML::xmlParse(doc)

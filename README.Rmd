@@ -12,6 +12,27 @@ knitr::opts_chunk$set(
   fig.path = "README-")
 ```
 
+#"Automates many of the tasks associated with quantitative discourse analysis of
+transcripts containing discourse including frequency counts of sentence types,
+words, sentences, turns of talk, syllables and other assorted analysis tasks. The
+package provides parsing tools for preparing transcript data. Many functions enable
+the user to aggregate data by any number of grouping variables, providing analysis
+and seamless integration with other R packages that undertake higher level analysis
+and visualization of text. This affords the user a more efficient and targeted
+analysis. 'qdap' is designed for transcript analysis, however, many functions are
+applicable to other areas of Text Mining/ Natural Language Processing."
+
+
+Imports chron, dplyr (>= 0.3), gdata, gender (>= 0.5.1), ggplot2 (>=
+2.1.0), grid, gridExtra, igraph, methods, NLP, openNLP (>=
+0.2-1), parallel, plotrix, RCurl, reports, reshape2, scales,
+stringdist, tidyr, tm (>= 0.7.2), tools, venneuler, wordcloud,
+xlsx, XML
+
+From old-'Annotated':
+Here we add a few features to these standard annotations, and introduce a basic corpus querying language, to enable fine-grained corpus search akin to the functionality of search made available in the BYU [suite of corpora](https://corpus.byu.edu/).  Via ... string-based search akin to the type of search made avaialble in Python's Natural Language Toolkit (NLTK), for example. -- 'Complex search' as a potentially non-contiguous pattern occurring across multiple features of annotation. -- Which aligns with def of gramx
+
+
 #corpuslingr: an R package for complex corpus search & web-based corpus creation
 
 Define complex corpus search.  Patterns comprised of ... one or more than one search term. comprised of contiguous and/or non-contiguous elements.  comprised of fixed and/or non-fixed.  comprised of some combination of lemma/form/part-of-speech.
@@ -26,7 +47,7 @@ subsequently search the corpus for complex grammatical constructions utilizing s
 
 The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
 
-Here, we walk through a simple workflow from corpus creation using `corpuslingr`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.  
+Here, we walk through a simple workflow from corpus creation using `corpuslingr`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.  Bookends.
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
@@ -94,7 +115,7 @@ ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE)
 
 ###clr_set_corpus()
 
-This function prepares the annotated corpus for complex, tuple-based search.  Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, making text processing easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.    
+This function prepares the annotated corpus for complex, tuple-based search.  Tuples are created, taking the form `<token~lemma~pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, making text processing easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.    
 
 Lastly, the function splits the corpus into a list of dataframes by document.  This is ultimately a search convenience.
 
