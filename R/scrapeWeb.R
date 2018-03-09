@@ -59,6 +59,7 @@ clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=
 
   out[,c('date','source','title','link')] <- lapply(out[,c('date','source','title','link')], as.character)
 
+  out <- subset(out,link != 'wsj.com')
   out[, c(5:7,1:4)]
 }
 
