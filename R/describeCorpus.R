@@ -8,7 +8,7 @@
 #'
 #' @export
 #' @rdname describeCorpus
-clr_desc_corpus <- function (x) {
+clr_desc_corpus <- function (x,doc_id ='doc_id',sentence_id='sentence_id', token='token') {
 
   if (!is.data.frame(x)) {x <- rbindlist(x)}
   x <- as.data.table(x)
