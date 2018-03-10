@@ -47,7 +47,7 @@ clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=
   title <- xml2::xml_text(xml2::xml_find_all(doc,"//item/title"))
   link <- xml2::xml_text(xml2::xml_find_all(doc,"//item/link"))
   pubDate <- xml2::xml_text(xml2::xml_find_all(doc,"//item/pubDate"))
-  source <- sub("^http*://(?:www[.])?([^/]*).*$", "\\1", link)
+  source <- sub("^htt[a-z]*://(?:www[.])?([^/]*).*$", "\\1", link)
 
   date <- gsub("^.+, ","",pubDate)
   date <- gsub(" [0-9]*:.+$","", date)
