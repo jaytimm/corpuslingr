@@ -53,6 +53,8 @@ clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=
   date <- gsub(" [0-9]*:.+$","", date)
 
   out <- as.data.frame(cbind(date,source,title,link))
+
+  ##These need to be scraped from the RSS, as user input may not align with actual output.
   out$lang <- language
   out$country <- country
   out$search <- ifelse(type=='topic'|type=='term',paste(type,search,sep="_"), 'topstories')
@@ -67,7 +69,6 @@ clr_web_gnews <- function(x,language='en',country='us',type='topstories',search=
 #' @rdname scrapeWeb
 clr_web_scrape <- function(y,link_var='link') {
 
-  y <- subset(y,source != 'wsj.com')
   raws <- sapply(y[link_var], function (x) {
     tryCatch(RCurl::getURL(x, .encoding='UTF-8', ssl.verifypeer = FALSE), error=function(e) NULL)})
 
@@ -90,7 +91,7 @@ clr_web_scrape <- function(y,link_var='link') {
   tif <- tif[complete.cases(tif),]
   tif$doc_id <- as.character(seq.int(nrow(tif)))
   tif$date <- as.Date(tif$date, "%d %b %Y")
-
+  tif <- subset(tif,source != 'wsj.com')
   tif <- tif[, c(ncol(tif),1:(ncol(tif)-1))]
   return(tif)
 }
