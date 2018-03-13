@@ -5,7 +5,8 @@
 \alias{clr_desc_corpus}
 \title{Summarize results of corpuslingr::GetContexts()}
 \usage{
-clr_desc_corpus(x)
+clr_desc_corpus(x, doc = "id", sent = "sid", tok = "word",
+  upos = "upos")
 }
 \value{
 A dataframe
