@@ -1,4 +1,4 @@
-type,pos,regex,def,egs,
+type,pos,regex,def,egs,notes
 macro,NOUN,NN[S]*,Common nouns,"sun, love",
 macro,NAME,NN[^S]+,Proper nouns,"John, Chicago",Including entities
 macro,NOUNX,NN[A-Z]*,Common and proper nouns,"sun, Sonny",
@@ -11,8 +11,8 @@ macro,DET,[P]*DT,Articles & determiners,"these, all",add PRP$
 macro,CONJ,CC,Conjunctions,"that, and, or",
 macro,NEG,,Negation,"not, n't",would have to be lemma based
 macro,NUM,CD,Numbers,"five, 5",Could include number entities
-phrase,NOUNPH,(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON )),Noun phrases,,
-phrase,KEYPH,(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?,Key phrases,,
+phrase,NOUNPH,(?:(?:[P]*DT)?(?:JJ[A-Z]* )*)?(?:((NN[A-Z]* )+|PRP )),Noun phrases,,
+phrase,KEYPH,(JJ[A-Z]* )*(NN[A-Z]* )+((PRP )(JJ[A-Z]* )*(NN[A-Z]* )+)?,Key phrases,,
 original,CC,CC,Coordinating conjunction,,
 original,CD,CD,Cardinal number,,
 original,DT,DT,Determiner,,
