@@ -9,10 +9,16 @@
 #' @rdname translateCQL
 clr_build_search <- function(x){
 
-  pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
-  framed <- gsub("([A-Za-z~*_]+)","<\\1>",x)
+  if (x=="*") '<\\S+~\\S+~\\S+>' else {
 
-  stp <- gsub("([^A-Za-z~*_]+)","",x) #Strip any add regex.
+  pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
+
+  x <- gsub ('\\*([A-Za-z])', 'XWILD\\1',x) #NO!
+  x <- gsub ('([A-Za-z])\\*', '\\1XWILD',x)
+
+  framed <- gsub("([A-Za-z~_-]+)","<\\1>",x)
+
+  stp <- gsub("([^A-Za-z~_-]+)","",x) #Strip any add regex.
 
   if (stp %in% clr_search_syntax$pos) {pos <- clr_search_syntax$regex[match(stp,clr_search_syntax$pos)]}
 
@@ -24,12 +30,14 @@ clr_build_search <- function(x){
   if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
 
   #Wildcard
-  form <- gsub("\\*","[a-z_]\\*",form) #Hypens ?
-  lemma <- gsub("\\*","\\\\S+",lemma)
+  form <- gsub("XWILD","[a-z_-]\\*",form) #Hypens ?
+
   #Negation.
 
   sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="~"), framed, perl=TRUE)
   }
+}
+
 
 
 #' @export

@@ -12,7 +12,7 @@ macro,CONJ,CC,Conjunctions,"that, and, or",
 macro,NEG,,Negation,"not, n't",would have to be lemma based
 macro,NUM,CD,Numbers,"five, 5",Could include number entities
 phrase,NOUNPH,(?:(?:[P]*DT )?(?:JJ[A-Z]* )*)?(?:((NN[A-Z]* )+|PRP )),Noun phrases,,
-phrase,KEYPH,(JJ[A-Z]* )*(NN[A-Z]* )+((PRP )(JJ[A-Z]* )*(NN[A-Z]* )+)?,Key phrases,,
+phrase,KEYPH,(JJ[A-Z]* )*(NN[A-Z]* )+((IN )(JJ[A-Z]* )*(NN[A-Z]* )+)?,Key phrases,,
 original,CC,CC,Coordinating conjunction,,
 original,CD,CD,Cardinal number,,
 original,DT,DT,Determiner,,
