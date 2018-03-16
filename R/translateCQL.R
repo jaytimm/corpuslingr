@@ -10,12 +10,26 @@
 clr_build_search <- function(x){
 
   pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
-  if (length(grep("~", x)==1)) {pos=gsub(".*~|>.*","",x)}
-  if (length(grep("x", pos)==1)) {pos=gsub("x","[A-Z]{1,10}",pos)}
-  #Add replace tilde ~
-  if (length(grep("&", x)==1)) {lemma=gsub(".*<|&.*","",x)}
-  if (length(grep("!", x)==1)) {form=gsub(".*<|!.*","",x)}
-  sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="~"), x, perl=TRUE)}
+  framed <- gsub("([A-Za-z~*_]+)","<\\1>",x)
+
+  stp <- gsub("([^A-Za-z~*_]+)","",x) #Strip any add regex.
+
+  if (stp %in% clr_search_syntax$pos) {pos <- clr_search_syntax$regex[match(stp,clr_search_syntax$pos)]}
+
+  if (length(grep("~", x)==1)) {
+    pos <- clr_search_syntax$regex[match(sub(".*~","",stp),clr_search_syntax$pos)]
+    stp <- gsub("~.*$","",stp)}
+
+  if (stp == toupper(stp) & !stp %in% clr_search_syntax$pos) {lemma <- stp}
+  if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
+
+  #Wildcard
+  form <- gsub("\\*","[a-z_]\\*",form) #Hypens ?
+  lemma <- gsub("\\*","\\\\S+",lemma)
+  #Negation.
+
+  sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="~"), framed, perl=TRUE)
+  }
 
 
 #' @export
@@ -32,9 +46,9 @@ clr_keyphrase <- "(<~JJ> )*(<~N[A-Z]{1,10}> )+((<~IN> )(<~JJ> )*(<~N[A-Z]{1,10}>
 #' @rdname translateCQL
 clr_cql_regex <- function(x) {
 
-  if (length(x) > 1) {x <- paste(x,collapse=" |")}
+#"I hope| desire" -- space is non-intuitive.
 
-  x <- gsub("<~NXP>",clr_nounphrase,x)
+  if (length(x) > 1) {x <- paste(x,collapse=" |")}
 
   y <- unlist(strsplit(x," "))
   y <- lapply(y,clr_build_search)
