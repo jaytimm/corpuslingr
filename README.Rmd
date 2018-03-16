@@ -12,10 +12,15 @@ knitr::opts_chunk$set(
   fig.path = "README-")
 ```
 
+A library of functions enabling complex corpus search in context, search aggregation, bag-of-words/KWIC building, and keyphrase extraction.
+
+
 #"Automates many of the tasks associated with quantitative discourse analysis of
 transcripts containing discourse including frequency counts of sentence types,
 words, sentences, turns of talk, syllables and other assorted analysis tasks. The
-package provides parsing tools for preparing transcript data. Many functions enable
+package provides parsing tools for preparing transcript data. 
+
+Many functions enable
 the user to aggregate data by any number of grouping variables, providing analysis
 and seamless integration with other R packages that undertake higher level analysis
 and visualization of text. This affords the user a more efficient and targeted
@@ -41,7 +46,6 @@ This package:
 
 * facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported.  Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
 
-* facilitates quick/easy web scraping of news sources, as a dataframe in text interchange format...
 
 subsequently search the corpus for complex grammatical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora](https://corpus.byu.edu/).
 
@@ -53,41 +57,6 @@ Here, we walk through a simple workflow from corpus creation using `corpuslingr`
 library(tidyverse)
 library(cleanNLP)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
-```
-
-
-##Web scraping functions
-
-The two web-based functions presented here more or less work in tandem.  
-
-###clr_web_gnews()
-
-The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.  
-
-```{r}
-dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
-```
-
-Metadata include:
-```{r echo=FALSE}
-colnames(dailyMeta)
-```
-
-First six article titles:
-```{r}
-head(dailyMeta['titles'])
-```
-
-
-###clr_web_scrape()
-
-The second web-based function, `clr_web_scrape`, scrapes text from the web addresses included in the output from `clr_web_gnews` (or any vector that contains web addresses).  The function returns a [TIF](https://github.com/ropensci/tif#text-interchange-formats)-compliant dataframe, with each scraped text represented as a single row.  Metadata from output of `clr_web_gnews` are also included.
-
-Both functions depend on functionality made available in the `boilerpipeR`, `XML`, and `RCurl` packages.
-
-```{r}
-nm_news <- dailyMeta %>% 
-  corpuslingr::clr_web_scrape(link_var='links')
 ```
 
 

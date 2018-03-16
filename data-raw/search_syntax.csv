@@ -1,0 +1,15 @@
+Search,Explanation,Example,Regex,
+NOUN,Common nouns,"sun, love",NN[S]*,
+NAME,Proper nouns,"John, Chicago",NN[^S]+,Including entities
+NOUNX,Common and proper nouns,"sun, Sonny",NN[A-Z]*,
+VERB,All verbs,"decide, jumped",VB[A-Z]*,
+ADJ,Adjectives,"nice, clean",JJ[A-Z]*,
+ADV,Adverbs,"soon, quickly",RB[A-Z]*,
+PRON,Pronouns,"she, everyone",PRP,
+PREP,Prepositions,"from, on",IN,
+DET,Articles & determiners,"these, all",[P]*DT,add PRP$
+CONJ,Conjunctions,"that, and, or",CC,
+NEG,Negation,"not, n't",,would have to be lemma based
+NUM,Numbers,"five, 5",CD,Could include number entities
+NOUNPH,Noun phrases,,(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON )),
+KEYPH,Key phrases,,(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?,
