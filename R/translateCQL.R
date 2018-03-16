@@ -42,12 +42,12 @@ clr_build_search <- function(x){
 
 #' @export
 #' @rdname translateCQL
-clr_nounphrase <- "(?:(?:<~DT> )?(?:<~Jx> )*)?(?:((<~Nx> )+|<~PRP> ))"
+clr_nounphrase <- "(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON ))"
 
 
 #' @export
 #' @rdname translateCQL
-clr_keyphrase <- "(<~JJ> )*(<~N[A-Z]{1,10}> )+((<~IN> )(<~JJ> )*(<~N[A-Z]{1,10}> )+)?"
+clr_keyphrase <- "(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?"
 
 
 #' @export
@@ -57,6 +57,9 @@ clr_cql_regex <- function(x) {
 #"I hope| desire" -- space is non-intuitive.
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
+
+  x <- gsub("NOUNPHR",clr_nounphrase,x)
+  x <- gsub("KEYPHR",clr_keyphrase,x)
 
   y <- unlist(strsplit(x," "))
   y <- lapply(y,clr_build_search)
