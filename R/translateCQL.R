@@ -30,7 +30,7 @@ clr_build_search <- function(x){
   if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
 
   #Wildcard
-  form <- gsub("XWILD","[:graph:]\\*",form) #Hypens ?
+  form <- gsub("XWILD","[:graph:]*",form) #Hypens ?
 
   #Negation.
 
