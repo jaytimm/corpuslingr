@@ -11,8 +11,8 @@ macro,DET,[P]*DT,Articles & determiners,"these, all",add PRP$
 macro,CONJ,CC,Conjunctions,"that, and, or",
 macro,NEG,,Negation,"not, n't",would have to be lemma based
 macro,NUM,CD,Numbers,"five, 5",Could include number entities
-phrase,NOUNPH,(?:(?:DET)?(?:ADJ* )*)?(?:((NOUNX )+|PRON)),Noun phrases,,
-phrase,KEYPH,(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX)+)?,Key phrases,,
+phrase,NOUNPH,(?:(?:DET )?(?:ADJ* )*)?(?:((NOUNX )+|PRON )),Noun phrases,,
+phrase,KEYPH,(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?,Key phrases,,
 original,CC,CC,Coordinating conjunction,,
 original,CD,CD,Cardinal number,,
 original,DT,DT,Determiner,,
