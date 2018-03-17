@@ -31,7 +31,7 @@ clr_build_search <- function(x){
 
   #Wildcard
   form <- gsub("XWILD","[a-z-]*",form) #Hypens ?
-  lemma <- gsub("XWILD","[a-z-]*",lemma)
+  lemma <- gsub("XWILD","[a-z-]+",lemma)
 
   #Negation.
 
