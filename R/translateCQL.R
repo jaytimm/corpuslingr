@@ -9,16 +9,20 @@
 #' @rdname translateCQL
 clr_build_search <- function(x){
 
-  if (x=="*") '<\\S+~\\S+~\\S+>' else {
+  default <- '<\\\\S+~\\\\S+~\\\\S+>'
+
+  if (x=="*") default else {
 
   pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
 
   x <- gsub ('\\*([A-Za-z-])', 'XWILD\\1',x) #NO!
   x <- gsub ('([A-Za-z-])\\*', '\\1XWILD',x)
 
-  framed <- gsub("([A-Za-z~_-]+)","<\\1>",x)
+  framed <- gsub("([A-Za-z~_$-]+)","<\\1>",x)
 
-  stp <- gsub("([^A-Za-z~_-]+)","",x) #Strip any add regex.
+  stp <- gsub("([^A-Za-z~_$-]+)","",x) #Strip any add regex.
+
+  #ISSUE with PRP$ as ... PRP\\$
 
   if (stp %in% clr_search_syntax$pos) {pos <- clr_search_syntax$regex[match(stp,clr_search_syntax$pos)]}
 
@@ -30,13 +34,15 @@ clr_build_search <- function(x){
   if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
 
   #Wildcard
-  form <- gsub("XWILD","[a-z_-]*",form) #Hypens ?
-  lemma <- gsub("XWILD","[a-z_-]+",lemma)
+  form <- gsub("XWILD","[a-z-]*",form) #Hypens ?
+  lemma <- gsub("XWILD","[a-z-]*",lemma)
 
   #Negation.
+  if (length(grep("\\(\\*|\\*\\{",x))==1) {sub("\\*", default,x)
+    } else{
 
   sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="~"), framed, perl=TRUE)
-  }
+  }}
 }
 
 
@@ -59,8 +65,8 @@ clr_cql_regex <- function(x) {
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
 
-  x <- gsub("NOUNPHR",clr_nounphrase,x)
-  x <- gsub("KEYPHR",clr_keyphrase,x)
+  x <- gsub("NPHR",clr_nounphrase,x)
+  x <- gsub("KPHR",clr_keyphrase,x)
 
   y <- unlist(strsplit(x," "))
   y <- lapply(y,clr_build_search)
