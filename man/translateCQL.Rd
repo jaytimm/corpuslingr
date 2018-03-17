@@ -4,17 +4,17 @@
 \name{translateCQL}
 \alias{translateCQL}
 \alias{clr_build_search}
-\alias{clr_nounphrase}
-\alias{clr_keyphrase}
+\alias{clr_ref_nounphrase}
+\alias{clr_ref_keyphrase}
 \alias{clr_cql_regex}
 \title{Translate user search input to regex}
 \format{An object of class \code{character} of length 1.}
 \usage{
 clr_build_search(x)
 
-clr_nounphrase
+clr_ref_nounphrase
 
-clr_keyphrase
+clr_ref_keyphrase
 
 clr_cql_regex(x)
 }
