@@ -1,13 +1,16 @@
 type,search_syntax,example
+Simple form search,lime,lime
+Simple lemma search,DRINK,"drinks, drank, drinking"
+Lemma with POS search,BARK~VERB,"barked, barking"
 Simple phrasal search,in the long run,in the long run
-Phrasal search,ADJ and ADJ,"happy and healthy, political and economical"
+Phrasal search - POS/form,ADJ and ADJ,"happy and healthy, political and economical"
 Phrasal search inc noun phrase,VERB NPHR into VBG,trick someone into believing
 Phrasal search inc noun phrase,VERB PRP$ way PREP NPHR,make its way through the Senate
-Suffix search,*tion,"nation, retaliation"
+Suffix search,*tion,"defenestration, nation, retaliation"
 Infix search,*break*,"breakable, heartbreaking"
-Optional search,MD (NEG)? HAVE been,"should have been, might not have been"
-Multiple term search,PRON (HOPE| WISH| DESIRE),"He hoped, they wish"
-Lemma with POS search,BARK~VERB,"barked, barking"
-Noun phrase search,(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON )),"Bill Clinton, he, the red kite"
-Key phrase search,(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?,"flowers in bloom,  very purple couch"
-Indeterminate length search,"NPHR BE *{1,4} ADJ","He was very, very happy; I'm not sure"
+Optional search w/ parens and ?,MD (NEG)? HAVE been,"should have been, might not have been"
+Multiple term search w parens and |,PRON (HOPE| WISH| DESIRE),"He hoped, they wish"
+Wildcard,*,ANYTHING
+Indeterminate length search w brackets and min/max,"NPHR BE *{1,4} ADJ","He was very, very happy; I'm not sure"
+Noun phrase search - POS w regex,(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON )),"Bill Clinton, he, the red kite"
+Key phrase search - POS w regex,(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?,"flowers in bloom,  very purple couch"
