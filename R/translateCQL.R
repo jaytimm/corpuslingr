@@ -13,8 +13,8 @@ clr_build_search <- function(x){
 
   pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
 
-  x <- gsub ('\\*([A-Za-z])', 'XWILD\\1',x) #NO!
-  x <- gsub ('([A-Za-z])\\*', '\\1XWILD',x)
+  x <- gsub ('\\*([A-Za-z-])', 'XWILD\\1',x) #NO!
+  x <- gsub ('([A-Za-z-])\\*', '\\1XWILD',x)
 
   framed <- gsub("([A-Za-z~_-]+)","<\\1>",x)
 
@@ -31,6 +31,7 @@ clr_build_search <- function(x){
 
   #Wildcard
   form <- gsub("XWILD","[a-z-]*",form) #Hypens ?
+  lemma <- gsub("XWILD","[a-z-]*",lemma)
 
   #Negation.
 
