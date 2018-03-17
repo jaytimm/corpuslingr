@@ -27,18 +27,19 @@ clr_build_search <- function(x){
     stp <- gsub("([^A-Za-z~_$-]+)","",x)
 
   #Swap out search syntax with regex:
-    if (stp %in% clr_search_syntax$pos) {pos <- clr_search_syntax$regex[match(stp,clr_search_syntax$pos)]}
+    if (stp %in% clr_ref_pos_syntax$pos) {
+      pos <- clr_ref_pos_syntax$regex[match(stp,clr_ref_pos_syntax$pos)]}
 
   #LEMMA~POS
     if (length(grep("~", x)==1)) {
-      pos <- clr_search_syntax$regex[match(sub(".*~","",stp),clr_search_syntax$pos)]
+      pos <- clr_ref_pos_syntax$regex[match(sub(".*~","",stp),clr_ref_pos_syntax$pos)]
       stp <- gsub("~.*$","",stp)}
 
   #Assign ALLCAPS/NON-POS to lemma
-    if (stp == toupper(stp) & !stp %in% clr_search_syntax$pos) {lemma <- stp}
+    if (stp == toupper(stp) & !stp %in% clr_ref_pos_syntax$pos) {lemma <- stp}
 
   #Assign noncaps/non-pos to form
-    if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
+    if (stp != toupper(stp) & !stp %in% clr_ref_pos_syntax$pos) {form <- stp}
 
   #Add regex to prefix/suffix/infix
     form <- gsub("XWILD","[a-z-]*",form)
@@ -63,12 +64,12 @@ clr_build_search <- function(x){
 
 #' @export
 #' @rdname translateCQL
-clr_nounphrase <- "(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON ))"
+clr_ref_nounphrase <- "(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON ))"
 
 
 #' @export
 #' @rdname translateCQL
-clr_keyphrase <- "(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?"
+clr_ref_keyphrase <- "(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?"
 
 
 #' @export
@@ -77,8 +78,8 @@ clr_cql_regex <- function(x) {
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
 
-  x <- gsub("NPHR",clr_nounphrase,x)
-  x <- gsub("KPHR",clr_keyphrase,x)
+  x <- gsub("NPHR",clr_ref_nounphrase,x)
+  x <- gsub("KPHR",clr_ref_keyphrase,x)
 
   y <- unlist(strsplit(x," "))
   y <- lapply(y,clr_build_search)
