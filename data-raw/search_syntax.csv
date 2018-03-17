@@ -1,51 +1,67 @@
-type,pos,regex,def,egs,notes
-macro,NOUN,NN[S]*,Common nouns,"sun, love",
-macro,NAME,NN[^S]+,Proper nouns,"John, Chicago",Including entities
-macro,NOUNX,NN[A-Z]*,Common and proper nouns,"sun, Sonny",
-macro,VERB,VB[A-Z]*,All verbs,"decide, jumped",
-macro,ADJ,JJ[A-Z]*,Adjectives,"nice, clean",
-macro,ADV,RB[A-Z]*,Adverbs,"soon, quickly",
-macro,PRON,PRP,Pronouns,"she, everyone",
-macro,PREP,IN,Prepositions,"from, on",
-macro,DET,[P]*DT,Articles & determiners,"these, all",add PRP$
-macro,CONJ,CC,Conjunctions,"that, and, or",
-macro,NEG,,Negation,"not, n't",would have to be lemma based
-macro,NUM,CD,Numbers,"five, 5",Could include number entities
-phrase,NP,NPHR,Noun phrases,,
-phrase,KP,KPHR,Key phrases,,
-original,CC,CC,Coordinating conjunction,,
-original,CD,CD,Cardinal number,,
-original,DT,DT,Determiner,,
-original,EX,EX,Existential there,,
-original,FW,FW,Foreign word,,
-original,HYPH,HYPH,Hyphen,,
-original,IN,IN,Preposition or subordinating conjunction,,
-original,JJ,JJ,Adjective,,
-original,JJR,JJR,"Adjective, comparative",,
-original,JJS,JJS,"Adjective, superlative",,
-original,MD,MD,Modal,,
-original,NN,NN,"Noun, singular or mass",,
-original,NNS,NNS,"Noun, plural",,
-original,NNP,NNP,"Proper noun, singular",,
-original,NNPS,NNPS,"Proper noun, plural",,
-original,PDT,PDT,Predeterminer,,
-original,POS,POS,Possessive ending,,
-original,PRP,PRP,Personal pronoun,,
-original,PRP$,PRP\\$,Possessive pronoun,,
-original,RB,RB,Adverb,,
-original,RBR,RBR,"Adverb, comparative",,
-original,RBS,RBS,"Adverb, superlative",,
-original,RP,RP,Particle,,
-original,SYM,SYM,Symbol,,
-original,TO,TO,to,,
-original,UH,UH,Interjection,,
-original,VB,VB,"Verb, base form",,
-original,VBD,VBD,"Verb, past tense",,
-original,VBG,VBG,"Verb, gerund or present participle",,
-original,VBN,VBN,"Verb, past participle",,
-original,VBP,VBP,"Verb, non-3rd person singular present",,
-original,VBZ,VBZ,"Verb, 3rd person singular present",,
-original,WDT,WDT,Wh-determiner,,
-original,WP,WP,Wh-pronoun,,
-original,WP$,WP\\$,Possessive wh-pronoun,,
-original,WRB,WRB,Wh-adverb,,
+type,pos,regex,definition,examples
+clr_macro,ADJ,JJ[A-Z]*,Adjectives,"penntreebank = JJ, JJR, JJS"
+clr_macro,ADV,RB[A-Z]*,Adverbs,"penntreebank = RB, RBR, RBS"
+clr_macro,CONJ,CC,Conjunctions,penntreebank = CC
+clr_macro,DET,[P]*DT,Articles & determiners,"penntreebank = DT, PDT"
+clr_macro,ENTITY,"NN[A-Z]{3,}",Named entities,type = spacy_entity
+clr_macro,NAME,NN[^S]+,"Proper nouns, including named entities","penntreebank = NNP, NNPS, ENTITY"
+clr_macro,NEG,NEG,Negation,"not, n't"
+clr_macro,NOUN,NN[S]*,Common nouns,"penntreebank = NN, NNS"
+clr_macro,NOUNX,NN[A-Z]*,Common and proper nouns,"penntreebank = NN, NNS, NNP, NNPS, ENTITY"
+clr_macro,NUM,CD,Numbers,penntreebank = CD
+clr_macro,PREP,IN,Prepositions,penntreebank = IN
+clr_macro,PRON,PRP,Pronouns,penntreebank = PRP
+clr_macro,VERB,VB[A-Z]*,All verbs,"penntreebank = VB, VBD, VBG, VDN, VBP, VBZ"
+clr_phrasal,KP,KPHR,Key phrases,"traditional retailer, public broadcast, rate of inflation, Communist penetration of Cuba"
+clr_phrasal,NP,NPHR,Noun phrases,"Senate Republicans, he, The good people"
+penntreebank,CC,CC,Coordinating conjunction,"but, and"
+penntreebank,CD,CD,Cardinal number,"10-dimensional, one, 1970s"
+penntreebank,DT,DT,Determiner,"a, the, Another"
+penntreebank,EX,EX,Existential there,there
+penntreebank,IN,IN,Preposition or subordinating conjunction,"that, of, like, in"
+penntreebank,JJ,JJ,Adjective,"high, partisan, peculiar, ethic"
+penntreebank,JJR,JJR,"Adjective, comparative","younger, more, higher"
+penntreebank,JJS,JJS,"Adjective, superlative","least, highest, best"
+penntreebank,MD,MD,Modal,"could, will, would"
+penntreebank,NN,NN,"Noun, singular or mass","cotton, editorial, engine"
+penntreebank,NNP,NNP,"Proper noun, singular","Frasier, Heaven, Union"
+penntreebank,NNPS,NNPS,"Proper noun, plural","Commies, PACs, ISPs"
+penntreebank,NNS,NNS,"Noun, plural","gifts, beings, children, depositions"
+penntreebank,PDT,PDT,Predeterminer,"all, quite"
+penntreebank,POS,POS,Possessive ending,'s
+penntreebank,PRP,PRP,Personal pronoun,"it, He, us, him"
+penntreebank,PRP$,PRP\\$,Possessive pronoun,"his, their, your"
+penntreebank,RB,RB,Adverb,"too, always, n't"
+penntreebank,RBR,RBR,"Adverb, comparative",more
+penntreebank,RBS,RBS,"Adverb, superlative",most
+penntreebank,RP,RP,Particle,"along, up, out, in, down"
+penntreebank,TO,TO,to,to
+penntreebank,UH,UH,Interjection,"Yes, Well, Amen"
+penntreebank,VB,VB,"Verb, base form","do, add, Let, need"
+penntreebank,VBD,VBD,"Verb, past tense","were, murdered, queried, said"
+penntreebank,VBG,VBG,"Verb, gerund or present participle","halving, staring, being, doing"
+penntreebank,VBN,VBN,"Verb, past participle","overreacted, exhibited, emerged, explained"
+penntreebank,VBP,VBP,"Verb, non-3rd person singular present","do, are, receive, say"
+penntreebank,VBZ,VBZ,"Verb, 3rd person singular present","goes, is, costs, lists"
+penntreebank,WDT,WDT,Wh-determiner,"what, that"
+penntreebank,WP,WP,Wh-pronoun,"what, who"
+penntreebank,WP$,WP\\$,Possessive wh-pronoun,whose
+penntreebank,WRB,WRB,Wh-adverb,"when, why"
+spacy_entity,CARDINAL,NNCARDINAL,Numerals that do not fall under another type.,"one, two, 1.1"
+spacy_entity,DATE,NNDATE,Absolute or relative dates or periods.,"90s, 1950s, Tuesday, 1997"
+spacy_entity,EVENT,NNEVENT,"Named hurricanes, battles, wars, sports events, etc.","Watergate, the_Great_Big_Intern_Scandal, the_Cold_War, the_Vietnam_War"
+spacy_entity,FAC,NNFAC,"Buildings, airports, highways, bridges, etc.","Dealey_Plaza, the_Western_Wall"
+spacy_entity,GPE,NNGPE,"Countries, cities, states.","China, Amman, Indonesia"
+spacy_entity,LANGUAGE,NNLANGUAGE,Any named language.,"English, Hebrew"
+spacy_entity,LAW,NNLAW,Named documents made into laws.,"the_Versailles_Treaty, Constitution, the_Second_Amendment, the_Civil_Rights_Act"
+spacy_entity,LOC,NNLOC,"Non-GPE locations, mountain ranges, bodies of water","Earth, the_Longworth_Building"
+spacy_entity,MONEY,NNMONEY,"Monetary values, including unit.","25,000, 2,000, about_$_46_million, 8,925"
+spacy_entity,NORP,NNNORP,Nationalities or religious or political groups,"Jeffersonian, Scottish, Palestinians, Belgians"
+spacy_entity,ORDINAL,NNORDINAL,"first, ""second"", etc.","first, Third"
+spacy_entity,ORG,NNORG,"Companies, agencies, institutions, etc.","the_Washington_Opera, the_Q_Wing_of_Florida_State_Prison, Starbucks, NRA"
+spacy_entity,PERCENT,NNPERCENT,"Percentage, including ""%"".","19_percent, only_8.5_percent, 25_percent"
+spacy_entity,PERSON,NNPERSON,"People, including fictional","Isikoff, Pol_Pot, Bob_Hope, Maslin"
+spacy_entity,PRODUCT,NNPRODUCT,"Objects, vehicles, foods, etc. (Not services.)","Gatorade, Netscape, Windows"
+spacy_entity,QUANTITY,NNQUANTITY,"Measurements, as of weight or distance.","10_pounds, gallon, about_448_feet, 30_miles"
+spacy_entity,TIME,NNTIME,Times smaller than a day.,"Monday_night, four_hours, overnight, morning"
+spacy_entity,WORK,NNWORK,"Titles of books, songs, etc.","Late_Edition, The_Silence_of_the_Lambs, Fortune_40, The_Enquirer"
