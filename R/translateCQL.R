@@ -45,7 +45,9 @@ clr_build_search <- function(x){
     lemma <- gsub("XWILD","[a-z-]*",lemma)
 
   #Negation.
-    if (stp == 'NEG') lemma = 'not'
+    if (stp == 'NEG') {
+      lemma <- 'not'
+      pos <- "\\\\S+"}
 
   #Wildcards with proper regex:
     if (length(grep("\\(\\*|\\*\\{",x))==1) {sub("\\*", default,x)
