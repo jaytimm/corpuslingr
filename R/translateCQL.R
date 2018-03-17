@@ -11,38 +11,50 @@ clr_build_search <- function(x){
 
   default <- '<\\\\S+~\\\\S+~\\\\S+>'
 
+  #Simple wildcard:
   if (x=="*") default else {
 
-  pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
+    pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
 
-  x <- gsub ('\\*([A-Za-z-])', 'XWILD\\1',x) #NO!
-  x <- gsub ('([A-Za-z-])\\*', '\\1XWILD',x)
+  #Prefixes, suffixes, 'infixes' -- kill non-regex *:
+    x <- gsub ('\\*([A-Za-z-])', 'XWILD\\1',x) #NO!
+    x <- gsub ('([A-Za-z-])\\*', '\\1XWILD',x)
 
-  framed <- gsub("([A-Za-z~_$-]+)","<\\1>",x)
+  #Bracket off search from potential regex:
+    framed <- gsub("([A-Za-z~_$-]+)","<\\1>",x)
 
-  stp <- gsub("([^A-Za-z~_$-]+)","",x) #Strip any add regex.
+  #Strip potential regex:
+    stp <- gsub("([^A-Za-z~_$-]+)","",x)
 
-  #ISSUE with PRP$ as ... PRP\\$
+  #Swap out search syntax with regex:
+    if (stp %in% clr_search_syntax$pos) {pos <- clr_search_syntax$regex[match(stp,clr_search_syntax$pos)]}
 
-  if (stp %in% clr_search_syntax$pos) {pos <- clr_search_syntax$regex[match(stp,clr_search_syntax$pos)]}
+  #LEMMA~POS
+    if (length(grep("~", x)==1)) {
+      pos <- clr_search_syntax$regex[match(sub(".*~","",stp),clr_search_syntax$pos)]
+      stp <- gsub("~.*$","",stp)}
 
-  if (length(grep("~", x)==1)) {
-    pos <- clr_search_syntax$regex[match(sub(".*~","",stp),clr_search_syntax$pos)]
-    stp <- gsub("~.*$","",stp)}
+  #Assign ALLCAPS/NON-POS to lemma
+    if (stp == toupper(stp) & !stp %in% clr_search_syntax$pos) {lemma <- stp}
 
-  if (stp == toupper(stp) & !stp %in% clr_search_syntax$pos) {lemma <- stp}
-  if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
+  #Assign noncaps/non-pos to form
+    if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
 
-  #Wildcard
-  form <- gsub("XWILD","[a-z-]*",form) #Hypens ?
-  lemma <- gsub("XWILD","[a-z-]*",lemma)
+  #Add regex to prefix/suffix/infix
+    form <- gsub("XWILD","[a-z-]*",form)
+    lemma <- gsub("XWILD","[a-z-]*",lemma)
 
   #Negation.
-  if (length(grep("\\(\\*|\\*\\{",x))==1) {sub("\\*", default,x)
+    if (stp == 'NEG') lemma = 'not'
+
+  #Wildcards with proper regex:
+    if (length(grep("\\(\\*|\\*\\{",x))==1) {sub("\\*", default,x)
     } else{
 
-  sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="~"), framed, perl=TRUE)
-  }}
+  #Add search terms as regex to frame
+      sub('(?<=<).*(?=>)', paste(form,lemma,pos,sep="~"), framed, perl=TRUE)
+    }
+  }
 }
 
 
@@ -60,8 +72,6 @@ clr_keyphrase <- "(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?"
 #' @export
 #' @rdname translateCQL
 clr_cql_regex <- function(x) {
-
-#"I hope| desire" -- space is non-intuitive.
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}
 
