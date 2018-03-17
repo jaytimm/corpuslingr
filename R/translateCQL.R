@@ -30,8 +30,8 @@ clr_build_search <- function(x){
   if (stp != toupper(stp) & !stp %in% clr_search_syntax$pos) {form <- stp}
 
   #Wildcard
-  form <- gsub("XWILD","[a-z-]*",form) #Hypens ?
-  lemma <- gsub("XWILD","[a-z-]+",lemma)
+  form <- gsub("XWILD","[a-z-_]*",form) #Hypens ?
+  lemma <- gsub("XWILD","[a-z-_]+",lemma)
 
   #Negation.
 
