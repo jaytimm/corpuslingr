@@ -34,7 +34,7 @@ clr_set_tuple <- function(x){
 
 #' @export
 #' @rdname setCorpus
-clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', NER_as_tag = FALSE) { #demarc_var - ?
+clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', NER_as_tag = FALSE, meta= NULL) { #demarc_var - ?
 
   setnames(x, old = c(doc_var,token_var,lemma_var,tag_var, pos_var,sentence_var), new = c('doc_id', 'token','lemma','tag','pos','sentence_id'))
   #x$doc_id <- gsub('\\D+','text',x$doc_id)
@@ -52,6 +52,8 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
   if (NER_as_tag == TRUE) {}
   #x$tag = ifelse(x$tag=="ENTITY",paste("NN",x$entity_type,sep=""),x$tag)
   #x$tag = ifelse(x$tag=="ENTITY",x$entity_type,x$tag)
+
+  if (meta !="") {x <- merge (meta, x, by=doc_var)}
 
   x$tup <- paste("<",x$token,"~",x$lemma,"~",x$tag,">",sep="")
   list_dfs <- split(x, f = x$doc_id)
