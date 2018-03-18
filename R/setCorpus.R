@@ -55,9 +55,10 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
 
   x$tup <- paste("<",x$token,"~",x$lemma,"~",x$tag,">",sep="")
 
-  temp <- colnames(x)[2:ncol(x)]
   if (is.data.frame(meta)) {
-    setDT(x)[meta, on=get(doc_var)]
+    temp <- colnames(x)[2:ncol(x)]
+
+    setDT(x)[meta, on='doc_id']
     x <- x[,c(colnames(meta), temp)]}
 
   list_dfs <- split(x, f = x$doc_id)

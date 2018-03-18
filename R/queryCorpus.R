@@ -9,6 +9,8 @@
 #' @return A list of dataframes
 #' @import data.table
 
+##Need to add something like: if (!col %in% colnames(out)) stop("Ordering column not preserved by function")
+
 
 #' @export
 #' @rdname queryCorpus
