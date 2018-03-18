@@ -53,9 +53,13 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
   #x$tag = ifelse(x$tag=="ENTITY",paste("NN",x$entity_type,sep=""),x$tag)
   #x$tag = ifelse(x$tag=="ENTITY",x$entity_type,x$tag)
 
-  if (is.data.frame(meta)) { x <- merge(meta,x) }
-
   x$tup <- paste("<",x$token,"~",x$lemma,"~",x$tag,">",sep="")
+
+  temp <- colnames(x)
+  if (is.data.frame(meta)) {
+    x <- merge(x,meta)
+    x <- x[,c(colnames(meta), temp)}
+
   list_dfs <- split(x, f = x$doc_id)
   list_dfs <- lapply(list_dfs,clr_set_tuple)
   list_dfs[order(as.numeric(names(list_dfs)))]
