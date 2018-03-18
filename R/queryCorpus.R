@@ -114,7 +114,7 @@ clr_search_context <- function(search,corp,LW,RW){
 #' @rdname queryCorpus
 clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE,remove_nums = TRUE) {
 
-  keys <- corpuslingr::clr_search_gramx(x,search= clr_keyphrase)
+  keys <- corpuslingr::clr_search_gramx(x,search= clr_ref_keyphrase)
 
   doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
   txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
