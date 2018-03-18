@@ -58,7 +58,7 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
   temp <- colnames(x)
   if (is.data.frame(meta)) {
     x <- merge(x,meta)
-    x <- x[,c(colnames(meta), temp)}
+    x <- x[,c(colnames(meta), temp)]}
 
   list_dfs <- split(x, f = x$doc_id)
   list_dfs <- lapply(list_dfs,clr_set_tuple)
