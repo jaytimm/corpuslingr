@@ -59,7 +59,7 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
     temp <- colnames(x)[2:ncol(x)]
 
     setDT(x)[meta, on='doc_id']
-    x <- x[,c(colnames(meta), temp)]}
+    x <- x[,c(colnames(meta), temp), with = FALSE]}
 
   list_dfs <- split(x, f = x$doc_id)
   list_dfs <- lapply(list_dfs,clr_set_tuple)
