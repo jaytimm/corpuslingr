@@ -12,8 +12,8 @@ clr_macro,NUM,CD,Numbers,penntreebank = CD
 clr_macro,PREP,IN,Prepositions,penntreebank = IN
 clr_macro,PRON,PRP,Pronouns,penntreebank = PRP
 clr_macro,VERB,VB[A-Z]*,All verbs,"penntreebank = VB, VBD, VBG, VDN, VBP, VBZ"
-clr_phrasal,KP,KPHR,Key phrases,"traditional retailer, public broadcast, rate of inflation, Communist penetration of Cuba"
-clr_phrasal,NP,NPHR,Noun phrases,"Senate Republicans, he, The good people"
+clr_phrasal,KPHR,KPHR,Key phrases,"traditional retailer, public broadcast, rate of inflation, Communist penetration of Cuba"
+clr_phrasal,NPHR,NPHR,Noun phrases,"Senate Republicans, he, The good people"
 penntreebank,CC,CC,Coordinating conjunction,"but, and"
 penntreebank,CD,CD,Cardinal number,"10-dimensional, one, 1970s"
 penntreebank,DT,DT,Determiner,"a, the, Another"
