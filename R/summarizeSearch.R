@@ -71,7 +71,7 @@ clr_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
   if(!is.data.frame(x)){x <- x$BOW}
 
   if (content_only==TRUE) {
-    x <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") & !x$lemma %in% corpuslingr::clr_stops, ]}
+    x <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") & !x$lemma %in% corpuslingr::clr_ref_stops, ]}
 
   x[,c('lemma','token','searchLemma','searchToken')] <- lapply(x[,c('lemma','token','searchLemma','searchToken')], toupper)
 
