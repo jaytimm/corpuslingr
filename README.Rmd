@@ -12,73 +12,49 @@ knitr::opts_chunk$set(
   fig.path = "README-")
 ```
 
-A library of functions enabling complex corpus search in context, search aggregation, bag-of-words/KWIC building, and keyphrase extraction.
 
 
-#"Automates many of the tasks associated with quantitative discourse analysis of
-transcripts containing discourse including frequency counts of sentence types,
-words, sentences, turns of talk, syllables and other assorted analysis tasks. The
-package provides parsing tools for preparing transcript data. 
-
-Many functions enable
-the user to aggregate data by any number of grouping variables, providing analysis
-and seamless integration with other R packages that undertake higher level analysis
-and visualization of text. This affords the user a more efficient and targeted
-analysis. 'qdap' is designed for transcript analysis, however, many functions are
-applicable to other areas of Text Mining/ Natural Language Processing."
-
-
-Imports chron, dplyr (>= 0.3), gdata, gender (>= 0.5.1), ggplot2 (>=
-2.1.0), grid, gridExtra, igraph, methods, NLP, openNLP (>=
-0.2-1), parallel, plotrix, RCurl, reports, reshape2, scales,
-stringdist, tidyr, tm (>= 0.7.2), tools, venneuler, wordcloud,
-xlsx, XML
-
-From old-'Annotated':
-Here we add a few features to these standard annotations, and introduce a basic corpus querying language, to enable fine-grained corpus search akin to the functionality of search made available in the BYU [suite of corpora](https://corpus.byu.edu/).  Via ... string-based search akin to the type of search made avaialble in Python's Natural Language Toolkit (NLTK), for example. -- 'Complex search' as a potentially non-contiguous pattern occurring across multiple features of annotation. -- Which aligns with def of gramx
-
-
-#corpuslingr: an R package for complex corpus search & web-based corpus creation
-
-Define complex corpus search.  Patterns comprised of ... one or more than one search term. comprised of contiguous and/or non-contiguous elements.  comprised of fixed and/or non-fixed.  comprised of some combination of lemma/form/part-of-speech.
-
-This package:
-
-* facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported.  Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
-
-
-subsequently search the corpus for complex grammatical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora](https://corpus.byu.edu/).
-
-The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
-
-Here, we walk through a simple workflow from corpus creation using `corpuslingr`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.  Bookends.
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
 library(cleanNLP)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
+library(quicknews)#devtools::install_github("jaytimm/quicknews")
 ```
 
 
 ##Corpus preparation & annotation
+
+To demo the search functionality of `corpuslingr`, we first build a small corpus of current news articles using my `quicknews` package.   We apply the `gnews_get_meta`/`gnews_scrape_web` functions across multiple Google News sections to build out the corpus some, and to add a genre-like dimension to the corpus.
+
+```{r}
+topics <- c('nation','world', 'sports','science')
+
+corpus <- lapply(topics, function (x) {
+    quicknews::qnews_get_meta (language="en", country="us", type="topic", search=x)%>%
+    quicknews::qnews_scrape_web (link_var='link')})%>%
+  bind_rows() %>%
+  mutate(doc_id = as.character(row_number())) #Add doc_id
+```
+
+
 
 ###clr_prep_corpus
 
 This function performs two tasks.  It elminates unnecessary whitespace from the text column of a corpus dataframe object.  Additionally, it attempts to trick annotators into treating hyphenated words as a single token.  With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens.  For linguists interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
 
 ```{r}
-nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
+corpus <- clr_prep_corpus (corpus, hyphenate = TRUE)
 ```
 
 
 ###Annotate via cleanNLP and udpipe
-For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object. The `cleanNLP` package is fantastic -- the author has aggregated three different annotators (spacy, CoreNLP, and `udpipe`) into one convenient pacakge.  There are pros/cons with each annotator; we won't get into these here.     
 
-A benefit of `udpipe` is that it is dependency-free, making it super useful for classroom and demo purposes.
- 
+For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object. 
+
 ```{r message=FALSE, warning=FALSE}
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
-ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE) 
+ann_corpus <- cleanNLP::cnlp_annotate(corpus$text, as_strings = TRUE, doc_ids = corpus$doc_id) 
 ```
 
 
@@ -96,38 +72,53 @@ lingr_corpus <- ann_corpus$token %>%
                   tag_var='pos', 
                   pos_var='upos',
                   sentence_var='sid',
-                  NER_as_tag = FALSE)
+                  meta = corpus[,c('doc_id','source','search')])
 ```
 
 
 ###clr_desc_corpus() 
 
-A simple function for describing the corpus. As can be noted, not all of the user-specified (n=30) links were successfully scraped.  Not all websites care to be scraped.
+A simple function for describing an annotated corpus, providing some basic aggregate statisitcs at the corpus, genre, and text levels.
+
 ```{r}
-corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
+summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id", sent="sentence_id", tok="token",upos='pos', genre="search")
 ```
 
-Text-based descritpives:
+
+Corpus summary:
 ```{r}
-head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
+summary$corpus
+```
+
+By genre:
+```{r}
+summary$genre
+```
+
+By text:
+```{r}
+head(summary$text)
 ```
 
 
 
 ##Search & aggregation functions
 
+###Basic search syntax
 
-###A corpus querying language (CQL)
+The search syntax utilized here is modeled after the syntax implemented in the BYU suite of corpora. A full list of part-of-speech syntax can be viewed [here](https://github.com/jaytimm/corpuslingr/blob/master/data-raw/clr_ref_pos_syntax.csv).  
 
-A fairly crude corpus querying language is utilized/included in the package.
+```{r message=FALSE, warning=FALSE}
+library(knitr)
+corpuslingr::clr_ref_search_egs %>% kable(escape=TRUE,caption = "Search syntax examples")
+```
 
-The CQL presented here consists of four basic elements.  Individual search components are enclosed with `<>`, lemma search is specified using `&`, token search is specified using `!`, and part-of-speech search is specified using `_`.  Additionally, parts-of-speech can be made generic/universal with the suffix `x`. So, a search for all nouns forms (NN, NNS, NNP, NNPS) would be specified by `_Nx`. All other regex rules apply.
 
 ###clr_search_gramx()
 
 Search for all instantiaions of a particular lexical pattern/grammatical construction devoid of context.  This function enables fairly quick search.
 ```{r}
-search1 <- "<_Vx> <up!>"
+search1 <- "VERB (*)? up"
 
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
@@ -139,27 +130,28 @@ lingr_corpus %>%
 
 A simple function for calculating text and token frequencies of search term(s).  The `agg_var` parameter allows the user to specify how frequency counts are aggregated.
 
-Note: Generic nounphrases can be include as a search term.  The regex for a generic nounphrase is below, and can be specified in the CQL query using `_NXP`.
+Note that generic noun phrases can be include as a search term (regex below), and can be specified in the query using `NPHR`.
 ```{r}
-clr_nounphrase
+clr_ref_nounphrase
 ```
 
 
 ```{r}
-search2 <- "<_NXP> <_Vx> <to!> <_Vx>"
+search2 <- "*tial NOUNX"
 
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
-  corpuslingr::clr_get_freq(agg_var = 'token')%>%
+  corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ```
+
 
 ###clr_search_context()
 
 A function that returns search terms with user-specified left and right contexts (`LW` and `RW`).  Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe object.  
 
 ```{r}
-search3 <- '<_Jx> <and!> <_Jx>'
+search3 <- 'NPHR (do)? (NEG)? (THINK| BELIEVE )'
 
 found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=5, RW = 5)
 ```
@@ -170,17 +162,21 @@ found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW
 Access `KWIC` object:
 ```{r}
 found_egs %>%
-  corpuslingr::clr_context_kwic()%>%
-  head()
+  corpuslingr::clr_context_kwic()%>% #Add genre.
+  select(doc_id,kwic)%>%
+  slice(1:15)%>%
+  kable(escape=FALSE)
 ```
 
 
 ###clr_context_bow()
 
+
+`agg_var` and `content_only`
 Access `BOW` object:
 
 ```{r}
-search3 <- c('<Santa&> <Fe&>','<Albuquerque&>')
+search3 <- "White House"
 
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
@@ -190,48 +186,21 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
 
 ###clr_search_keyphrases()
 
-Function for extracting keyphrases from each text comprising a corpus based on tf-idf weights.  The methods and logic underlying this function are described in more detail [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
+Function for extracting key phrases from each text comprising a corpus based on tf-idf weights.  The methods and logic underlying this function are described in more detail [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
-The regex for keyphrase search:
+The regex for key phrase search:
 ```{r}
-clr_keyphrase
+clr_ref_keyphrase
 ```
 
 
-The use can specify the number of keyphrases to extract, 
+The user can specify the number of keyphrases to extract, how to aggregate key phrases, how to output key phrases, and whether or not to use jitter to break ties among top n key phrases.   
 
-For super small corpora (as our demo corpus is), results will likely be less favorable.
 ```{r}
 lingr_corpus %>%
   corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
-  head()
+  head()%>%
+  kable()
 ```
-
-
-##Multi-term search
-
-```{r}
-#multi-search <- c("")
-search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
-```
-
-
-##Corpus workflow with corpuslingr, cleanNLP, & magrittr
-
-```{r eval=FALSE, message=FALSE, warning=FALSE}
-corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
-  corpuslingr::clr_web_scrape(link_var='links') %>%
-  cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
-  corpuslingr::clr_set_corpus(doc_var='id', 
-                  token_var='word', 
-                  lemma_var='lemma', 
-                  tag_var='pos', 
-                  pos_var='upos',
-                  sentence_var='sid',
-                  NER_as_tag = FALSE) %>%
-  corpuslingr::clr_search_context(search=search2,LW=5, RW = 5)%>%
-  corpuslingr::clr_context_kwic()
-```
-
 
 

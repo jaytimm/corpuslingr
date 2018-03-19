@@ -1,90 +1,45 @@
-corpuslingr: an R package for complex corpus search and web-based corpus creation
-=================================================================================
-
-This package:
-
--   facilitates regex/CQL-based search across form, lemma, and detailed part-of-speech tags. Multi-term search is also supported. Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term.
-
--   facilitates quick/easy web scraping of news sources, as a dataframe in text interchange format...
-
-subsequently search the corpus for complex grammatical constructions utilizing search functionality akin to that made available in the [BYU suite of corpora]().
-
-The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
-
-Here, we walk through a simple workflow from corpus creation using `corpuslingr`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.
-
 ``` r
 library(tidyverse)
 library(cleanNLP)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
-```
-
-Web scraping functions
-----------------------
-
-The two web-based functions presented here more or less work in tandem.
-
-### clr\_web\_gnews()
-
-The first, `clr_web_gnews`, simply pulls metadata based on user-specified search paramaters from the GoogleNews RSS feed.
-
-``` r
-dailyMeta <- corpuslingr::clr_web_gnews (search="New Mexico",n=30)
-```
-
-Metadata include:
-
-    ## [1] "source"   "titles"   "links"    "pubdates" "date"
-
-First six article titles:
-
-``` r
-head(dailyMeta['titles'])
-##                                                                              titles
-## 2                        Legal Challenge Targets New Mexico Driver's License System
-## 3                        Publicly-Funded New Mexico Spaceport Seeks Confidentiality
-## 4 Indian Slavery Once Thrived in New Mexico. Latinos Are Finding Family Ties to It.
-## 5                      University of New Mexico Ranked 7th for Application Increase
-## 6                   New Mexico lawmaker seeks funding for school security | The ...
-## 7             New Mexico holds hundreds of people in prison past their release date
-```
-
-### clr\_web\_scrape()
-
-The second web-based function, `clr_web_scrape`, scrapes text from the web addresses included in the output from `clr_web_gnews` (or any vector that contains web addresses). The function returns a [TIF](https://github.com/ropensci/tif#text-interchange-formats)-compliant dataframe, with each scraped text represented as a single row. Metadata from output of `clr_web_gnews` are also included.
-
-Both functions depend on functionality made available in the `boilerpipeR`, `XML`, and `RCurl` packages.
-
-``` r
-nm_news <- dailyMeta %>% 
-  corpuslingr::clr_web_scrape(link_var='links')
+library(quicknews)#devtools::install_github("jaytimm/quicknews")
 ```
 
 Corpus preparation & annotation
 -------------------------------
+
+To demo the search functionality of `corpuslingr`, we first build a small corpus of current news articles using my `quicknews` package. We apply the `gnews_get_meta`/`gnews_scrape_web` functions across multiple Google News sections to build out the corpus some, and to add a genre-like dimension to the corpus.
+
+``` r
+topics <- c('nation','world', 'sports','science')
+
+corpus <- lapply(topics, function (x) {
+    quicknews::qnews_get_meta (language="en", country="us", type="topic", search=x)%>%
+    quicknews::qnews_scrape_web (link_var='link')})%>%
+  bind_rows() %>%
+  mutate(doc_id = as.character(row_number())) #Add doc_id
+```
 
 ### clr\_prep\_corpus
 
 This function performs two tasks. It elminates unnecessary whitespace from the text column of a corpus dataframe object. Additionally, it attempts to trick annotators into treating hyphenated words as a single token. With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens. For linguists interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
 
 ``` r
-nm_news <- nm_news %>% mutate(text = corpuslingr::clr_prep_corpus (text, hyphenate = TRUE))
+corpus <- clr_prep_corpus (corpus, hyphenate = TRUE)
 ```
 
 ### Annotate via cleanNLP and udpipe
 
-For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object. The `cleanNLP` package is fantastic -- the author has aggregated three different annotators (spacy, CoreNLP, and `udpipe`) into one convenient pacakge. There are pros/cons with each annotator; we won't get into these here.
-
-A benefit of `udpipe` is that it is dependency-free, making it super useful for classroom and demo purposes.
+For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object.
 
 ``` r
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
-ann_corpus <- cleanNLP::cnlp_annotate(nm_news$text, as_strings = TRUE) 
+ann_corpus <- cleanNLP::cnlp_annotate(corpus$text, as_strings = TRUE, doc_ids = corpus$doc_id) 
 ```
 
 ### clr\_set\_corpus()
 
-This function prepares the annotated corpus for complex, tuple-based search. Tuples are created, taking the form `<token,lemma,pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, making text processing easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.
+This function prepares the annotated corpus for complex, tuple-based search. Tuples are created, taking the form `<token~lemma~pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, making text processing easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.
 
 Lastly, the function splits the corpus into a list of dataframes by document. This is ultimately a search convenience.
 
@@ -96,85 +51,123 @@ lingr_corpus <- ann_corpus$token %>%
                   tag_var='pos', 
                   pos_var='upos',
                   sentence_var='sid',
-                  NER_as_tag = FALSE)
+                  meta = corpus[,c('doc_id','source','search')])
 ```
 
 ### clr\_desc\_corpus()
 
-A simple function for describing the corpus. As can be noted, not all of the user-specified (n=30) links were successfully scraped. Not all websites care to be scraped.
+A simple function for describing an annotated corpus, providing some basic aggregate statisitcs at the corpus, genre, and text levels.
 
 ``` r
-corpuslingr::clr_desc_corpus(lingr_corpus)$corpus
-##    n_docs textLength textType textSent
-## 1:     16      10842     2549      667
+summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id", sent="sentence_id", tok="token",upos='pos', genre="search")
 ```
 
-Text-based descritpives:
+Corpus summary:
 
 ``` r
-head(corpuslingr::clr_desc_corpus(lingr_corpus)$text)
+summary$corpus
+##    n_docs textLength textType textSent
+## 1:     64      61804     9684     2837
+```
+
+By genre:
+
+``` r
+summary$genre
+##           search n_docs textLength textType textSent
+## 1:  topic_nation     17      13158     3246      630
+## 2:   topic_world     16      15563     3952      663
+## 3:  topic_sports     19      23854     4271     1162
+## 4: topic_science     12       9229     2438      449
+```
+
+By text:
+
+``` r
+head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:  text1        289      177       14
-## 2: text10        963      404       61
-## 3: text11        540      268       32
-## 4: text12        338      188       18
-## 5: text13        643      334       29
-## 6: text14        985      448       48
+## 1:      1        182      121        8
+## 2:      2        613      290       25
+## 3:      3        173      109        7
+## 4:      4       1170      543       46
+## 5:      5        715      329       32
+## 6:      6        219      139        7
 ```
 
 Search & aggregation functions
 ------------------------------
 
-### A corpus querying language (CQL)
+### Basic search syntax
 
-A fairly crude corpus querying language is utilized/included in the package.
+The search syntax utilized here is modeled after the syntax implemented in the BYU suite of corpora. A full list of part-of-speech syntax can be viewed [here](https://github.com/jaytimm/corpuslingr/blob/master/data-raw/clr_ref_pos_syntax.csv).
 
-The CQL presented here consists of four basic elements. Individual search components are enclosed with `<>`, lemma search is specified using `&`, token search is specified using `!`, and part-of-speech search is specified using `_`. Additionally, parts-of-speech can be made generic/universal with the suffix `x`. So, a search for all nouns forms (NN, NNS, NNP, NNPS) would be specified by `_Nx`. All other regular expressions work in conjunction with these search expressions.
+``` r
+library(knitr)
+corpuslingr::clr_ref_search_egs %>% kable(escape=TRUE,caption = "Search syntax examples")
+```
+
+| type                                               | search\_syntax                                | example                                     |
+|:---------------------------------------------------|:----------------------------------------------|:--------------------------------------------|
+| Simple form search                                 | lime                                          | lime                                        |
+| Simple lemma search                                | DRINK                                         | drinks, drank, drinking                     |
+| Lemma with POS search                              | BARK~VERB                                     | barked, barking                             |
+| Simple phrasal search                              | in the long run                               | in the long run                             |
+| Phrasal search - POS/form                          | ADJ and ADJ                                   | happy and healthy, political and economical |
+| Phrasal search inc noun phrase                     | VERB NPHR into VBG                            | trick someone into believing                |
+| Phrasal search inc noun phrase                     | VERB PRP$ way PREP NPHR                       | make its way through the Senate             |
+| Suffix search                                      | \*tion                                        | defenestration, nation, retaliation         |
+| Infix search                                       | *break*                                       | breakable, heartbreaking                    |
+| Optional search w/ parens and ?                    | MD (NEG)? HAVE been                           | should have been, might not have been       |
+| Multiple term search w parens and |                | PRON (HOPE| WISH| DESIRE)                     | He hoped, they wish                         |
+| Wildcard                                           | \*                                            | ANYTHING                                    |
+| Indeterminate length search w brackets and min/max | NPHR BE \*{1,4} ADJ                           | He was very, very happy; I'm not sure       |
+| Noun phrase search - POS w regex                   | (?:(?:DET )?(?:ADJ )\*)?(?:((NOUNX )+|PRON )) | Bill Clinton, he, the red kite              |
+| Key phrase search - POS w regex                    | (ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?    | flowers in bloom, very purple couch         |
 
 ### clr\_search\_gramx()
 
 Search for all instantiaions of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search.
 
 ``` r
-search1 <- "<_Vx> <up!>"
+search1 <- "VERB (*)? up"
 
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   head ()
-##    doc_id         token     tag       lemma
-## 1: text10      stay up   VB IN     stay up 
-## 2: text10    teamed up  VBN RP     team up 
-## 3: text12     comes up  VBZ RP     come up 
-## 4: text15        is up  VBZ JJ       be up 
-## 5: text15   partner up   VB RP  partner up 
-## 6: text15 partnered up  VBD RP  partner up
+##    doc_id         token        tag        lemma
+## 1:      2  is forced up VBZ VBN RP  be force up
+## 2:      7       Sign up      VB RP      sign up
+## 3:      9  need help up  VBP VB RP need help up
+## 4:      9     jumped up     VBN RP      jump up
+## 5:     13     picked up     VBD RP      pick up
+## 6:     14 looking it up VBG PRP RP   look it up
 ```
 
 ### clr\_get\_freqs()
 
 A simple function for calculating text and token frequencies of search term(s). The `agg_var` parameter allows the user to specify how frequency counts are aggregated.
 
-Note: Generic nounphrases can be include as a search term. The regex for a generic nounphrase is below, and can be specified in the CQL query using `_NXP`.
+Note that generic noun phrases can be include as a search term (regex below), and can be specified in the query using `NPHR`.
 
 ``` r
-clr_nounphrase
-## [1] "(?:(?:<_DT> )?(?:<_Jx> )*)?(?:((<_Nx> )+|<_PRP> ))"
+clr_ref_nounphrase
+## [1] "(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON ))"
 ```
 
 ``` r
-search2 <- "<_NXP> <_Vx> <to!> <_Vx>"
+search2 <- "*tial NOUNX"
 
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
-  corpuslingr::clr_get_freq(agg_var = 'token')%>%
+  corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                                      token txtf docf
-## 1: DEMOCRATIC LAWMAKERS WANT TO ELIMINATE     3    1
-## 2:               THEY PREPARE TO RE-ENTER     2    2
-## 3:                       I WANT TO ASSURE     1    1
-## 4:       INDIAN CAPTIVES SOUGHT TO ESCAPE     1    1
-## 5:                     IT COMES TO RETURN     1    1
-## 6:  LOUISIANA LAWMAKERS VOTED TO CONTINUE     1    1
+##                    token txtf docf
+## 1: PRESIDENTIAL ELECTION    3    2
+## 2:     PRESIDENTIAL SEAT    2    1
+## 3:     PRESIDENTIAL TERM    2    2
+## 4:       INITIAL MELTING    1    1
+## 5:        INITIAL PUBLIC    1    1
+## 6:      POTENTIAL BUYERS    1    1
 ```
 
 ### clr\_search\_context()
@@ -182,7 +175,7 @@ lingr_corpus %>%
 A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe object.
 
 ``` r
-search3 <- '<_Jx> <and!> <_Jx>'
+search3 <- 'NPHR (do)? (NEG)? (THINK| BELIEVE )'
 
 found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=5, RW = 5)
 ```
@@ -193,93 +186,74 @@ Access `KWIC` object:
 
 ``` r
 found_egs %>%
-  corpuslingr::clr_context_kwic()%>%
-  head()
-##    doc_id                   lemma
-## 1: text10        third and fourth
-## 2: text11       public and tribal
-## 3: text11 irreversible and costly
-## 4: text11     efficient and safer
-## 5: text11  transparent and honest
-## 6: text11     fair and reasonable
-##                                                                                            kwic
-## 1:          1:00.30 ) finished second , <mark> third and fourth </mark> , respectively , at the
-## 2: emissions being wasted on our <mark> public and tribal </mark> lands yearly . These measures
-## 3: full of this without creating <mark> irreversible and costly </mark> issues . The New Mexico
-## 4:       Mining and to develop more <mark> efficient and safer </mark> methods of mineral . The
-## 5: operating in a responsible , <mark> transparent and honest </mark> . Every across New Mexico
-## 6:                  we leave as their . <mark> Fair and reasonable </mark> rules are in 's best
+  corpuslingr::clr_context_kwic()%>% #Add genre.
+  select(doc_id,kwic)%>%
+  slice(1:15)%>%
+  kable(escape=FALSE)
 ```
+
+| doc\_id | kwic                                                                                          |
+|:--------|:----------------------------------------------------------------------------------------------|
+| 13      | Mr. Trump wrote . " <mark> I do n't believe </mark> he made memos except to                   |
+| 13      | lied as well . So <mark> I do n't think </mark> this is the end of                            |
+| 15      | secret , family members and <mark> authorities believe </mark> . The girl had exchanged       |
+| 15      | " They were yelling about <mark> they think </mark> that Amy and Kevin are                    |
+| 15      | But during that time , <mark> investigators believe </mark> , Amy and Esterly were            |
+| 15      | Yu told CNN . " <mark> I think </mark> it was both of their                                   |
+| 22      | Malpass said . " So <mark> I think </mark> we have a context where                            |
+| 25      | people ? " Leo said <mark> he thought </mark> he 'd clarified the issue                       |
+| 25      | an anecdote ) : " <mark> You do n't believe </mark> you made a show of                        |
+| 27      | called Trump a moron , <mark> I think </mark> that was from the heart                         |
+| 32      | touring polling places . " <mark> I think </mark> there 's a lot more                         |
+| 37      | it can have , because <mark> I think </mark> it 's what this university                       |
+| 38      | that , as well . <mark> I think </mark> most of all it feels                                  |
+| 38      | there . " Harvick made <mark> the mistake thinking </mark> about potential points for winning |
+| 38      | " Larson said . " <mark> I thought </mark> he would be mad at                                 |
 
 ### clr\_context\_bow()
 
-Access `BOW` object:
+`agg_var` and `content_only` Access `BOW` object:
 
 ``` r
-search3 <- c('<Santa&> <Fe&>','<Albuquerque&>')
+search3 <- "White House"
 
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
-##    searchLemma       lemma cofreq
-## 1: ALBUQUERQUE         NEW     14
-## 2: ALBUQUERQUE      MEXICO     11
-## 3: ALBUQUERQUE        N.M.     10
-## 4: ALBUQUERQUE        2018      6
-## 5: ALBUQUERQUE ALBUQUERQUE      6
-## 6: ALBUQUERQUE        MORE      5
+##    searchLemma  lemma cofreq
+## 1: WHITE HOUSE    SAY     10
+## 2: WHITE HOUSE  TRUMP      5
+## 3: WHITE HOUSE OPIOID      4
+## 4: WHITE HOUSE BANNON      3
+## 5: WHITE HOUSE    MR.      3
+## 6: WHITE HOUSE REDUCE      3
 ```
 
 ### clr\_search\_keyphrases()
 
-Function for extracting keyphrases for each text in a corpus based on tf-idf weights. The methods and logic underlying this function are described in more detail [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
+Function for extracting key phrases from each text comprising a corpus based on tf-idf weights. The methods and logic underlying this function are described in more detail [here](https://www.jtimm.net/blog/keyphrase-extraction-from-a-corpus-of-texts/).
 
-The regex for keyphrase search:
+The regex for key phrase search:
 
 ``` r
-clr_keyphrase
-## [1] "(<_JJ> )*(<_N[A-Z]{1,10}> )+((<_IN> )(<_JJ> )*(<_N[A-Z]{1,10}> )+)?"
+clr_ref_keyphrase
+## [1] "(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?"
 ```
 
-The use can specify the number of keyphrases to extract,
-
-For super small corpora (as our demo corpus is), results will likely be less favorable.
+The user can specify the number of keyphrases to extract, how to aggregate key phrases, how to output key phrases, and whether or not to use jitter to break ties among top n key phrases.
 
 ``` r
 lingr_corpus %>%
   corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
-  head()
-##    doc_id                                                     keyphrases
-## 1:  text1         Morale | meals on wheels | Services | senior | Office 
-## 2: text10                 Aggy | event | Lobos | individual win | diver 
-## 3: text11                lands | measure | dollar | Martinez | resource 
-## 4: text12 point | Colorado State | Rams | minute | Wyoming on Wednesday 
-## 5: text13         slave | Americas | Trujillo | indian captive | origin 
-## 6: text14  Valencia | inmate | document | corrections Department | July
+  head()%>%
+  kable()
 ```
 
-Multi-term search
------------------
-
-``` r
-#multi-search <- c("")
-search6 <- "<_xNP> (<wish&> |<hope&> |<believe&> )"
-```
-
-Corpus workflow with corpuslingr, cleanNLP, & magrittr
-------------------------------------------------------
-
-``` r
-corpuslingr::clr_web_gnews(search="New Mexico",n=30) %>%
-  corpuslingr::clr_web_scrape(link_var='links') %>%
-  cleanNLP::cnlp_annotate(as_strings = TRUE) %>%
-  corpuslingr::clr_set_corpus(doc_var='id', 
-                  token_var='word', 
-                  lemma_var='lemma', 
-                  tag_var='pos', 
-                  pos_var='upos',
-                  sentence_var='sid',
-                  NER_as_tag = FALSE) %>%
-  corpuslingr::clr_search_context(search=search2,LW=5, RW = 5)%>%
-  corpuslingr::clr_context_kwic()
-```
+| doc\_id | keyphrases                                                                  |
+|:--------|:----------------------------------------------------------------------------|
+| 1       | boy | office | Colorado Springs | El Paso County | undisclosed location     |
+| 10      | attack | Phelan | Thomas Phelan | heroism | World Trade Center on September |
+| 11      | Cambridge Analytica | Facebook | Mr. Wylie | company | data                 |
+| 12      | Mr. Cruz | deputy Peterson | sheriff | deputy | Sept.                       |
+| 13      | Mr. Mueller | Mr. Trump | Mr. McCabe | Comey | director                     |
+| 14      | White | video | Rothschilds | D-Ward | resilient city                       |
