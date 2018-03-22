@@ -81,7 +81,7 @@ Corpus summary:
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     68      54470     9055     2440
+## 1:     67      50694     8550     2249
 ```
 
 By genre:
@@ -89,9 +89,9 @@ By genre:
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     15      10982     2743      517
-## 2:   topic_world     18      12694     3451      522
-## 3:  topic_sports     19      19898     3959      990
+## 1:  topic_nation     15      10750     2658      483
+## 2:   topic_world     17      10452     2892      459
+## 3:  topic_sports     19      18596     3806      914
 ## 4: topic_science     16      10896     2926      520
 ```
 
@@ -102,10 +102,10 @@ head(summary$text)
 ##    doc_id textLength textType textSent
 ## 1:      1        780      336       48
 ## 2:      2        462      228       22
-## 3:      3        579      274       28
-## 4:      4       1270      522       53
-## 5:      5        740      306       36
-## 6:      6        570      250       30
+## 3:      3       1567      566       63
+## 4:      4        579      274       28
+## 5:      5       1270      522       53
+## 6:      6        567      291       23
 ```
 
 Search & aggregation functions
@@ -346,12 +346,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                    token txtf docf
-## 1: PRESIDENTIAL ELECTION    4    4
-## 2:          MARTIAL ARTS    3    1
+## 1:          MARTIAL ARTS    3    1
+## 2: PRESIDENTIAL ELECTION    3    3
 ## 3:        CELESTIAL BODY    2    1
-## 4:       MARTIAL ARTISTS    1    1
-## 5:  POTENTIAL EXEMPTIONS    1    1
-## 6:      POTENTIAL PRISON    1    1
+## 4:          INITIAL PLAN    2    1
+## 5:    ESSENTIAL SUPPLIES    1    1
+## 6:      INITIAL RESPONSE    1    1
 ```
 
 ### clr\_search\_context()
@@ -373,143 +373,84 @@ found_egs %>%
   corpuslingr::clr_context_kwic()%>% #Add genre.
   select(doc_id,kwic)%>%
   slice(1:15)%>%
-  kable(escape=TRUE, format = "html")
+  kable(escape=FALSE, format = "markdown")
 ```
 
-<table>
+<table style="width:100%;">
+<colgroup>
+<col width="7%" />
+<col width="92%" />
+</colgroup>
 <thead>
-<tr>
-<th style="text-align:left;">
-doc\_id
-</th>
-<th style="text-align:left;">
-kwic
-</th>
+<tr class="header">
+<th align="left">doc_id</th>
+<th align="left">kwic</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-the network , explaining that &lt;mark&gt; he believed &lt;/mark&gt; Fox News had become a
-</td>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">the network , explaining that <mark> he believed </mark> Fox News had become a</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-branches of government and said &lt;mark&gt; he believed &lt;/mark&gt; Fox News was knowingly causing
-</td>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">branches of government and said <mark> he believed </mark> Fox News was knowingly causing</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-the fire , tweeting that &lt;mark&gt; she thought &lt;/mark&gt; Smith 's comments were "
-</td>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">the fire , tweeting that <mark> she thought </mark> Smith 's comments were &quot;</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-11
-</td>
-<td style="text-align:left;">
-reading the main story " &lt;mark&gt; You do n't believe &lt;/mark&gt; that surrogates from the Trump
-</td>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">&quot; It 's remarkable . <mark> I do n't think </mark> it 's ever occurred in</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-11
-</td>
-<td style="text-align:left;">
-Sessions replied . " And &lt;mark&gt; I do n't believe &lt;/mark&gt; it happened . " That
-</td>
+<tr class="odd">
+<td align="left">12</td>
+<td align="left">reading the main story &quot; <mark> You do n't believe </mark> that surrogates from the Trump</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-12
-</td>
-<td style="text-align:left;">
-We have argued , and &lt;mark&gt; I think &lt;/mark&gt; successfully , that the European
-</td>
+<tr class="even">
+<td align="left">12</td>
+<td align="left">Sessions replied . &quot; And <mark> I do n't believe </mark> it happened . &quot; That</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-12
-</td>
-<td style="text-align:left;">
-We have argued , and &lt;mark&gt; I think &lt;/mark&gt; successfully , that the European
-</td>
+<tr class="odd">
+<td align="left">13</td>
+<td align="left">We have argued , and <mark> I think </mark> successfully , that the European</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-before fatally shooting Clark . &lt;mark&gt; The gun officers thought &lt;/mark&gt; Clark had in his hand
-</td>
+<tr class="even">
+<td align="left">13</td>
+<td align="left">We have argued , and <mark> I think </mark> successfully , that the European</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-Police Department said the man &lt;mark&gt; they believed &lt;/mark&gt; was breaking windows was the
-</td>
+<tr class="odd">
+<td align="left">15</td>
+<td align="left">before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-produced by the Bee . &lt;mark&gt; She believes &lt;/mark&gt; another suspect was smashing windows
-</td>
+<tr class="even">
+<td align="left">15</td>
+<td align="left">Police Department said the man <mark> they believed </mark> was breaking windows was the</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-they are resisting or if &lt;mark&gt; police think &lt;/mark&gt; a weapon is present ,
-</td>
+<tr class="odd">
+<td align="left">15</td>
+<td align="left">produced by the Bee . <mark> She believes </mark> another suspect was smashing windows</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-17
-</td>
-<td style="text-align:left;">
-and do my thing . &lt;mark&gt; I think &lt;/mark&gt; I can catch him late
-</td>
+<tr class="even">
+<td align="left">15</td>
+<td align="left">they are resisting or if <mark> police think </mark> a weapon is present ,</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-21
-</td>
-<td style="text-align:left;">
-I have not participated , &lt;mark&gt; I think &lt;/mark&gt; it 's in the country
-</td>
+<tr class="odd">
+<td align="left">16</td>
+<td align="left">the venues , yes , <mark> I think </mark> the comparison with 1936 is</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-24
-</td>
-<td style="text-align:left;">
-. Mr. Olmert contended that &lt;mark&gt; Mr. Barak believed &lt;/mark&gt; Mr. Olmert would soon have
-</td>
+<tr class="even">
+<td align="left">16</td>
+<td align="left">is certainly right . &quot; <mark> I think </mark> it is an emetic prospect</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-29
-</td>
-<td style="text-align:left;">
-'s top diplomat . " &lt;mark&gt; I think &lt;/mark&gt; the comparison to 1936 is
-</td>
+<tr class="odd">
+<td align="left">16</td>
+<td align="left">beyond common sense . And <mark> we do not think </mark> British war veterans - including</td>
 </tr>
 </tbody>
 </table>
+
 ### clr\_context\_bow()
 
 A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to ....
@@ -521,12 +462,12 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
 ##    searchLemma          lemma cofreq
-## 1: WHITE HOUSE            SAY      4
-## 2: WHITE HOUSE     ALLEGATION      2
-## 3: WHITE HOUSE       OFFICIAL      2
-## 4: WHITE HOUSE          TRUMP      2
-## 5: WHITE HOUSE           WEEK      2
-## 6: WHITE HOUSE #AUSTINBOMBING      1
+## 1: WHITE HOUSE     ALLEGATION      2
+## 2: WHITE HOUSE          TRUMP      2
+## 3: WHITE HOUSE           WEEK      2
+## 4: WHITE HOUSE         ACCORD      1
+## 5: WHITE HOUSE ADMINISTRATION      1
+## 6: WHITE HOUSE         AFFAIR      1
 ```
 
 ### clr\_search\_keyphrases()
@@ -566,7 +507,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-network | Peters | note | CNN | matter
+network | Peters | note | comment | CNN
 </td>
 </tr>
 <tr>
@@ -574,7 +515,7 @@ network | Peters | note | CNN | matter
 10
 </td>
 <td style="text-align:left;">
-teacher | percent | school | school shootings | school shooting
+Daniels | Avenatti | Cohen | last week | CNN
 </td>
 </tr>
 <tr>
@@ -582,7 +523,7 @@ teacher | percent | school | school shootings | school shooting
 11
 </td>
 <td style="text-align:left;">
-Mr. Sessions | Mr. Trump | Mr. Mueller | russian government | contact
+suspect | Border Protection | pound of cocaine | airline worker | pound
 </td>
 </tr>
 <tr>
@@ -590,7 +531,7 @@ Mr. Sessions | Mr. Trump | Mr. Mueller | russian government | contact
 12
 </td>
 <td style="text-align:left;">
-European Union | tariff | United States | steel | aluminum
+Mr. Sessions | Mr. Trump | Mr. Mueller | Mr. McCabe | Russians
 </td>
 </tr>
 <tr>
@@ -598,7 +539,7 @@ European Union | tariff | United States | steel | aluminum
 13
 </td>
 <td style="text-align:left;">
-Mr. Paddock | Mandalay Bay | clip | video | privacy
+European Union | United States | tariff | steel | aluminum
 </td>
 </tr>
 <tr>
@@ -606,7 +547,7 @@ Mr. Paddock | Mandalay Bay | clip | video | privacy
 14
 </td>
 <td style="text-align:left;">
-bombing | race | color | motive | Charlottesville
+Mr. Paddock | Mandalay Bay | clip | video | frame
 </td>
 </tr>
 </tbody>
