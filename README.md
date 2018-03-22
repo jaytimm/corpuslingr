@@ -3,7 +3,7 @@ corpuslingr
 
 The main function of this library is to enable complex search of an annotated corpus akin to search functionality made available via `RegexpParser` in Python's Natural Language Toolkit (NLTK). While regex-based, search syntax has been simplified, and modeled after the more intuitive syntax used in the online BYU suite of corpora.
 
-Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Functions allow users to specify how search results are aggregated. Search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
+Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Functions allow users to specify how search results are aggregated. Importantly, search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
 
 The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
 
@@ -81,7 +81,7 @@ Corpus summary:
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     66      51974     8716     2260
+## 1:     66      52007     8655     2321
 ```
 
 By genre:
@@ -89,10 +89,10 @@ By genre:
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     17      13524     3190      625
-## 2:   topic_world     16      10528     2997      431
-## 3:  topic_sports     17      17320     3594      857
-## 4: topic_science     16      10602     2893      488
+## 1:  topic_nation     17      14065     3304      659
+## 2:   topic_world     16       9665     2784      412
+## 3:  topic_sports     18      18690     3748      915
+## 4: topic_science     15       9587     2733      448
 ```
 
 By text:
@@ -103,9 +103,9 @@ head(summary$text)
 ## 1:      1        878      363       34
 ## 2:      2        780      336       48
 ## 3:      3        937      426       49
-## 4:      4        579      274       28
-## 5:      5        710      278       25
-## 6:      6       1270      522       53
+## 4:      4        462      228       22
+## 5:      5        579      274       28
+## 6:      6        710      278       25
 ```
 
 Search & aggregation functions
@@ -182,12 +182,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                      token txtf docf
-## 1:   PRESIDENTIAL ELECTION    4    3
-## 2:            MARTIAL ARTS    3    1
-## 3:     POTENTIAL CONFLICTS    2    1
-## 4: CONFIDENTIAL STRATEGIES    1    1
-## 5:      ESSENTIAL INDUSTRY    1    1
-## 6:    INITIAL NEGOTIATIONS    1    1
+## 1:   PRESIDENTIAL ELECTION    5    4
+## 2:     POTENTIAL CONFLICTS    2    1
+## 3: CONFIDENTIAL STRATEGIES    1    1
+## 4:      ESSENTIAL INDUSTRY    1    1
+## 5:    INITIAL NEGOTIATIONS    1    1
+## 6:        INITIAL REACTION    1    1
 ```
 
 ### clr\_search\_context()
@@ -214,21 +214,21 @@ found_egs %>%
 
 | doc\_id | kwic                                                                                          |
 |:--------|:----------------------------------------------------------------------------------------------|
-| 14      | reading the main story " <mark> You do n't believe </mark> that surrogates from the Trump     |
-| 14      | Sessions replied . " And <mark> I do n't believe </mark> it happened . " That                 |
+| 11      | " It 's remarkable . <mark> I do n't think </mark> it 's ever occurred in                     |
+| 13      | reading the main story " <mark> You do n't believe </mark> that surrogates from the Trump     |
+| 13      | Sessions replied . " And <mark> I do n't believe </mark> it happened . " That                 |
 | 17      | before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand |
 | 17      | Police Department said the man <mark> they believed </mark> was breaking windows was the      |
 | 17      | produced by the Bee . <mark> She believes </mark> another suspect was smashing windows        |
 | 17      | they are resisting or if <mark> police think </mark> a weapon is present ,                    |
-| 18      | . " Contrary to what <mark> some people thought </mark> , Cassidy pointed out ,               |
 | 2       | the network , explaining that <mark> he believed </mark> Fox News had become a                |
 | 2       | branches of government and said <mark> he believed </mark> Fox News was knowingly causing     |
 | 2       | the fire , tweeting that <mark> she thought </mark> Smith 's comments were "                  |
-| 20      | and do my thing . <mark> I think </mark> I can catch him late                                 |
-| 26      | . Mr. Olmert contended that <mark> Mr. Barak believed </mark> Mr. Olmert would soon have      |
-| 27      | We have argued , and <mark> I think </mark> successfully , that the European                  |
-| 27      | We have argued , and <mark> I think </mark> successfully , that the European                  |
-| 33      | 's top diplomat . " <mark> I think </mark> the comparison to 1936 is                          |
+| 21      | approach is closer to how <mark> Trump thought </mark> the job would be than                  |
+| 21      | we might stipulate , because <mark> he thinks </mark> it will yield the best                  |
+| 21      | I know , some of <mark> you believe </mark> it 's because Putin is                            |
+| 21      | made a nefarious deal . <mark> I do n't think </mark> Trump 's motives matter here            |
+| 25      | . Mr. Olmert contended that <mark> Mr. Barak believed </mark> Mr. Olmert would soon have      |
 
 ### clr\_context\_bow()
 
@@ -241,12 +241,12 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
 ##    searchLemma          lemma cofreq
-## 1: WHITE HOUSE          TRUMP      3
-## 2: WHITE HOUSE ADMINISTRATION      2
-## 3: WHITE HOUSE        KUSHNER      2
-## 4: WHITE HOUSE         APOLLO      1
-## 5: WHITE HOUSE          BRIEF      1
-## 6: WHITE HOUSE       BUSINESS      1
+## 1: WHITE HOUSE          TRUMP      4
+## 2: WHITE HOUSE           LAST      3
+## 3: WHITE HOUSE      PRESIDENT      3
+## 4: WHITE HOUSE ADMINISTRATION      2
+## 5: WHITE HOUSE     ALLEGATION      2
+## 6: WHITE HOUSE         BRANCH      2
 ```
 
 ### clr\_search\_keyphrases()
@@ -265,15 +265,69 @@ The user can specify the number of keyphrases to extract, how to aggregate key p
 ``` r
 lingr_corpus %>%
   corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
-  head(escape=FALSE)%>%
-  kable()
+  head()%>%
+  kable(escape=FALSE, format = "html")
 ```
 
-| doc\_id | keyphrases                                                                     |
-|:--------|:-------------------------------------------------------------------------------|
-| 1       | loan | letter | Kushner Companies | Citi | transaction                         |
-| 10      | suspect | pound of cocaine | airline worker | Border Protection | CNN          |
-| 11      | teacher | percent | school | school shootings | public school                  |
-| 12      | vehicle | suspect | Manley | Conditt | bomb                                    |
-| 13      | spending bill | bill | government | legislation | lawmaker                     |
-| 14      | Mr. Sessions | Mr. Trump | Mr. Mueller | russian government | Mr. Papadopoulos |
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+doc\_id
+</th>
+<th style="text-align:left;">
+keyphrases
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+loan | letter | Kushner Companies | Citi | transaction
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+Trump | Biden | President | United States | most presidents
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+Daniels | Avenatti | Cohen | CNN | New Day
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+teacher | percent | school | school shootings | percent of teacher
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+Mr. Sessions | Mr. Trump | Mr. Mueller | news report | Trump campaign
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+Mr. Paddock | Mandalay Bay | clip | video | smudge
+</td>
+</tr>
+</tbody>
+</table>
