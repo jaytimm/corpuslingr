@@ -81,7 +81,7 @@ Corpus summary:
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     68      55044     8782     2485
+## 1:     69      53095     8813     2273
 ```
 
 By genre:
@@ -89,10 +89,10 @@ By genre:
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     16      13303     3055      621
-## 2:   topic_world     18      11213     3082      479
-## 3:  topic_sports     19      20941     3960     1026
-## 4: topic_science     15       9587     2733      448
+## 1:  topic_nation     17      15024     3578      631
+## 2:   topic_world     18      12982     3392      539
+## 3:  topic_sports     18      14870     3235      732
+## 4: topic_science     16      10219     2751      487
 ```
 
 By text:
@@ -100,12 +100,12 @@ By text:
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        356      184       26
-## 2:      2        878      363       34
-## 3:      3        780      336       48
-## 4:      4        396      238       14
-## 5:      5        462      228       22
-## 6:      6        579      274       28
+## 1:      1       1186      554       41
+## 2:      2        723      282       30
+## 3:      3        579      274       28
+## 4:      4       1270      522       53
+## 5:      5        358      183       19
+## 6:      6        938      415       46
 ```
 
 Search & aggregation functions
@@ -313,18 +313,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token         tag    lemma        
-##    <chr>  <chr>         <chr>  <chr>        
-##  1 1      hit by        VBN IN hit by       
-##  2 1      got into      VBD IN get into     
-##  3 1      got into      VBD IN get into     
-##  4 1      was out       VBD IN be out       
-##  5 1      gotten into   VBN IN get into     
-##  6 1      jumped in     VBD IN jump in      
-##  7 1      drove through VBD IN drive through
-##  8 1      described as  VBN IN describe as  
-##  9 1      taken to      VBN IN take to      
-## 10 1      looking into  VBG IN look into
+##    doc_id token              tag    lemma            
+##    <chr>  <chr>              <chr>  <chr>            
+##  1 1      vote on            VB IN  vote on          
+##  2 1      vote on            VB IN  vote on          
+##  3 1      evening after      VBG IN evening after    
+##  4 1      debated throughout VBD IN debate throughout
+##  5 1      look like          VB IN  look like        
+##  6 1      lamenting that     VBG IN lament that      
+##  7 1      's in              VBZ IN be in            
+##  8 1      speculated that    VBD IN speculate that   
+##  9 1      vote on            VB IN  vote on          
+## 10 1      visit by           VB IN  visit by
 ```
 
 ### clr\_get\_freqs()
@@ -346,12 +346,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                      token txtf docf
-## 1:   PRESIDENTIAL ELECTION    4    4
-## 2:     POTENTIAL CONFLICTS    2    1
-## 3: CONFIDENTIAL STRATEGIES    1    1
-## 4:    INITIAL NEGOTIATIONS    1    1
-## 5:        INITIAL REACTION    1    1
-## 6:       POTENTIAL RESULTS    1    1
+## 1:   PRESIDENTIAL ELECTION    5    5
+## 2:          CELESTIAL BODY    2    1
+## 3:    POTENTIAL EXEMPTIONS    2    2
+## 4: PRESIDENTIAL MEMORANDUM    2    2
+## 5: CONFIDENTIAL STRATEGIES    1    1
+## 6:    INITIAL NEGOTIATIONS    1    1
 ```
 
 ### clr\_search\_context()
@@ -373,27 +373,143 @@ found_egs %>%
   corpuslingr::clr_context_kwic()%>% #Add genre.
   select(doc_id,kwic)%>%
   slice(1:15)%>%
-  kable(escape=FALSE)
+  kable(escape=FALSE, format = "html")
 ```
 
-| doc\_id | kwic                                                                                          |
-|:--------|:----------------------------------------------------------------------------------------------|
-| 11      | " It 's remarkable . <mark> I do n't think </mark> it 's ever occurred in                     |
-| 13      | reading the main story " <mark> You do n't believe </mark> that surrogates from the Trump     |
-| 13      | Sessions replied . " And <mark> I do n't believe </mark> it happened . " That                 |
-| 15      | still opposed to it . <mark> I think </mark> President Trump was right when                   |
-| 16      | before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand |
-| 16      | Police Department said the man <mark> they believed </mark> was breaking windows was the      |
-| 16      | produced by the Bee . <mark> She believes </mark> another suspect was smashing windows        |
-| 16      | they are resisting or if <mark> police think </mark> a weapon is present ,                    |
-| 21      | approach is closer to how <mark> Trump thought </mark> the job would be than                  |
-| 21      | we might stipulate , because <mark> he thinks </mark> it will yield the best                  |
-| 21      | I know , some of <mark> you believe </mark> it 's because Putin is                            |
-| 21      | made a nefarious deal . <mark> I do n't think </mark> Trump 's motives matter here            |
-| 24      | . Mr. Olmert contended that <mark> Mr. Barak believed </mark> Mr. Olmert would soon have      |
-| 25      | We have argued , and <mark> I think </mark> successfully , that the European                  |
-| 25      | We have argued , and <mark> I think </mark> successfully , that the European                  |
-
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+doc\_id
+</th>
+<th style="text-align:left;">
+kwic
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+a campaign surrogate . " <mark> You do n't believe </mark> that surrogates from the Trump
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+Sessions replied . " And <mark> I do n't believe </mark> it happened . " That
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+gun . Eighty-four percent of <mark> Republicans believe </mark> people on the  "
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+Police Department said the man <mark> they believed </mark> was breaking windows was the
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+produced by the Bee . <mark> She believes </mark> another suspect was smashing windows
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+they are resisting or if <mark> police think </mark> a weapon is present ,
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+" certainly right . " <mark> I think </mark> the comparison with 1936 is
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+approach is closer to how <mark> Trump thought </mark> the job would be than
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+we might stipulate , because <mark> he thinks </mark> it will yield the best
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+I know , some of <mark> you believe </mark> it 's because Putin is
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+made a nefarious deal . <mark> I do n't think </mark> Trump 's motives matter here
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
+I have not participated , <mark> I think </mark> it 's in the country
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+26
+</td>
+<td style="text-align:left;">
+. Mr. Olmert contended that <mark> Mr. Barak believed </mark> Mr. Olmert would soon have
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Orange County Register . " <mark> I think </mark> they were spot-on , that
+</td>
+</tr>
+</tbody>
+</table>
 ### clr\_context\_bow()
 
 A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to ....
@@ -404,13 +520,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
-##    searchLemma          lemma cofreq
-## 1: WHITE HOUSE          TRUMP      7
-## 2: WHITE HOUSE      PRESIDENT      5
-## 3: WHITE HOUSE           LAST      3
-## 4: WHITE HOUSE          PRESS      3
-## 5: WHITE HOUSE         SENIOR      3
-## 6: WHITE HOUSE ADMINISTRATION      2
+##    searchLemma      lemma cofreq
+## 1: WHITE HOUSE        SAY      8
+## 2: WHITE HOUSE   OFFICIAL      4
+## 3: WHITE HOUSE      MARCH      3
+## 4: WHITE HOUSE      TRUMP      3
+## 5: WHITE HOUSE        AIM      2
+## 6: WHITE HOUSE ALLEGATION      2
 ```
 
 ### clr\_search\_keyphrases()
@@ -450,7 +566,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-car | investigator | police | victim | man
+omnibus | bill | Democrats | Trump | lawmaker
 </td>
 </tr>
 <tr>
@@ -458,7 +574,7 @@ car | investigator | police | victim | man
 10
 </td>
 <td style="text-align:left;">
-Trump | Biden | President | United States | tough guy
+teacher | percent | school | school shootings | public school
 </td>
 </tr>
 <tr>
@@ -466,7 +582,7 @@ Trump | Biden | President | United States | tough guy
 11
 </td>
 <td style="text-align:left;">
-Daniels | Avenatti | Cohen | CNN | thuggish behavior
+Mr. Sessions | Mr. McCabe | investigation | Mr. Trump | Mr. Mueller
 </td>
 </tr>
 <tr>
@@ -474,7 +590,7 @@ Daniels | Avenatti | Cohen | CNN | thuggish behavior
 12
 </td>
 <td style="text-align:left;">
-teacher | percent | school | school shootings | school shooting
+Mr. Paddock | Mandalay Bay | clip | video | complete picture to date
 </td>
 </tr>
 <tr>
@@ -482,7 +598,7 @@ teacher | percent | school | school shootings | school shooting
 13
 </td>
 <td style="text-align:left;">
-Mr. Sessions | Mr. Trump | Mr. Mueller | russian government | attorney general
+url | id | text | mobile\_url | gun
 </td>
 </tr>
 <tr>
@@ -490,7 +606,7 @@ Mr. Sessions | Mr. Trump | Mr. Mueller | russian government | attorney general
 14
 </td>
 <td style="text-align:left;">
-bombing | race | \#AustinBombing | terrorism | bomb
+China | European Union | tariff | global trade war | Lighthizer
 </td>
 </tr>
 </tbody>
