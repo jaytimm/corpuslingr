@@ -1,9 +1,22 @@
+corpuslingr
+===========
+
+The main function of this library is to enable complex search of an annotated corpus akin to search functionality made available via `RegexpParser` in Python's Natural Language Toolkit (NLTK). While regex-based, search syntax has been simplified, and modeled after the more intuitive syntax used in the online BYU suite of corpora.
+
+Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Functions allow users to specify how search results are aggregated. Search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
+
+The package additionally automates the extraction of key phrases from a corpus of texts.
+
+The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
+
 ``` r
 library(tidyverse)
 library(cleanNLP)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 library(quicknews)#devtools::install_github("jaytimm/quicknews")
 ```
+
+Here, we walk through a simple workflow from corpus creation using `quicknews`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.
 
 Corpus preparation & annotation
 -------------------------------
@@ -39,7 +52,9 @@ ann_corpus <- cleanNLP::cnlp_annotate(corpus$text, as_strings = TRUE, doc_ids = 
 
 ### clr\_set\_corpus()
 
-This function prepares the annotated corpus for complex, tuple-based search. Tuples are created, taking the form `<token~lemma~pos>`; tuple onsets/offsets are also set. Annotation output is homogenized, including column names, making text processing easier 'downstream.' Naming conventions established in the `spacyr` package are adopted here.
+This function prepares the annotated corpus for complex, tuple-based search. Tuples are created, taking the form `<token~lemma~pos>`; tuple onsets/offsets are also set.
+
+Annotation output is homogenized, including column names. Naming conventions established in the `spacyr` package are adopted here.
 
 Lastly, the function splits the corpus into a list of dataframes by document. This is ultimately a search convenience.
 
@@ -59,7 +74,8 @@ lingr_corpus <- ann_corpus$token %>%
 A simple function for describing an annotated corpus, providing some basic aggregate statisitcs at the corpus, genre, and text levels.
 
 ``` r
-summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id", sent="sentence_id", tok="token",upos='pos', genre="search")
+summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id", 
+                        sent="sentence_id", tok="token",upos='pos', genre="search")
 ```
 
 Corpus summary:
@@ -67,7 +83,7 @@ Corpus summary:
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     64      61804     9684     2837
+## 1:     64      47490     8330     2096
 ```
 
 By genre:
@@ -75,10 +91,10 @@ By genre:
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     17      13158     3246      630
-## 2:   topic_world     16      15563     3952      663
-## 3:  topic_sports     19      23854     4271     1162
-## 4: topic_science     12       9229     2438      449
+## 1:  topic_nation     16      14423     3427      674
+## 2:   topic_world     15       9369     2757      385
+## 3:  topic_sports     17      13096     2968      653
+## 4: topic_science     16      10602     2893      488
 ```
 
 By text:
@@ -86,12 +102,12 @@ By text:
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        182      121        8
-## 2:      2        613      290       25
-## 3:      3        173      109        7
-## 4:      4       1170      543       46
-## 5:      5        715      329       32
-## 6:      6        219      139        7
+## 1:      1        780      336       48
+## 2:      2        622      247       31
+## 3:      3        723      282       30
+## 4:      4        579      274       28
+## 5:      5        710      278       25
+## 6:      6       1270      522       53
 ```
 
 Search & aggregation functions
@@ -99,7 +115,7 @@ Search & aggregation functions
 
 ### Basic search syntax
 
-The search syntax utilized here is modeled after the syntax implemented in the BYU suite of corpora. A full list of part-of-speech syntax can be viewed [here](https://github.com/jaytimm/corpuslingr/blob/master/data-raw/clr_ref_pos_syntax.csv).
+The search syntax utilized here is modeled after the syntax implemented in the [BYU suite of corpora](https://corpus.byu.edu/). A full list of part-of-speech syntax can be viewed [here](https://github.com/jaytimm/corpuslingr/blob/master/data-raw/clr_ref_pos_syntax.csv).
 
 ``` r
 library(knitr)
@@ -129,18 +145,24 @@ corpuslingr::clr_ref_search_egs %>% kable(escape=TRUE,caption = "Search syntax e
 Search for all instantiaions of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search.
 
 ``` r
-search1 <- "VERB (*)? up"
+search1 <- "VERB (PRON)? PREP| RP"
 
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
-  head ()
-##    doc_id         token        tag        lemma
-## 1:      2  is forced up VBZ VBN RP  be force up
-## 2:      7       Sign up      VB RP      sign up
-## 3:      9  need help up  VBP VB RP need help up
-## 4:      9     jumped up     VBN RP      jump up
-## 5:     13     picked up     VBD RP      pick up
-## 6:     14 looking it up VBG PRP RP   look it up
+  slice(1:10)
+## # A tibble: 10 x 4
+##    doc_id token           tag    lemma       
+##    <chr>  <chr>           <chr>  <chr>       
+##  1 1      network as      VBP IN network as  
+##  2 1      gathered in     VBD IN gather in   
+##  3 1      boasted about   VBD IN boast about 
+##  4 1      bragged about   VBD IN brag about  
+##  5 1      sent by         VBN IN send by     
+##  6 1      leaked to       VBD IN leake to    
+##  7 1      said that       VBD IN say that    
+##  8 1      explaining that VBG IN explain that
+##  9 1      hit like        VBZ IN hit like    
+## 10 1      spoke on        VBD IN speak on
 ```
 
 ### clr\_get\_freqs()
@@ -161,13 +183,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                    token txtf docf
-## 1: PRESIDENTIAL ELECTION    3    2
-## 2:     PRESIDENTIAL SEAT    2    1
-## 3:     PRESIDENTIAL TERM    2    2
-## 4:       INITIAL MELTING    1    1
-## 5:        INITIAL PUBLIC    1    1
-## 6:      POTENTIAL BUYERS    1    1
+##                      token txtf docf
+## 1:   PRESIDENTIAL ELECTION    2    2
+## 2: CONFIDENTIAL STRATEGIES    1    1
+## 3:    INITIAL NEGOTIATIONS    1    1
+## 4:        INITIAL REACTION    1    1
+## 5:          POTENTIAL LEAD    1    1
+## 6:  PRESIDENTIAL CANDIDATE    1    1
 ```
 
 ### clr\_search\_context()
@@ -175,7 +197,7 @@ lingr_corpus %>%
 A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe object.
 
 ``` r
-search3 <- 'NPHR (do)? (NEG)? (THINK| BELIEVE )'
+search3 <- 'NPHR (DO)? (NEG)? (THINK| BELIEVE )'
 
 found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=5, RW = 5)
 ```
@@ -194,25 +216,25 @@ found_egs %>%
 
 | doc\_id | kwic                                                                                          |
 |:--------|:----------------------------------------------------------------------------------------------|
-| 13      | Mr. Trump wrote . " <mark> I do n't believe </mark> he made memos except to                   |
-| 13      | lied as well . So <mark> I do n't think </mark> this is the end of                            |
-| 15      | secret , family members and <mark> authorities believe </mark> . The girl had exchanged       |
-| 15      | " They were yelling about <mark> they think </mark> that Amy and Kevin are                    |
-| 15      | But during that time , <mark> investigators believe </mark> , Amy and Esterly were            |
-| 15      | Yu told CNN . " <mark> I think </mark> it was both of their                                   |
-| 22      | Malpass said . " So <mark> I think </mark> we have a context where                            |
-| 25      | people ? " Leo said <mark> he thought </mark> he 'd clarified the issue                       |
-| 25      | an anecdote ) : " <mark> You do n't believe </mark> you made a show of                        |
-| 27      | called Trump a moron , <mark> I think </mark> that was from the heart                         |
-| 32      | touring polling places . " <mark> I think </mark> there 's a lot more                         |
-| 37      | it can have , because <mark> I think </mark> it 's what this university                       |
-| 38      | that , as well . <mark> I think </mark> most of all it feels                                  |
-| 38      | there . " Harvick made <mark> the mistake thinking </mark> about potential points for winning |
-| 38      | " Larson said . " <mark> I thought </mark> he would be mad at                                 |
+| 1       | the network , explaining that <mark> he believed </mark> Fox News had become a                |
+| 1       | branches of government and said <mark> he believed </mark> Fox News was knowingly causing     |
+| 1       | the fire , tweeting that <mark> she thought </mark> Smith 's comments were "                  |
+| 13      | reading the main story " <mark> You do n't believe </mark> that surrogates from the Trump     |
+| 13      | Sessions replied . " And <mark> I do n't believe </mark> it happened . " That                 |
+| 15      | before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand |
+| 15      | Police Department said the man <mark> they believed </mark> was breaking windows was the      |
+| 15      | produced by the Bee . <mark> She believes </mark> another suspect was smashing windows        |
+| 15      | they are resisting or if <mark> police think </mark> a weapon is present ,                    |
+| 18      | " certainly right . " <mark> I think </mark> the comparison with 1936 is                      |
+| 19      | . " Contrary to what <mark> some people thought </mark> , Cassidy pointed out ,               |
+| 2       | still opposed to it . <mark> I think </mark> President Trump was right when                   |
+| 2       | still opposed to it . <mark> I think </mark> President Trump was right when                   |
+| 27      | . Mr. Olmert contended that <mark> Mr. Barak believed </mark> Mr. Olmert would soon have      |
+| 31      | 's top diplomat . " <mark> I think </mark> the comparison to 1936 is                          |
 
 ### clr\_context\_bow()
 
-`agg_var` and `content_only` Access `BOW` object:
+A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to ....
 
 ``` r
 search3 <- "White House"
@@ -220,13 +242,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
-##    searchLemma  lemma cofreq
-## 1: WHITE HOUSE    SAY     10
-## 2: WHITE HOUSE  TRUMP      5
-## 3: WHITE HOUSE OPIOID      4
-## 4: WHITE HOUSE BANNON      3
-## 5: WHITE HOUSE    MR.      3
-## 6: WHITE HOUSE REDUCE      3
+##    searchLemma    lemma cofreq
+## 1: WHITE HOUSE   ARABIA      2
+## 2: WHITE HOUSE      BIN      2
+## 3: WHITE HOUSE    CROWN      2
+## 4: WHITE HOUSE    MARCH      2
+## 5: WHITE HOUSE MOHAMMED      2
+## 6: WHITE HOUSE   PRINCE      2
 ```
 
 ### clr\_search\_keyphrases()
@@ -249,11 +271,11 @@ lingr_corpus %>%
   kable()
 ```
 
-| doc\_id | keyphrases                                                                  |
-|:--------|:----------------------------------------------------------------------------|
-| 1       | boy | office | Colorado Springs | El Paso County | undisclosed location     |
-| 10      | attack | Phelan | Thomas Phelan | heroism | World Trade Center on September |
-| 11      | Cambridge Analytica | Facebook | Mr. Wylie | company | data                 |
-| 12      | Mr. Cruz | deputy Peterson | sheriff | deputy | Sept.                       |
-| 13      | Mr. Mueller | Mr. Trump | Mr. McCabe | Comey | director                     |
-| 14      | White | video | Rothschilds | D-Ward | resilient city                       |
+| doc\_id | keyphrases                                                              |
+|:--------|:------------------------------------------------------------------------|
+| 1       | network | Peters | note | CNN | matter                                  |
+| 10      | suspect | pound of cocaine | airline worker | Border Protection | pound |
+| 11      | teacher | percent | school | school shootings | percent of teacher      |
+| 12      | Mr. Conditt | Austin | bomb | neighbor | sense                          |
+| 13      | Mr. Sessions | Mr. Trump | Mr. Mueller | news report | Russians         |
+| 14      | great-grandmother | senior staff editor | Times | readers | feather     |
