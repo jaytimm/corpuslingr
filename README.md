@@ -3,7 +3,7 @@ corpuslingr
 
 The main function of this library is to enable complex search of an annotated corpus akin to search functionality made available via `RegexpParser` in Python's Natural Language Toolkit (NLTK). While regex-based, search syntax has been simplified, and modeled after the more intuitive syntax used in the online BYU suite of corpora.
 
-Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Functions allow users to specify how search results are aggregated. Importantly, search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
+Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Functions also allow users to specify how search results are aggregated. Importantly, search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
 
 The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
 
@@ -81,7 +81,7 @@ Corpus summary:
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     66      52007     8655     2321
+## 1:     68      55044     8782     2485
 ```
 
 By genre:
@@ -89,9 +89,9 @@ By genre:
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     17      14065     3304      659
-## 2:   topic_world     16       9665     2784      412
-## 3:  topic_sports     18      18690     3748      915
+## 1:  topic_nation     16      13303     3055      621
+## 2:   topic_world     18      11213     3082      479
+## 3:  topic_sports     19      20941     3960     1026
 ## 4: topic_science     15       9587     2733      448
 ```
 
@@ -100,12 +100,12 @@ By text:
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        878      363       34
-## 2:      2        780      336       48
-## 3:      3        937      426       49
-## 4:      4        462      228       22
-## 5:      5        579      274       28
-## 6:      6        710      278       25
+## 1:      1        356      184       26
+## 2:      2        878      363       34
+## 3:      3        780      336       48
+## 4:      4        396      238       14
+## 5:      5        462      228       22
+## 6:      6        579      274       28
 ```
 
 Search & aggregation functions
@@ -117,26 +117,190 @@ The search syntax utilized here is modeled after the syntax implemented in the [
 
 ``` r
 library(knitr)
-corpuslingr::clr_ref_search_egs %>% kable(escape=TRUE,caption = "Search syntax examples")
+corpuslingr::clr_ref_search_egs %>% kable(escape=FALSE, format = "html")
 ```
 
-| type                                               | search\_syntax                                | example                                     |
-|:---------------------------------------------------|:----------------------------------------------|:--------------------------------------------|
-| Simple form search                                 | lime                                          | lime                                        |
-| Simple lemma search                                | DRINK                                         | drinks, drank, drinking                     |
-| Lemma with POS search                              | BARK~VERB                                     | barked, barking                             |
-| Simple phrasal search                              | in the long run                               | in the long run                             |
-| Phrasal search - POS/form                          | ADJ and ADJ                                   | happy and healthy, political and economical |
-| Phrasal search inc noun phrase                     | VERB NPHR into VBG                            | trick someone into believing                |
-| Phrasal search inc noun phrase                     | VERB PRP$ way PREP NPHR                       | make its way through the Senate             |
-| Suffix search                                      | \*tion                                        | defenestration, nation, retaliation         |
-| Infix search                                       | *break*                                       | breakable, heartbreaking                    |
-| Optional search w/ parens and ?                    | MD (NEG)? HAVE been                           | should have been, might not have been       |
-| Multiple term search w parens and |                | PRON (HOPE| WISH| DESIRE)                     | He hoped, they wish                         |
-| Wildcard                                           | \*                                            | ANYTHING                                    |
-| Indeterminate length search w brackets and min/max | NPHR BE \*{1,4} ADJ                           | He was very, very happy; I'm not sure       |
-| Noun phrase search - POS w regex                   | (?:(?:DET )?(?:ADJ )\*)?(?:((NOUNX )+|PRON )) | Bill Clinton, he, the red kite              |
-| Key phrase search - POS w regex                    | (ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?    | flowers in bloom, very purple couch         |
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+type
+</th>
+<th style="text-align:left;">
+search\_syntax
+</th>
+<th style="text-align:left;">
+example
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Simple form search
+</td>
+<td style="text-align:left;">
+lime
+</td>
+<td style="text-align:left;">
+lime
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Simple lemma search
+</td>
+<td style="text-align:left;">
+DRINK
+</td>
+<td style="text-align:left;">
+drinks, drank, drinking
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lemma with POS search
+</td>
+<td style="text-align:left;">
+BARK~VERB
+</td>
+<td style="text-align:left;">
+barked, barking
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Simple phrasal search
+</td>
+<td style="text-align:left;">
+in the long run
+</td>
+<td style="text-align:left;">
+in the long run
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Phrasal search - POS/form
+</td>
+<td style="text-align:left;">
+ADJ and ADJ
+</td>
+<td style="text-align:left;">
+happy and healthy, political and economical
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Phrasal search inc noun phrase
+</td>
+<td style="text-align:left;">
+VERB NPHR into VBG
+</td>
+<td style="text-align:left;">
+trick someone into believing
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Phrasal search inc noun phrase
+</td>
+<td style="text-align:left;">
+VERB PRP$ way PREP NPHR
+</td>
+<td style="text-align:left;">
+make its way through the Senate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Suffix search
+</td>
+<td style="text-align:left;">
+\*tion
+</td>
+<td style="text-align:left;">
+defenestration, nation, retaliation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Infix search
+</td>
+<td style="text-align:left;">
+*break*
+</td>
+<td style="text-align:left;">
+breakable, heartbreaking
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Optional search w/ parens and ?
+</td>
+<td style="text-align:left;">
+MD (NEG)? HAVE been
+</td>
+<td style="text-align:left;">
+should have been, might not have been
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Multiple term search w parens and |
+</td>
+<td style="text-align:left;">
+PRON (HOPE| WISH| DESIRE)
+</td>
+<td style="text-align:left;">
+He hoped, they wish
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wildcard
+</td>
+<td style="text-align:left;">
+-   </td>
+    <td style="text-align:left;">
+    ANYTHING
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:left;">
+    Indeterminate length search w brackets and min/max
+    </td>
+    <td style="text-align:left;">
+    NPHR BE \*{1,4} ADJ
+    </td>
+    <td style="text-align:left;">
+    He was very, very happy; I'm not sure
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:left;">
+    Noun phrase search - POS w regex
+    </td>
+    <td style="text-align:left;">
+    (?:(?:DET )?(?:ADJ )\*)?(?:((NOUNX )+|PRON ))
+    </td>
+    <td style="text-align:left;">
+    Bill Clinton, he, the red kite
+    </td>
+    </tr>
+    <tr>
+    <td style="text-align:left;">
+    Key phrase search - POS w regex
+    </td>
+    <td style="text-align:left;">
+    (ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?
+    </td>
+    <td style="text-align:left;">
+    flowers in bloom, very purple couch
+    </td>
+    </tr>
+    </tbody>
+    </table>
 
 ### clr\_search\_gramx()
 
@@ -149,18 +313,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token          tag    lemma         
-##    <chr>  <chr>          <chr>  <chr>         
-##  1 1      made to        VBN IN make to       
-##  2 1      Interested in  VBD IN interest in   
-##  3 1      stay up        VB IN  stay up       
-##  4 1      met at         VBD IN met at        
-##  5 1      reported by    VBN IN report by     
-##  6 1      obtained by    VBN IN obtain by     
-##  7 1      addressed to   VBN IN address to    
-##  8 1      done in        VBN IN do in         
-##  9 1      arrives on     VBZ IN arrive on     
-## 10 1      profiting from VBG IN profiting from
+##    doc_id token         tag    lemma        
+##    <chr>  <chr>         <chr>  <chr>        
+##  1 1      hit by        VBN IN hit by       
+##  2 1      got into      VBD IN get into     
+##  3 1      got into      VBD IN get into     
+##  4 1      was out       VBD IN be out       
+##  5 1      gotten into   VBN IN get into     
+##  6 1      jumped in     VBD IN jump in      
+##  7 1      drove through VBD IN drive through
+##  8 1      described as  VBN IN describe as  
+##  9 1      taken to      VBN IN take to      
+## 10 1      looking into  VBG IN look into
 ```
 
 ### clr\_get\_freqs()
@@ -182,12 +346,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                      token txtf docf
-## 1:   PRESIDENTIAL ELECTION    5    4
+## 1:   PRESIDENTIAL ELECTION    4    4
 ## 2:     POTENTIAL CONFLICTS    2    1
 ## 3: CONFIDENTIAL STRATEGIES    1    1
-## 4:      ESSENTIAL INDUSTRY    1    1
-## 5:    INITIAL NEGOTIATIONS    1    1
-## 6:        INITIAL REACTION    1    1
+## 4:    INITIAL NEGOTIATIONS    1    1
+## 5:        INITIAL REACTION    1    1
+## 6:       POTENTIAL RESULTS    1    1
 ```
 
 ### clr\_search\_context()
@@ -217,18 +381,18 @@ found_egs %>%
 | 11      | " It 's remarkable . <mark> I do n't think </mark> it 's ever occurred in                     |
 | 13      | reading the main story " <mark> You do n't believe </mark> that surrogates from the Trump     |
 | 13      | Sessions replied . " And <mark> I do n't believe </mark> it happened . " That                 |
-| 17      | before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand |
-| 17      | Police Department said the man <mark> they believed </mark> was breaking windows was the      |
-| 17      | produced by the Bee . <mark> She believes </mark> another suspect was smashing windows        |
-| 17      | they are resisting or if <mark> police think </mark> a weapon is present ,                    |
-| 2       | the network , explaining that <mark> he believed </mark> Fox News had become a                |
-| 2       | branches of government and said <mark> he believed </mark> Fox News was knowingly causing     |
-| 2       | the fire , tweeting that <mark> she thought </mark> Smith 's comments were "                  |
+| 15      | still opposed to it . <mark> I think </mark> President Trump was right when                   |
+| 16      | before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand |
+| 16      | Police Department said the man <mark> they believed </mark> was breaking windows was the      |
+| 16      | produced by the Bee . <mark> She believes </mark> another suspect was smashing windows        |
+| 16      | they are resisting or if <mark> police think </mark> a weapon is present ,                    |
 | 21      | approach is closer to how <mark> Trump thought </mark> the job would be than                  |
 | 21      | we might stipulate , because <mark> he thinks </mark> it will yield the best                  |
 | 21      | I know , some of <mark> you believe </mark> it 's because Putin is                            |
 | 21      | made a nefarious deal . <mark> I do n't think </mark> Trump 's motives matter here            |
-| 25      | . Mr. Olmert contended that <mark> Mr. Barak believed </mark> Mr. Olmert would soon have      |
+| 24      | . Mr. Olmert contended that <mark> Mr. Barak believed </mark> Mr. Olmert would soon have      |
+| 25      | We have argued , and <mark> I think </mark> successfully , that the European                  |
+| 25      | We have argued , and <mark> I think </mark> successfully , that the European                  |
 
 ### clr\_context\_bow()
 
@@ -241,12 +405,12 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
 ##    searchLemma          lemma cofreq
-## 1: WHITE HOUSE          TRUMP      4
-## 2: WHITE HOUSE           LAST      3
-## 3: WHITE HOUSE      PRESIDENT      3
-## 4: WHITE HOUSE ADMINISTRATION      2
-## 5: WHITE HOUSE     ALLEGATION      2
-## 6: WHITE HOUSE         BRANCH      2
+## 1: WHITE HOUSE          TRUMP      7
+## 2: WHITE HOUSE      PRESIDENT      5
+## 3: WHITE HOUSE           LAST      3
+## 4: WHITE HOUSE          PRESS      3
+## 5: WHITE HOUSE         SENIOR      3
+## 6: WHITE HOUSE ADMINISTRATION      2
 ```
 
 ### clr\_search\_keyphrases()
@@ -286,7 +450,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-loan | letter | Kushner Companies | Citi | transaction
+car | investigator | police | victim | man
 </td>
 </tr>
 <tr>
@@ -294,7 +458,7 @@ loan | letter | Kushner Companies | Citi | transaction
 10
 </td>
 <td style="text-align:left;">
-Trump | Biden | President | United States | most presidents
+Trump | Biden | President | United States | tough guy
 </td>
 </tr>
 <tr>
@@ -302,7 +466,7 @@ Trump | Biden | President | United States | most presidents
 11
 </td>
 <td style="text-align:left;">
-Daniels | Avenatti | Cohen | CNN | New Day
+Daniels | Avenatti | Cohen | CNN | thuggish behavior
 </td>
 </tr>
 <tr>
@@ -310,7 +474,7 @@ Daniels | Avenatti | Cohen | CNN | New Day
 12
 </td>
 <td style="text-align:left;">
-teacher | percent | school | school shootings | percent of teacher
+teacher | percent | school | school shootings | school shooting
 </td>
 </tr>
 <tr>
@@ -318,7 +482,7 @@ teacher | percent | school | school shootings | percent of teacher
 13
 </td>
 <td style="text-align:left;">
-Mr. Sessions | Mr. Trump | Mr. Mueller | news report | Trump campaign
+Mr. Sessions | Mr. Trump | Mr. Mueller | russian government | attorney general
 </td>
 </tr>
 <tr>
@@ -326,7 +490,7 @@ Mr. Sessions | Mr. Trump | Mr. Mueller | news report | Trump campaign
 14
 </td>
 <td style="text-align:left;">
-Mr. Paddock | Mandalay Bay | clip | video | smudge
+bombing | race | \#AustinBombing | terrorism | bomb
 </td>
 </tr>
 </tbody>
