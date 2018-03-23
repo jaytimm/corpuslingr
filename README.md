@@ -22,7 +22,7 @@ Corpus preparation & annotation
 To demo the search functionality of `corpuslingr`, we first build a small corpus of current news articles using my `quicknews` package. We apply the `gnews_get_meta`/`gnews_scrape_web` functions across multiple Google News sections to build out the corpus some, and to add a genre-like dimension to the corpus.
 
 ``` r
-topics <- c('nation','world', 'sports','science')
+topics <- c('nation','world', 'sports')
 
 corpus <- lapply(topics, function (x) {
     quicknews::qnews_get_meta (language="en", country="us", type="topic", search=x)%>%
@@ -81,18 +81,17 @@ Corpus summary:
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     67      50694     8550     2249
+## 1:     50      42605     7174     1836
 ```
 
 By genre:
 
 ``` r
 summary$genre
-##           search n_docs textLength textType textSent
-## 1:  topic_nation     15      10750     2658      483
-## 2:   topic_world     17      10452     2892      459
-## 3:  topic_sports     19      18596     3806      914
-## 4: topic_science     16      10896     2926      520
+##          search n_docs textLength textType textSent
+## 1: topic_nation     16      14868     3474      643
+## 2:  topic_world     19      15889     3723      693
+## 3: topic_sports     15      11848     2726      570
 ```
 
 By text:
@@ -100,12 +99,12 @@ By text:
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        780      336       48
-## 2:      2        462      228       22
-## 3:      3       1567      566       63
-## 4:      4        579      274       28
-## 5:      5       1270      522       53
-## 6:      6        567      291       23
+## 1:      1        700      232       34
+## 2:      2        874      356       37
+## 3:      3        976      421       39
+## 4:      4        726      322       30
+## 5:      5        775      341       37
+## 6:      6        692      306       33
 ```
 
 Search & aggregation functions
@@ -228,7 +227,7 @@ defenestration, nation, retaliation
 Infix search
 </td>
 <td style="text-align:left;">
-*break*
+\*break\*
 </td>
 <td style="text-align:left;">
 breakable, heartbreaking
@@ -258,76 +257,54 @@ He hoped, they wish
 </tr>
 <tr>
 <td style="text-align:left;">
-Wildcard
+Multiple term search w parens and |
 </td>
 <td style="text-align:left;">
--   </td>
-    <td style="text-align:left;">
-    ANYTHING
-    </td>
-    </tr>
-    <tr>
-    <td style="text-align:left;">
-    Indeterminate length search w brackets and min/max
-    </td>
-    <td style="text-align:left;">
-    NPHR BE \*{1,4} ADJ
-    </td>
-    <td style="text-align:left;">
-    He was very, very happy; I'm not sure
-    </td>
-    </tr>
-    <tr>
-    <td style="text-align:left;">
-    Noun phrase search - POS w regex
-    </td>
-    <td style="text-align:left;">
-    (?:(?:DET )?(?:ADJ )\*)?(?:((NOUNX )+|PRON ))
-    </td>
-    <td style="text-align:left;">
-    Bill Clinton, he, the red kite
-    </td>
-    </tr>
-    <tr>
-    <td style="text-align:left;">
-    Key phrase search - POS w regex
-    </td>
-    <td style="text-align:left;">
-    (ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?
-    </td>
-    <td style="text-align:left;">
-    flowers in bloom, very purple couch
-    </td>
-    </tr>
-    </tbody>
-    </table>
-
+House (Republicans| Democrats)
+</td>
+<td style="text-align:left;">
+House Republicans, House Democrats
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indeterminate wildcard search w brackets and min/max
+</td>
+<td style="text-align:left;">
+NPHR BE \*{1,4} ADJ
+</td>
+<td style="text-align:left;">
+He was very, very happy; I'm not sure
+</td>
+</tr>
+</tbody>
+</table>
 ### clr\_search\_gramx()
 
 Search for all instantiaions of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search.
 
 ``` r
-search1 <- "VERB (PRON)? PREP| RP"
+search1 <- "VERB (PRON)? (PREP| RP)"
 
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token           tag    lemma       
-##    <chr>  <chr>           <chr>  <chr>       
-##  1 1      network as      VBP IN network as  
-##  2 1      gathered in     VBD IN gather in   
-##  3 1      boasted about   VBD IN boast about 
-##  4 1      bragged about   VBD IN brag about  
-##  5 1      sent by         VBN IN send by     
-##  6 1      leaked to       VBD IN leake to    
-##  7 1      said that       VBD IN say that    
-##  8 1      explaining that VBG IN explain that
-##  9 1      hit like        VBZ IN hit like    
-## 10 1      spoke on        VBD IN speak on
+##    doc_id token            tag    lemma        
+##    <chr>  <chr>            <chr>  <chr>        
+##  1 1      indicted by      VBN IN indict by    
+##  2 1      accused of       VBN IN accuse of    
+##  3 1      filed in         VBN IN file in      
+##  4 1      withdrawing from VBG IN withdraw from
+##  5 1      consulted with   VBN IN consult with 
+##  6 1      indicted by      VBN IN indict by    
+##  7 1      accused of       VBN IN accuse of    
+##  8 1      filed in         VBN IN file in      
+##  9 1      withdrawing from VBG IN withdraw from
+## 10 1      founded by       VBN IN founde by
 ```
 
-### clr\_get\_freqs()
+### clr\_get\_freq()
 
 A simple function for calculating text and token frequencies of search term(s). The `agg_var` parameter allows the user to specify how frequency counts are aggregated.
 
@@ -345,13 +322,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                    token txtf docf
-## 1:          MARTIAL ARTS    3    1
-## 2: PRESIDENTIAL ELECTION    3    3
-## 3:        CELESTIAL BODY    2    1
-## 4:          INITIAL PLAN    2    1
-## 5:    ESSENTIAL SUPPLIES    1    1
-## 6:      INITIAL RESPONSE    1    1
+##                      token txtf docf
+## 1:        PRESIDENTIAL BID    2    2
+## 2:  PRESIDENTIAL CANDIDATE    2    2
+## 3: PRESIDENTIAL CANDIDATES    2    1
+## 4:   PRESIDENTIAL ELECTION    2    2
+## 5: PRESIDENTIAL TRANSITION    2    1
+## 6:   EXISTENTIAL CRITICISM    1    1
 ```
 
 ### clr\_search\_context()
@@ -389,64 +366,64 @@ found_egs %>%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">1</td>
-<td align="left">the network , explaining that <mark> he believed </mark> Fox News had become a</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">branches of government and said <mark> he believed </mark> Fox News was knowingly causing</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">the fire , tweeting that <mark> she thought </mark> Smith 's comments were &quot;</td>
+<td align="left">10</td>
+<td align="left">a busy McDonald 's if <mark> he thought </mark> law enforcement was drawing near</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">&quot; It 's remarkable . <mark> I do n't think </mark> it 's ever occurred in</td>
-</tr>
-<tr class="odd">
-<td align="left">12</td>
-<td align="left">reading the main story &quot; <mark> You do n't believe </mark> that surrogates from the Trump</td>
-</tr>
-<tr class="even">
-<td align="left">12</td>
-<td align="left">Sessions replied . &quot; And <mark> I do n't believe </mark> it happened . &quot; That</td>
-</tr>
-<tr class="odd">
-<td align="left">13</td>
-<td align="left">We have argued , and <mark> I think </mark> successfully , that the European</td>
-</tr>
-<tr class="even">
-<td align="left">13</td>
-<td align="left">We have argued , and <mark> I think </mark> successfully , that the European</td>
+<td align="left">Mr. Gonzales said . &quot; <mark> I think </mark> this kind of sets a</td>
 </tr>
 <tr class="odd">
 <td align="left">15</td>
-<td align="left">before fatally shooting Clark . <mark> The gun officers thought </mark> Clark had in his hand</td>
+<td align="left">on helping children . &quot; <mark> I believe </mark> they learn from what they</td>
 </tr>
 <tr class="even">
 <td align="left">15</td>
-<td align="left">Police Department said the man <mark> they believed </mark> was breaking windows was the</td>
+<td align="left">&quot; I am here because <mark> I believe </mark> in you , and the</td>
 </tr>
 <tr class="odd">
-<td align="left">15</td>
-<td align="left">produced by the Bee . <mark> She believes </mark> another suspect was smashing windows</td>
+<td align="left">18</td>
+<td align="left">on the school run . <mark> Police believe </mark> Mrs McKie 's body was</td>
 </tr>
 <tr class="even">
-<td align="left">15</td>
-<td align="left">they are resisting or if <mark> police think </mark> a weapon is present ,</td>
+<td align="left">18</td>
+<td align="left">of his actions . &quot; <mark> I think </mark> he has completely distanced himself</td>
 </tr>
 <tr class="odd">
-<td align="left">16</td>
-<td align="left">the venues , yes , <mark> I think </mark> the comparison with 1936 is</td>
+<td align="left">18</td>
+<td align="left">what he has done . <mark> I think </mark> it 's very very sad</td>
 </tr>
 <tr class="even">
-<td align="left">16</td>
-<td align="left">is certainly right . &quot; <mark> I think </mark> it is an emetic prospect</td>
+<td align="left">19</td>
+<td align="left">sceptical about the value of <mark> Brexit believe </mark> the government should give up</td>
 </tr>
 <tr class="odd">
-<td align="left">16</td>
-<td align="left">beyond common sense . And <mark> we do not think </mark> British war veterans - including</td>
+<td align="left">22</td>
+<td align="left">its policies . Kogan said <mark> he believed </mark> he was acting within Facebook</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">&quot; Fitzgerald told reporters Friday <mark> he believes </mark> the special elections in the</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">&quot; Fitzgerald said . &quot; <mark> I do n't think </mark> Judge Reynolds considered that at</td>
+</tr>
+<tr class="even">
+<td align="left">31</td>
+<td align="left">skirmish may come sooner than <mark> you think </mark> . The first potential Mattisx</td>
+</tr>
+<tr class="odd">
+<td align="left">32</td>
+<td align="left">in close-knit pods , and <mark> some scientists believe </mark> they can become stranded en</td>
+</tr>
+<tr class="even">
+<td align="left">34</td>
+<td align="left">Ivan Timofeev , director of <mark> a Moscow think </mark> tank . Papadopoulos highlighted these</td>
+</tr>
+<tr class="odd">
+<td align="left">34</td>
+<td align="left">Israel , where he announced <mark> Trump believed </mark> Putin was a &quot; responsible</td>
 </tr>
 </tbody>
 </table>
@@ -461,13 +438,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
-##    searchLemma          lemma cofreq
-## 1: WHITE HOUSE     ALLEGATION      2
-## 2: WHITE HOUSE          TRUMP      2
-## 3: WHITE HOUSE           WEEK      2
-## 4: WHITE HOUSE         ACCORD      1
-## 5: WHITE HOUSE ADMINISTRATION      1
-## 6: WHITE HOUSE         AFFAIR      1
+##    searchLemma   lemma cofreq
+## 1: WHITE HOUSE   OFFER      4
+## 2: WHITE HOUSE  BANNON      3
+## 3: WHITE HOUSE  BOLTON      3
+## 4: WHITE HOUSE COMMENT      3
+## 5: WHITE HOUSE   COVER      3
+## 6: WHITE HOUSE   TRUMP      3
 ```
 
 ### clr\_search\_keyphrases()
@@ -507,7 +484,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-network | Peters | note | comment | CNN
+Greitens | St. Louis | office | use | p.m
 </td>
 </tr>
 <tr>
@@ -515,7 +492,7 @@ network | Peters | note | comment | CNN
 10
 </td>
 <td style="text-align:left;">
-Daniels | Avenatti | Cohen | last week | CNN
+Mr. Conditt | Pflugerville | Statesman | shed | Tex.
 </td>
 </tr>
 <tr>
@@ -523,7 +500,7 @@ Daniels | Avenatti | Cohen | last week | CNN
 11
 </td>
 <td style="text-align:left;">
-suspect | Border Protection | pound of cocaine | airline worker | pound
+Mr. Trump | president | Democrats | spending bill | measure
 </td>
 </tr>
 <tr>
@@ -531,7 +508,7 @@ suspect | Border Protection | pound of cocaine | airline worker | pound
 12
 </td>
 <td style="text-align:left;">
-Mr. Sessions | Mr. Trump | Mr. Mueller | Mr. McCabe | Russians
+D | district | student | march | D-Md
 </td>
 </tr>
 <tr>
@@ -539,7 +516,7 @@ Mr. Sessions | Mr. Trump | Mr. Mueller | Mr. McCabe | Russians
 13
 </td>
 <td style="text-align:left;">
-European Union | United States | tariff | steel | aluminum
+Taylor | Godwin | Stith | Capitol Police | Jenna Portnoy
 </td>
 </tr>
 <tr>
@@ -547,7 +524,7 @@ European Union | United States | tariff | steel | aluminum
 14
 </td>
 <td style="text-align:left;">
-Mr. Paddock | Mandalay Bay | clip | video | frame
+bus | driver | Greyhound | CBS | passenger
 </td>
 </tr>
 </tbody>
