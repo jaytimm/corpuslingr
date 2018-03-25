@@ -94,7 +94,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     51      40790     7401     1713
+## 1:     57      51114     8688     2288
 ```
 
 -   By genre:
@@ -102,9 +102,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     18      14446     3626      649
-## 2:  topic_world     16      14007     3339      498
-## 3: topic_sports     17      12337     2809      617
+## 1: topic_nation     18      12329     3001      554
+## 2:  topic_world     20      23120     5888     1002
+## 3: topic_sports     19      15665     2649      781
 ```
 
 -   By text:
@@ -112,12 +112,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        492      213       16
-## 2:      2        448      199       21
-## 3:      3        495      239       30
-## 4:      4        572      248       29
+## 1:      1        972      414       34
+## 2:      2        346      184       18
+## 3:      3        623      270       29
+## 4:      4        598      295       34
 ## 5:      5        264      165       15
-## 6:      6        544      283       22
+## 6:      6       1260      460       58
 ```
 
 ------------------------------------------------------------------------
@@ -308,18 +308,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token          tag        lemma        
-##    <chr>  <chr>          <chr>      <chr>        
-##  1 1      said that      VBD IN     say that     
-##  2 1      spoke to       VBD IN     speak to     
-##  3 1      Interested in  VBD IN     interested in
-##  4 1      stay up        VB IN      stay up      
-##  5 1      perplexed by   VBN IN     perplex by   
-##  6 1      operating like VBG IN     operate like 
-##  7 1      say that       VB IN      say that     
-##  8 1      appears on     VBZ IN     appear on    
-##  9 1      added that     VBD IN     add that     
-## 10 1      told him that  VBD PRP IN tell he that
+##    doc_id token            tag    lemma        
+##    <chr>  <chr>            <chr>  <chr>        
+##  1 1      talking about    VBG IN talk about   
+##  2 1      said in          VBD IN say in       
+##  3 1      put out          VBN RP put out      
+##  4 1      rallying for     VBG IN rallying for 
+##  5 1      been at          VBN IN be at        
+##  6 1      assigned to      VBN IN assign to    
+##  7 1      contrasted with  VBN IN contrast with
+##  8 1      went on          VBD IN go on        
+##  9 1      marching against VBG IN march against
+## 10 1      speaks during    VBZ IN speak during
 ```
 
 ------------------------------------------------------------------------
@@ -342,13 +342,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                      token txtf docf
-## 1:   PRESIDENTIAL ELECTION    3    2
-## 2:   PRESIDENTIAL HOPEFULS    2    1
-## 3: CONFIDENTIAL SETTLEMENT    1    1
-## 4:        POTENTIAL MOTIVE    1    1
-## 5:       POTENTIAL REVENUE    1    1
-## 6:     PRESIDENTIAL GUARDS    1    1
+##                     token txtf docf
+## 1:  PRESIDENTIAL ELECTION    5    3
+## 2: PRESIDENTIAL ELECTIONS    3    1
+## 3: PRESIDENTIAL PERSONNEL    2    1
+## 4:      INITIAL AGGRESSOR    1    1
+## 5:   INITIAL APPOINTMENTS    1    1
+## 6:       INITIAL KOSINSKI    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -383,7 +383,7 @@ found_egs %>%
 
 ### clr\_context\_bow()
 
-A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to ....
+A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to specify how collocates are aggreggated and whether only content words are included, respectively.
 
 ``` r
 search3 <- "White House"
@@ -391,13 +391,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
-##    searchLemma   lemma cofreq
-## 1: WHITE HOUSE  SENIOR      7
-## 2: WHITE HOUSE ADVISOR      6
-## 3: WHITE HOUSE   JARED      6
-## 4: WHITE HOUSE KUSHNER      6
-## 5: WHITE HOUSE   CHIEF      5
-## 6: WHITE HOUSE REUTERS      5
+##    searchLemma     lemma cofreq
+## 1: WHITE HOUSE DESTEFANO      7
+## 2: WHITE HOUSE     TRUMP      5
+## 3: WHITE HOUSE    JOHNNY      4
+## 4: WHITE HOUSE PRESIDENT      4
+## 5: WHITE HOUSE       SAY      4
+## 6: WHITE HOUSE   ADVISER      3
 ```
 
 ------------------------------------------------------------------------
@@ -436,50 +436,50 @@ keyphrases
 <tbody>
 <tr>
 <td style="text-align:left;">
-1
+57
 </td>
 <td style="text-align:left;">
-Ruddy | president | White House | Trump | major change
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-10
-</td>
-<td style="text-align:left;">
-Santorum | problem | student | kid | someone
+seconds | Hamilton | Florida State | Michigan | game
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-11
+56
 </td>
 <td style="text-align:left;">
-Conditt | police | bombing | McCaul | Austin
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-12
-</td>
-<td style="text-align:left;">
-Gonzalez | B.S.! | head | school | parent
+ball | Smith | demerit point | match | Steve Smith
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-13
+55
 </td>
 <td style="text-align:left;">
-Sharps | Harris | family | Weland | son
+Drive | Upshaw | condition | court | floor Saturday night
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-14
+54
 </td>
 <td style="text-align:left;">
-degree | high | inch | warm note Sunday | rain transition into snow
+Truck Series race | track | Monday | Virginia area | Rain
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+53
+</td>
+<td style="text-align:left;">
+Duke | model | Kansas | ppg | Syracuse
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+52
+</td>
+<td style="text-align:left;">
+Giants fan | A | parking | a | Coliseum
 </td>
 </tr>
 </tbody>
