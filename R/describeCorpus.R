@@ -19,7 +19,7 @@ clr_desc_corpus <- function (x,doc ='id',sent='sid', tok='word',upos='upos',genr
 
   corpus <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep=""))))]
 
-  if (genre!=""){
+  if (is.null(genre) == FALSE){
   byGenre <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep="")))), by=genre]
 
   out <- list("text" = byText, "corpus" = corpus, "genre" = byGenre)
