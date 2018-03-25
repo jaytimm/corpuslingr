@@ -61,7 +61,7 @@ clr_context_kwic <- function (x,include=c('doc_id','lemma')) {
   kwic_table <- as.data.table(x)
   kwic_table <- kwic_table[, list(kwic = paste(aContext, "<mark>", token, "</mark>", zContext, collapse=" ")), by=list(doc_id,eg,token,lemma)]
 
-  kwic_table <- kwic_table[order(-as.numeric(doc_id))]
+  kwic_table <- kwic_table[order(as.numeric(doc_id))]
   kwic_table[, c(include,'kwic'), with = FALSE]
   }
 
