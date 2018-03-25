@@ -12,9 +12,12 @@ library(tidyverse)
 library(cleanNLP)
 library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 library(quicknews) #devtools::install_github("jaytimm/quicknews")
+library(DT)
 ```
 
 Here, we walk through a simple workflow from corpus creation using `quicknews`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.
+
+------------------------------------------------------------------------
 
 Corpus preparation & annotation
 -------------------------------
@@ -31,6 +34,8 @@ corpus <- lapply(topics, function (x) {
   mutate(doc_id = as.character(row_number())) #Add doc_id
 ```
 
+------------------------------------------------------------------------
+
 ### clr\_prep\_corpus
 
 This function performs two tasks. It elminates unnecessary whitespace from the text column of a corpus dataframe object. Additionally, it attempts to trick annotators into treating hyphenated words as a single token. With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens. For linguists interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
@@ -38,6 +43,8 @@ This function performs two tasks. It elminates unnecessary whitespace from the t
 ``` r
 corpus <- clr_prep_corpus (corpus, hyphenate = TRUE)
 ```
+
+------------------------------------------------------------------------
 
 ### Annotate via cleanNLP and udpipe
 
@@ -47,6 +54,8 @@ For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataf
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
 ann_corpus <- cleanNLP::cnlp_annotate(corpus$text, as_strings = TRUE, doc_ids = corpus$doc_id) 
 ```
+
+------------------------------------------------------------------------
 
 ### clr\_set\_corpus()
 
@@ -67,6 +76,8 @@ lingr_corpus <- ann_corpus$token %>%
                   meta = corpus[,c('doc_id','source','search')])
 ```
 
+------------------------------------------------------------------------
+
 ### clr\_desc\_corpus()
 
 A simple function for describing an annotated corpus, providing some basic aggregate statisitcs at the corpus, genre, and text levels.
@@ -81,7 +92,7 @@ Corpus summary:
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     50      42605     7174     1836
+## 1:     52      46656     7835     1877
 ```
 
 By genre:
@@ -89,9 +100,9 @@ By genre:
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     16      14868     3474      643
-## 2:  topic_world     19      15889     3723      693
-## 3: topic_sports     15      11848     2726      570
+## 1: topic_nation     16      14768     3739      660
+## 2:  topic_world     17      16282     3560      584
+## 3: topic_sports     19      15606     3261      759
 ```
 
 By text:
@@ -99,13 +110,15 @@ By text:
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        700      232       34
-## 2:      2        874      356       37
-## 3:      3        976      421       39
-## 4:      4        726      322       30
-## 5:      5        775      341       37
-## 6:      6        692      306       33
+## 1:      1        402      206       16
+## 2:      2       2440      899      106
+## 3:      3        495      239       30
+## 4:      4        572      248       29
+## 5:      5        409      201       21
+## 6:      6        264      165       15
 ```
+
+------------------------------------------------------------------------
 
 Search & aggregation functions
 ------------------------------
@@ -116,169 +129,20 @@ The search syntax utilized here is modeled after the syntax implemented in the [
 
 ``` r
 library(knitr)
-corpuslingr::clr_ref_search_egs %>% kable(escape=FALSE, format = "html")
+corpuslingr::clr_ref_search_egs %>%
+  DT::datatable(selection="none",class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
 ```
 
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-type
-</th>
-<th style="text-align:left;">
-search\_syntax
-</th>
-<th style="text-align:left;">
-example
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-Simple form search
-</td>
-<td style="text-align:left;">
-lime
-</td>
-<td style="text-align:left;">
-lime
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Simple lemma search
-</td>
-<td style="text-align:left;">
-DRINK
-</td>
-<td style="text-align:left;">
-drinks, drank, drinking
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Lemma with POS search
-</td>
-<td style="text-align:left;">
-BARK~VERB
-</td>
-<td style="text-align:left;">
-barked, barking
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Simple phrasal search
-</td>
-<td style="text-align:left;">
-in the long run
-</td>
-<td style="text-align:left;">
-in the long run
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Phrasal search - POS/form
-</td>
-<td style="text-align:left;">
-ADJ and ADJ
-</td>
-<td style="text-align:left;">
-happy and healthy, political and economical
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Phrasal search inc noun phrase
-</td>
-<td style="text-align:left;">
-VERB NPHR into VBG
-</td>
-<td style="text-align:left;">
-trick someone into believing
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Phrasal search inc noun phrase
-</td>
-<td style="text-align:left;">
-VERB PRP$ way PREP NPHR
-</td>
-<td style="text-align:left;">
-make its way through the Senate
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Suffix search
-</td>
-<td style="text-align:left;">
-\*tion
-</td>
-<td style="text-align:left;">
-defenestration, nation, retaliation
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Infix search
-</td>
-<td style="text-align:left;">
-\*break\*
-</td>
-<td style="text-align:left;">
-breakable, heartbreaking
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Optional search w/ parens and ?
-</td>
-<td style="text-align:left;">
-MD (NEG)? HAVE been
-</td>
-<td style="text-align:left;">
-should have been, might not have been
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Multiple term search w parens and |
-</td>
-<td style="text-align:left;">
-PRON (HOPE| WISH| DESIRE)
-</td>
-<td style="text-align:left;">
-He hoped, they wish
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Multiple term search w parens and |
-</td>
-<td style="text-align:left;">
-House (Republicans| Democrats)
-</td>
-<td style="text-align:left;">
-House Republicans, House Democrats
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Indeterminate wildcard search w brackets and min/max
-</td>
-<td style="text-align:left;">
-NPHR BE \*{1,4} ADJ
-</td>
-<td style="text-align:left;">
-He was very, very happy; I'm not sure
-</td>
-</tr>
-</tbody>
-</table>
+![](README-unnamed-chunk-11-1.png)
+
+``` r
+
+
+#%>% kable(escape=FALSE, format = "html")
+```
+
+------------------------------------------------------------------------
+
 ### clr\_search\_gramx()
 
 Search for all instantiaions of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search.
@@ -290,19 +154,21 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token            tag    lemma        
-##    <chr>  <chr>            <chr>  <chr>        
-##  1 1      indicted by      VBN IN indict by    
-##  2 1      accused of       VBN IN accuse of    
-##  3 1      filed in         VBN IN file in      
-##  4 1      withdrawing from VBG IN withdraw from
-##  5 1      consulted with   VBN IN consult with 
-##  6 1      indicted by      VBN IN indict by    
-##  7 1      accused of       VBN IN accuse of    
-##  8 1      filed in         VBN IN file in      
-##  9 1      withdrawing from VBG IN withdraw from
-## 10 1      founded by       VBN IN founde by
+##    doc_id token         tag    lemma      
+##    <chr>  <chr>         <chr>  <chr>      
+##  1 1      sentenced in  VBN IN sentence in
+##  2 1      convicted for VBN IN convict for
+##  3 1      according to  VBG IN accord to  
+##  4 1      reported that VBD IN report that
+##  5 1      caught after  VBN IN catch after
+##  6 1      placed on     VBN IN place on   
+##  7 1      according to  VBG IN accord to  
+##  8 1      according to  VBG IN accord to  
+##  9 1      amounted to   VBN IN amount to  
+## 10 1      described as  VBN IN describe as
 ```
+
+------------------------------------------------------------------------
 
 ### clr\_get\_freq()
 
@@ -323,13 +189,15 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                      token txtf docf
-## 1:        PRESIDENTIAL BID    2    2
-## 2:  PRESIDENTIAL CANDIDATE    2    2
-## 3: PRESIDENTIAL CANDIDATES    2    1
-## 4:   PRESIDENTIAL ELECTION    2    2
-## 5: PRESIDENTIAL TRANSITION    2    1
-## 6:   EXISTENTIAL CRITICISM    1    1
+## 1:   PRESIDENTIAL ELECTION    5    4
+## 2:   PRESIDENTIAL HOPEFULS    2    1
+## 3: CONFIDENTIAL SETTLEMENT    1    1
+## 4:     INITIAL INTERACTION    1    1
+## 5:        POTENTIAL DEPUTY    1    1
+## 6:     PRESIDENTIAL PALACE    1    1
 ```
+
+------------------------------------------------------------------------
 
 ### clr\_search\_context()
 
@@ -340,6 +208,8 @@ search3 <- 'NPHR (DO)? (NEG)? (THINK| BELIEVE )'
 
 found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=5, RW = 5)
 ```
+
+------------------------------------------------------------------------
 
 ### clr\_context\_kwic()
 
@@ -353,80 +223,25 @@ found_egs %>%
   kable(escape=FALSE, format = "markdown")
 ```
 
-<table style="width:100%;">
-<colgroup>
-<col width="7%" />
-<col width="92%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">doc_id</th>
-<th align="left">kwic</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">10</td>
-<td align="left">a busy McDonald 's if <mark> he thought </mark> law enforcement was drawing near</td>
-</tr>
-<tr class="even">
-<td align="left">10</td>
-<td align="left">Mr. Gonzales said . &quot; <mark> I think </mark> this kind of sets a</td>
-</tr>
-<tr class="odd">
-<td align="left">15</td>
-<td align="left">on helping children . &quot; <mark> I believe </mark> they learn from what they</td>
-</tr>
-<tr class="even">
-<td align="left">15</td>
-<td align="left">&quot; I am here because <mark> I believe </mark> in you , and the</td>
-</tr>
-<tr class="odd">
-<td align="left">18</td>
-<td align="left">on the school run . <mark> Police believe </mark> Mrs McKie 's body was</td>
-</tr>
-<tr class="even">
-<td align="left">18</td>
-<td align="left">of his actions . &quot; <mark> I think </mark> he has completely distanced himself</td>
-</tr>
-<tr class="odd">
-<td align="left">18</td>
-<td align="left">what he has done . <mark> I think </mark> it 's very very sad</td>
-</tr>
-<tr class="even">
-<td align="left">19</td>
-<td align="left">sceptical about the value of <mark> Brexit believe </mark> the government should give up</td>
-</tr>
-<tr class="odd">
-<td align="left">22</td>
-<td align="left">its policies . Kogan said <mark> he believed </mark> he was acting within Facebook</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="left">&quot; Fitzgerald told reporters Friday <mark> he believes </mark> the special elections in the</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">&quot; Fitzgerald said . &quot; <mark> I do n't think </mark> Judge Reynolds considered that at</td>
-</tr>
-<tr class="even">
-<td align="left">31</td>
-<td align="left">skirmish may come sooner than <mark> you think </mark> . The first potential Mattisx</td>
-</tr>
-<tr class="odd">
-<td align="left">32</td>
-<td align="left">in close-knit pods , and <mark> some scientists believe </mark> they can become stranded en</td>
-</tr>
-<tr class="even">
-<td align="left">34</td>
-<td align="left">Ivan Timofeev , director of <mark> a Moscow think </mark> tank . Papadopoulos highlighted these</td>
-</tr>
-<tr class="odd">
-<td align="left">34</td>
-<td align="left">Israel , where he announced <mark> Trump believed </mark> Putin was a &quot; responsible</td>
-</tr>
-</tbody>
-</table>
+| doc\_id | kwic                                                                                 |
+|:--------|:-------------------------------------------------------------------------------------|
+| 14      | disarmament and peace . But <mark> I think </mark> it is a fact that                 |
+| 15      | his law degree . " <mark> I think </mark> he needs that adrenaline rush              |
+| 15      | reframing a question . " <mark> I think </mark> I 've always acted confident         |
+| 16      | " This Week " that <mark> Trump believes </mark> that , on the whole                 |
+| 2       | students to Washington . " <mark> I believe </mark> in what these kids are           |
+| 2       | the Washington rally , said <mark> they believed </mark> that the students would not |
+| 2       | gun control . " " <mark> I believe </mark> it 's their goal to                       |
+| 2       | from the NRA . " <mark> They think </mark> we 're all talk and                       |
+| 20      | showed a van with tinted <mark> windows believed </mark> to be carrying Puigdemo nt  |
+| 24      | such a deed . " <mark> You think </mark> Prime Minister is going to                  |
+| 24      | " he told ANI . <mark> You think </mark> Prime Minister is going to                  |
+| 25      | health as an area where <mark> he believes </mark> Israel can become a global        |
+| 34      | " Just to explain why <mark> I think </mark> coaches look at it like                 |
+| 34      | was their time . So <mark> I think </mark> if you 've been there                     |
+| 34      | looseness and freedom . " <mark> I do n't think </mark> it lights a fire ,           |
+
+------------------------------------------------------------------------
 
 ### clr\_context\_bow()
 
@@ -438,14 +253,16 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
-##    searchLemma   lemma cofreq
-## 1: WHITE HOUSE   OFFER      4
-## 2: WHITE HOUSE  BANNON      3
-## 3: WHITE HOUSE  BOLTON      3
-## 4: WHITE HOUSE COMMENT      3
-## 5: WHITE HOUSE   COVER      3
-## 6: WHITE HOUSE   TRUMP      3
+##    searchLemma    lemma cofreq
+## 1: WHITE HOUSE      SAY      7
+## 2: WHITE HOUSE    COVER      6
+## 3: WHITE HOUSE OFFICIAL      5
+## 4: WHITE HOUSE     JOIN      4
+## 5: WHITE HOUSE    TRUMP      4
+## 6: WHITE HOUSE    CHIEF      3
 ```
+
+------------------------------------------------------------------------
 
 ### clr\_search\_keyphrases()
 
@@ -484,7 +301,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-Greitens | St. Louis | office | use | p.m
+Turley | Harris County District Attorney | Houston Chronicle | year in prison | officer
 </td>
 </tr>
 <tr>
@@ -492,7 +309,7 @@ Greitens | St. Louis | office | use | p.m
 10
 </td>
 <td style="text-align:left;">
-Mr. Conditt | Pflugerville | Statesman | shed | Tex.
+family | Sharps | Harris | Weland | son
 </td>
 </tr>
 <tr>
@@ -500,7 +317,7 @@ Mr. Conditt | Pflugerville | Statesman | shed | Tex.
 11
 </td>
 <td style="text-align:left;">
-Mr. Trump | president | Democrats | spending bill | measure
+Mr. Trump | bill | Democrats | measure | president
 </td>
 </tr>
 <tr>
@@ -508,7 +325,7 @@ Mr. Trump | president | Democrats | spending bill | measure
 12
 </td>
 <td style="text-align:left;">
-D | district | student | march | D-Md
+study | people on active duty | readiness | transgender service member | new policy
 </td>
 </tr>
 <tr>
@@ -516,7 +333,7 @@ D | district | student | march | D-Md
 13
 </td>
 <td style="text-align:left;">
-Taylor | Godwin | Stith | Capitol Police | Jenna Portnoy
+Mr. Trump | Mr. Ruddy | president | lawyer | interview on Sunday evening
 </td>
 </tr>
 <tr>
@@ -524,7 +341,7 @@ Taylor | Godwin | Stith | Capitol Police | Jenna Portnoy
 14
 </td>
 <td style="text-align:left;">
-bus | driver | Greyhound | CBS | passenger
+peace | war | war in Viet Nam | nation | world
 </td>
 </tr>
 </tbody>
