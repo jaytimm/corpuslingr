@@ -70,7 +70,7 @@ found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 return(found)
 
 } else
-{"SEARCH TERM(S) NOT FOUND IN CORPUS"}
+{"SEARCH TERM(S) NOT FOUND IN CORPUS"}  ##THIS NEEDS TO
 }
 
 
@@ -146,7 +146,9 @@ clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=
 
   if (flatten == TRUE) {
     k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]
-    }
+  }
+
+  k1 <- k1[order(-as.numeric(doc_id))]
 
   return(k1)
 }
