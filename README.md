@@ -89,35 +89,35 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
                         sent="sentence_id", tok="token",upos='pos', genre="search")
 ```
 
--   Corpus summary:
+-   **Corpus summary:**
 
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     54      41569     6423     2019
+## 1:     55      41725     6584     2101
 ```
 
--   By genre:
+-   **By genre:**
 
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     17      13435     3098      744
-## 2:  topic_world     19      12324     3106      568
-## 3: topic_sports     18      15810     2607      766
+## 1: topic_nation     17      12909     2976      719
+## 2:  topic_world     19      11843     3076      590
+## 3: topic_sports     19      16973     2830      838
 ```
 
--   By text:
+-   **By text:**
 
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        308      185       16
-## 2:      2        346      184       18
-## 3:      3        255      143       14
-## 4:      4        598      295       34
-## 5:      5        914      367       40
-## 6:      6       3548     1039      290
+## 1:      1        346      184       18
+## 2:      2        255      143       14
+## 3:      3        914      367       40
+## 4:      4        330      201       17
+## 5:      5        431      223       22
+## 6:      6        552      265       23
 ```
 
 ------------------------------------------------------------------------
@@ -308,18 +308,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token           tag       lemma       
-##    <chr>  <chr>           <chr>     <chr>       
-##  1 1      found in        VBN IN    find in     
-##  2 1      be on           VB IN     be on       
-##  3 1      developing in   VBG IN    develop in  
-##  4 1      change to       VB IN     change to   
-##  5 1      see up          VB RP     see up      
-##  6 1      arrive by       VB IN     arrive by   
-##  7 1      reporting about VBG IN    report about
-##  8 1      Check out       VB RP     check out   
-##  9 1      connect with    VB IN     connect with
-## 10 1      follow him on   VB PRP IN follow he on
+##    doc_id token            tag    lemma          
+##    <chr>  <chr>            <chr>  <chr>          
+##  1 1      spitting in      VBG IN spitt in       
+##  2 1      terminated after VBN IN terminate after
+##  3 1      Facebook on      VB IN  Facebook on    
+##  4 1      escalates with   VBZ IN escalate with  
+##  5 1      climb over       VB IN  climb over     
+##  6 1      started because  VBD IN start because  
+##  7 1      be at            VB IN  be at          
+##  8 1      comment on       VB IN  comment on     
+##  9 1      published on     VBN IN publish on     
+## 10 1      saddened by      VBN IN sadden by
 ```
 
 ------------------------------------------------------------------------
@@ -343,10 +343,10 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                     token txtf docf
-## 1: PRESIDENTIAL PERSONNEL    2    1
-## 2:   INITIAL APPOINTMENTS    1    1
-## 3:        INITIAL REPORTS    1    1
-## 4:       INITIAL RESPONSE    1    1
+## 1:  PRESIDENTIAL ELECTION    5    3
+## 2:    PRESIDENTIAL PALACE    4    2
+## 3: PRESIDENTIAL ELECTIONS    3    1
+## 4:   INITIAL APPOINTMENTS    1    1
 ## 5:         MARTIAL ARTIST    1    1
 ## 6:       POTENTIAL MOTIVE    1    1
 ```
@@ -392,12 +392,12 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
   head()
 ##    searchLemma     lemma cofreq
-## 1: WHITE HOUSE DESTEFANO      7
-## 2: WHITE HOUSE PRESIDENT      7
-## 3: WHITE HOUSE     TRUMP      7
-## 4: WHITE HOUSE       SAY      5
-## 5: WHITE HOUSE   ADVISER      4
-## 6: WHITE HOUSE    JOHNNY      4
+## 1: WHITE HOUSE     TRUMP      7
+## 2: WHITE HOUSE     COVER      5
+## 3: WHITE HOUSE PRESIDENT      5
+## 4: WHITE HOUSE STATEMENT      4
+## 5: WHITE HOUSE    FOLLOW      3
+## 6: WHITE HOUSE  NATIONAL      3
 ```
 
 ------------------------------------------------------------------------
@@ -436,50 +436,50 @@ keyphrases
 <tbody>
 <tr>
 <td style="text-align:left;">
-54
+1
 </td>
 <td style="text-align:left;">
-seconds | Hamilton | Florida State | game | Michigan
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-53
-</td>
-<td style="text-align:left;">
-Kansas | Jayhawks | no. | Duke | final four
+customer | altercation | video | sandwich | owner
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-52
+2
 </td>
 <td style="text-align:left;">
-Upshaw | Drive | condition | court | game
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-51
-</td>
-<td style="text-align:left;">
-track | Truck Series race | Monday | a.m | Virginia area
+boy | police | attacker | year-old boy | train
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-50
+3
 </td>
 <td style="text-align:left;">
-Bell | Steeler | draft | Colbert | Steelers
+Sharps | family | family member | Sharp family | Amy Sharp
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-49
+4
 </td>
 <td style="text-align:left;">
-Phillies | Rupp | Phils | Pirates | catcher
+NRA | accident | trip | problem | involvement in nationwide shooting competition
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Moss | temperature | Durham | roads | drizzle
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+wall | military | drug | national defense | Trump
 </td>
 </tr>
 </tbody>
