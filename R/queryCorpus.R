@@ -148,7 +148,7 @@ clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=
     k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]
   }
 
-  k1 <- k1[order(-as.numeric(doc_id))]
+  k1 <- k1[order(as.numeric(doc_id))]
 
   return(k1)
 }

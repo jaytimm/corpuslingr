@@ -94,7 +94,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     57      51114     8688     2288
+## 1:     54      41569     6423     2019
 ```
 
 -   By genre:
@@ -102,9 +102,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     18      12329     3001      554
-## 2:  topic_world     20      23120     5888     1002
-## 3: topic_sports     19      15665     2649      781
+## 1: topic_nation     17      13435     3098      744
+## 2:  topic_world     19      12324     3106      568
+## 3: topic_sports     18      15810     2607      766
 ```
 
 -   By text:
@@ -112,12 +112,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        972      414       34
+## 1:      1        308      185       16
 ## 2:      2        346      184       18
-## 3:      3        623      270       29
+## 3:      3        255      143       14
 ## 4:      4        598      295       34
-## 5:      5        264      165       15
-## 6:      6       1260      460       58
+## 5:      5        914      367       40
+## 6:      6       3548     1039      290
 ```
 
 ------------------------------------------------------------------------
@@ -308,18 +308,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token            tag    lemma        
-##    <chr>  <chr>            <chr>  <chr>        
-##  1 1      talking about    VBG IN talk about   
-##  2 1      said in          VBD IN say in       
-##  3 1      put out          VBN RP put out      
-##  4 1      rallying for     VBG IN rallying for 
-##  5 1      been at          VBN IN be at        
-##  6 1      assigned to      VBN IN assign to    
-##  7 1      contrasted with  VBN IN contrast with
-##  8 1      went on          VBD IN go on        
-##  9 1      marching against VBG IN march against
-## 10 1      speaks during    VBZ IN speak during
+##    doc_id token           tag       lemma       
+##    <chr>  <chr>           <chr>     <chr>       
+##  1 1      found in        VBN IN    find in     
+##  2 1      be on           VB IN     be on       
+##  3 1      developing in   VBG IN    develop in  
+##  4 1      change to       VB IN     change to   
+##  5 1      see up          VB RP     see up      
+##  6 1      arrive by       VB IN     arrive by   
+##  7 1      reporting about VBG IN    report about
+##  8 1      Check out       VB RP     check out   
+##  9 1      connect with    VB IN     connect with
+## 10 1      follow him on   VB PRP IN follow he on
 ```
 
 ------------------------------------------------------------------------
@@ -343,12 +343,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                     token txtf docf
-## 1:  PRESIDENTIAL ELECTION    5    3
-## 2: PRESIDENTIAL ELECTIONS    3    1
-## 3: PRESIDENTIAL PERSONNEL    2    1
-## 4:      INITIAL AGGRESSOR    1    1
-## 5:   INITIAL APPOINTMENTS    1    1
-## 6:       INITIAL KOSINSKI    1    1
+## 1: PRESIDENTIAL PERSONNEL    2    1
+## 2:   INITIAL APPOINTMENTS    1    1
+## 3:        INITIAL REPORTS    1    1
+## 4:       INITIAL RESPONSE    1    1
+## 5:         MARTIAL ARTIST    1    1
+## 6:       POTENTIAL MOTIVE    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -393,11 +393,11 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   head()
 ##    searchLemma     lemma cofreq
 ## 1: WHITE HOUSE DESTEFANO      7
-## 2: WHITE HOUSE     TRUMP      5
-## 3: WHITE HOUSE    JOHNNY      4
-## 4: WHITE HOUSE PRESIDENT      4
-## 5: WHITE HOUSE       SAY      4
-## 6: WHITE HOUSE   ADVISER      3
+## 2: WHITE HOUSE PRESIDENT      7
+## 3: WHITE HOUSE     TRUMP      7
+## 4: WHITE HOUSE       SAY      5
+## 5: WHITE HOUSE   ADVISER      4
+## 6: WHITE HOUSE    JOHNNY      4
 ```
 
 ------------------------------------------------------------------------
@@ -436,34 +436,10 @@ keyphrases
 <tbody>
 <tr>
 <td style="text-align:left;">
-57
-</td>
-<td style="text-align:left;">
-seconds | Hamilton | Florida State | Michigan | game
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-56
-</td>
-<td style="text-align:left;">
-ball | Smith | demerit point | match | Steve Smith
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-55
-</td>
-<td style="text-align:left;">
-Drive | Upshaw | condition | court | floor Saturday night
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 54
 </td>
 <td style="text-align:left;">
-Truck Series race | track | Monday | Virginia area | Rain
+seconds | Hamilton | Florida State | game | Michigan
 </td>
 </tr>
 <tr>
@@ -471,7 +447,7 @@ Truck Series race | track | Monday | Virginia area | Rain
 53
 </td>
 <td style="text-align:left;">
-Duke | model | Kansas | ppg | Syracuse
+Kansas | Jayhawks | no. | Duke | final four
 </td>
 </tr>
 <tr>
@@ -479,7 +455,31 @@ Duke | model | Kansas | ppg | Syracuse
 52
 </td>
 <td style="text-align:left;">
-Giants fan | A | parking | a | Coliseum
+Upshaw | Drive | condition | court | game
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+51
+</td>
+<td style="text-align:left;">
+track | Truck Series race | Monday | a.m | Virginia area
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+Bell | Steeler | draft | Colbert | Steelers
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+Phillies | Rupp | Phils | Pirates | catcher
 </td>
 </tr>
 </tbody>
