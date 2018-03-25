@@ -94,7 +94,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     55      41725     6584     2101
+## 1:     54      45442     7219     2024
 ```
 
 -   **By genre:**
@@ -102,9 +102,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     17      12909     2976      719
-## 2:  topic_world     19      11843     3076      590
-## 3: topic_sports     19      16973     2830      838
+## 1: topic_nation     16      16068     3870      678
+## 2:  topic_world     19      12273     3129      581
+## 3: topic_sports     19      17101     2710      854
 ```
 
 -   **By text:**
@@ -112,12 +112,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        346      184       18
-## 2:      2        255      143       14
-## 3:      3        914      367       40
-## 4:      4        330      201       17
-## 5:      5        431      223       22
-## 6:      6        552      265       23
+## 1:      1        379      174       16
+## 2:      2        346      184       18
+## 3:      3        623      270       29
+## 4:      4       1071      462       39
+## 5:      5       1260      460       58
+## 6:      6       2505      871       84
 ```
 
 ------------------------------------------------------------------------
@@ -308,18 +308,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token            tag    lemma          
-##    <chr>  <chr>            <chr>  <chr>          
-##  1 1      spitting in      VBG IN spitt in       
-##  2 1      terminated after VBN IN terminate after
-##  3 1      Facebook on      VB IN  Facebook on    
-##  4 1      escalates with   VBZ IN escalate with  
-##  5 1      climb over       VB IN  climb over     
-##  6 1      started because  VBD IN start because  
-##  7 1      be at            VB IN  be at          
-##  8 1      comment on       VB IN  comment on     
-##  9 1      published on     VBN IN publish on     
-## 10 1      saddened by      VBN IN sadden by
+##    doc_id token           tag    lemma         
+##    <chr>  <chr>           <chr>  <chr>         
+##  1 1      acknowledged in VBD IN acknowledge in
+##  2 1      accused of      VBN IN accuse of     
+##  3 1      wrote in        VBD IN write in      
+##  4 1      lie to          VB IN  lie to        
+##  5 1      retire from     VB IN  retire from   
+##  6 1      based on        VBN IN base on       
+##  7 1      fired for       VBN IN fire for      
+##  8 1      spoke to        VBD IN speak to      
+##  9 1      speak to        VB IN  speak to      
+## 10 1      published in    VBN IN published in
 ```
 
 ------------------------------------------------------------------------
@@ -343,12 +343,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                     token txtf docf
-## 1:  PRESIDENTIAL ELECTION    5    3
+## 1:  PRESIDENTIAL ELECTION    6    4
 ## 2:    PRESIDENTIAL PALACE    4    2
 ## 3: PRESIDENTIAL ELECTIONS    3    1
-## 4:   INITIAL APPOINTMENTS    1    1
-## 5:         MARTIAL ARTIST    1    1
-## 6:       POTENTIAL MOTIVE    1    1
+## 4:  PRESIDENTIAL CAMPAIGN    2    2
+## 5:      INITIAL AGGRESSOR    1    1
+## 6:         MARTIAL ARTIST    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -360,7 +360,7 @@ A function that returns search terms with user-specified left and right contexts
 ``` r
 search3 <- 'NPHR (DO)? (NEG)? (THINK| BELIEVE )'
 
-found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=5, RW = 5)
+found_egs <- corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=15, RW = 15)
 ```
 
 ------------------------------------------------------------------------
@@ -373,7 +373,6 @@ Access `KWIC` object:
 found_egs %>%
   corpuslingr::clr_context_kwic()%>% #Add genre.
   select(doc_id,kwic)%>%
-  slice(1:15)%>%
   DT::datatable(selection="none",class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
 ```
 
@@ -389,15 +388,15 @@ A function for accessing `BOW` object. The parameters `agg_var` and `content_onl
 search3 <- "White House"
 
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
-  corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma'))%>%
+  corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma     lemma cofreq
-## 1: WHITE HOUSE     TRUMP      7
-## 2: WHITE HOUSE     COVER      5
-## 3: WHITE HOUSE PRESIDENT      5
-## 4: WHITE HOUSE STATEMENT      4
-## 5: WHITE HOUSE    FOLLOW      3
-## 6: WHITE HOUSE  NATIONAL      3
+##    searchLemma     lemma   pos cofreq
+## 1: WHITE HOUSE     COVER  VERB      3
+## 2: WHITE HOUSE INTERVIEW  NOUN      3
+## 3: WHITE HOUSE     FIRST   ADJ      2
+## 4: WHITE HOUSE   FLORIDA PROPN      2
+## 5: WHITE HOUSE      JOIN  VERB      2
+## 6: WHITE HOUSE      LADY  NOUN      2
 ```
 
 ------------------------------------------------------------------------
@@ -439,7 +438,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-customer | altercation | video | sandwich | owner
+McCabe | lack of candor | FBI | investigator | press
 </td>
 </tr>
 <tr>
@@ -447,7 +446,7 @@ customer | altercation | video | sandwich | owner
 2
 </td>
 <td style="text-align:left;">
-boy | police | attacker | year-old boy | train
+customer | altercation | sandwich | video | owner
 </td>
 </tr>
 <tr>
@@ -455,7 +454,7 @@ boy | police | attacker | year-old boy | train
 3
 </td>
 <td style="text-align:left;">
-Sharps | family | family member | Sharp family | Amy Sharp
+office | family | gas connection | suicide | room
 </td>
 </tr>
 <tr>
@@ -463,7 +462,7 @@ Sharps | family | family member | Sharp family | Amy Sharp
 4
 </td>
 <td style="text-align:left;">
-NRA | accident | trip | problem | involvement in nationwide shooting competition
+Fiedler | teacher | Heyward | student | change
 </td>
 </tr>
 <tr>
@@ -471,7 +470,7 @@ NRA | accident | trip | problem | involvement in nationwide shooting competition
 5
 </td>
 <td style="text-align:left;">
-Moss | temperature | Durham | roads | drizzle
+Mr. Busch | Busch | son | boy | police
 </td>
 </tr>
 <tr>
@@ -479,7 +478,7 @@ Moss | temperature | Durham | roads | drizzle
 6
 </td>
 <td style="text-align:left;">
-wall | military | drug | national defense | Trump
+report | Anderson | book | gender dysphoria | study
 </td>
 </tr>
 </tbody>
