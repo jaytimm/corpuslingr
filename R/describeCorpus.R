@@ -15,7 +15,7 @@ clr_desc_corpus <- function (x,doc ='id',sent='sid', tok='word',upos='upos',genr
 
   byText <- x[upos!="PUNCT", list(textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(get(sent)))), by=doc]
 
-  byText <- byText[order(as.numeric(get(doc)))]
+  byText <- byText[order(as.numeric(gsub('[A-Za-z]','',get(doc))))]
 
   corpus <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep=""))))]
 
