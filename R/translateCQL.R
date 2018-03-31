@@ -12,7 +12,7 @@ clr_build_search <- function(x){
   default <- '<\\\\S+~\\\\S+~\\\\S+>'
 
   #Simple wildcard:
-  if (x=="*") default else {
+  if (x=="\\*") default else {
 
     pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
 
