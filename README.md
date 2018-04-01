@@ -1,22 +1,34 @@
-corpuslingr
-===========
+CORPUSLINGR: corpus linguistics in r
+------------------------------------
 
-The main function of this library is to streamline in-context corpus search of grammatical constructions and complex lexical patterns, ie, patterns comprised of:
+This library of functions streamlines two sets of tasks useful to the corpus linguist:
+
+-   corpus search of grammatical constructions and complex lexical patterns in context, and
+-   detailed summary and aggregation of corpus search results.
+
+Grammatical constructions and complex lexical patterns are formalized here (in terms of an annotated corpus) as patterns comprised of:
 
 -   different types of elements (eg, form, lemma, or part-of-speech),
--   contiguous/non-contiguous elements,
--   positionally fixed and free (ie, optional) elements,
--   or any combination thereof.
+-   contiguous and/or non-contiguous elements,
+-   positionally fixed and/or free (ie, optional) elements, or
+-   any combination thereof.
 
 Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function in Python's Natural Language Toolkit (NLTK).
 
 Regex syntax is simplified (or, more accurately, supplemented) with an in-house "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
 
-Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Summary functions also allow users to specify how search results are aggregated. Importantly, both search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
+Summary functions allow users to:
 
-Functions included in the library dovetail nicely with existing R packages geared towards text/corpus analysis (eg, `quanteda`, `spacyr`, `udpipe`, `coreNLP`, `qdap`). These packages are beasts (!); `corpuslingr` just fills a few gaps with the needs of the corpus linguist in mind, enabling finer-grained, more qualitative analysis of language use and variation in context.
+-   aggregate search results by text & token frequency,
+-   view search results in context (kwic),
+-   create word embeddings/co-occurrence vectors for each search term, and
+-   specify how search results are aggregated.
 
-While still in development (ie, feedback!), the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search functionality when working with (moderately-sized) personal corpora.
+Importantly, both search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
+
+Functions included in the library dovetail nicely with existing R packages geared towards text/corpus analysis (eg, `quanteda`, `spacyr`, `udpipe`, `coreNLP`, `qdap`). These packages are beasts (!); `corpuslingr` fills a few gaps with the needs of the corpus linguist in mind, enabling finer-grained, more qualitative analysis of language use and variation in context.
+
+While still in development (ie, feedback!), the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search functionality when working with (moderately-sized) personal corpora. The package is available for download at [my github site](https://github.com/jaytimm).
 
 ``` r
 library(tidyverse)
@@ -51,7 +63,7 @@ corpus <- lapply(topics, function (x) {
 
 ### clr\_prep\_corpus
 
-This function performs two tasks. It elminates unnecessary whitespace from the text column of a corpus dataframe object. Additionally, it attempts to trick annotators into treating hyphenated words as a single token. With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens. For linguists interested in word formation processes, eg, this is disappointing. There is likley a less hacky way to do this.
+This function performs two tasks. It eliminates unnecessary whitespace from the text column of a corpus data frame object. Additionally, it attempts to trick annotators into treating hyphenated words as a single token. With the exception of Stanford's CoreNLP (via `cleanNLP`), annotators tend to treat hyphenated words as multiple word tokens. For linguists interested in word formation processes, eg, this is disappointing. There is likely a less hacky way to do this.
 
 ``` r
 corpus <- clr_prep_corpus (corpus, hyphenate = TRUE)
@@ -61,7 +73,7 @@ corpus <- clr_prep_corpus (corpus, hyphenate = TRUE)
 
 ### Annotate via cleanNLP and udpipe
 
-For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus dataframe object.
+For demo purposes, we use `udpipe` (via `cleanNLP`) to annotate the corpus data frame object.
 
 ``` r
 cleanNLP::cnlp_init_udpipe(model_name="english",feature_flag = FALSE, parser = "none") 
@@ -76,7 +88,7 @@ This function prepares the annotated corpus for complex, tuple-based search. Tup
 
 Annotation output is homogenized, including column names. Naming conventions established in the `spacyr` package are adopted here.
 
-Lastly, the function splits the corpus into a list of dataframes by document. This is ultimately a search convenience.
+Lastly, the function splits the corpus into a list of data frames by document. This is ultimately a search convenience.
 
 ``` r
 lingr_corpus <- ann_corpus$token %>%
@@ -93,7 +105,7 @@ lingr_corpus <- ann_corpus$token %>%
 
 ### clr\_desc\_corpus()
 
-A simple function for describing an annotated corpus, providing some basic aggregate statisitcs at the corpus, genre, and text levels.
+A simple function for describing an annotated corpus, providing some basic aggregate statistics at the corpus, genre, and text levels.
 
 ``` r
 summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id", 
@@ -105,7 +117,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     48      37328     6621     1629
+## 1:     48      39304     6972     1707
 ```
 
 -   **By genre:**
@@ -113,9 +125,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     15      13440     3140      567
-## 2:  topic_world     16      11835     3002      509
-## 3: topic_sports     17      12053     2735      612
+## 1: topic_nation     17      14683     3353      576
+## 2:  topic_world     18      14408     3547      646
+## 3: topic_sports     13      10213     2449      506
 ```
 
 -   **By text:**
@@ -123,12 +135,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        443      222       18
-## 2:      2        284      147       15
-## 3:      3       1028      412       46
-## 4:      4        736      319       33
-## 5:      5        599      279       27
-## 6:      6        292      150       15
+## 1:      1        919      388       36
+## 2:      2        201      116        9
+## 3:      3        443      221       16
+## 4:      4        599      279       27
+## 5:      5        286      166       15
+## 6:      6        863      403       31
 ```
 
 ------------------------------------------------------------------------
@@ -310,7 +322,7 @@ He was very, very happy; I'm not sure
 
 ### clr\_search\_gramx()
 
-Search for all instantiaions of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search.
+Search for all instantiations of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search.
 
 ``` r
 search1 <- "VERB (PRON)? (PREP| RP)"
@@ -319,18 +331,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token          tag    lemma         
-##    <chr>  <chr>          <chr>  <chr>         
-##  1 1      dined with     VBD IN dine with     
-##  2 1      said during    VBD IN say during    
-##  3 1      dig up         VB RP  dig up        
-##  4 1      scared to      VBN IN scared to     
-##  5 1      be in          VB IN  be in         
-##  6 1      deal with      VB IN  deal with     
-##  7 1      come as        VBP IN come as       
-##  8 1      testify before VB IN  testify before
-##  9 1      came after     VBD IN come after    
-## 10 1      resigned amid  VBD IN resign amid
+##    doc_id token         tag    lemma      
+##    <chr>  <chr>         <chr>  <chr>      
+##  1 1      living in     VBG IN living in  
+##  2 1      co-owned by   VBN IN co-own by  
+##  3 1      Interested in VBD IN interest in
+##  4 1      stay up       VB IN  stay up    
+##  5 1      's because    VBZ IN be because 
+##  6 1      replaced in   VBN IN replace in 
+##  7 1      played out    VBD RP play out   
+##  8 1      lived in      VBD IN live in    
+##  9 1      tied to       VBN IN tie to     
+## 10 1      appeared on   VBD IN appear on
 ```
 
 ------------------------------------------------------------------------
@@ -353,20 +365,20 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                       token txtf docf
-## 1:   PRESIDENTIAL PERSONNEL    8    1
-## 2:    PRESIDENTIAL SCHOLARS    3    1
-## 3:   CONFIDENTIAL ASSISTANT    1    1
-## 4:       CONFIDENTIAL CALLS    1    1
-## 5:       INFLUENTIAL DONORS    1    1
-## 6: POTENTIAL ADMINISTRATION    1    1
+##                      token txtf docf
+## 1:           INITIAL STAGE    1    1
+## 2:  POTENTIAL ONE-AND-DONE    1    1
+## 3:    PRESIDENTIAL ADVISER    1    1
+## 4:   PRESIDENTIAL ELECTION    1    1
+## 5:     PRESIDENTIAL FAMILY    1    1
+## 6: PRESIDENTIAL STATEMENTS    1    1
 ```
 
 ------------------------------------------------------------------------
 
 ### clr\_search\_context()
 
-A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two dataframes: a `BOW` (bag-of-words) dataframe object and a `KWIC` (keyword in context) dataframe object.
+A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two data frames: a `BOW` (bag-of-words) data frame object and a `KWIC` (keyword in context) data frame object.
 
 ``` r
 search3 <- 'NPHR (DO)? (NEG)? (THINK| BELIEVE )'
@@ -393,7 +405,7 @@ found_egs %>%
 
 ### clr\_context\_bow()
 
-A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to specify how collocates are aggreggated and whether only content words are included, respectively.
+A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to specify how collocates are aggregated and whether only content words are included, respectively.
 
 ``` r
 search3 <- "White House"
@@ -401,13 +413,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma    lemma   pos cofreq
-## 1: WHITE HOUSE      SAY  VERB     15
-## 2: WHITE HOUSE   EASTER PROPN     12
-## 3: WHITE HOUSE OFFICIAL  NOUN     10
-## 4: WHITE HOUSE      EGG PROPN      9
-## 5: WHITE HOUSE    HOUSE PROPN      9
-## 6: WHITE HOUSE     ROLL  NOUN      9
+##    searchLemma          lemma   pos cofreq
+## 1: WHITE HOUSE           TELL  VERB      4
+## 2: WHITE HOUSE       OFFICIAL  NOUN      3
+## 3: WHITE HOUSE ADMINISTRATION  NOUN      2
+## 4: WHITE HOUSE    ARRANGEMENT  NOUN      2
+## 5: WHITE HOUSE          CHIEF PROPN      2
+## 6: WHITE HOUSE            DAY  NOUN      2
 ```
 
 ------------------------------------------------------------------------
@@ -423,7 +435,7 @@ clr_ref_keyphrase
 ## [1] "(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?"
 ```
 
-The user can specify the number of keyphrases to extract, how to aggregate key phrases, how to output key phrases, and whether or not to use jitter to break ties among top n key phrases.
+The user can specify the number of key phrases to extract, how to aggregate key phrases, how to output key phrases, and whether or not to use jitter to break ties among top n key phrases.
 
 ``` r
 lingr_corpus %>%
@@ -449,7 +461,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-good legal help | Mueller | Trump | storm | Castellanos
+Pruitt | condo | gift | EPA | lease
 </td>
 </tr>
 <tr>
@@ -457,7 +469,7 @@ good legal help | Mueller | Trump | storm | Castellanos
 2
 </td>
 <td style="text-align:left;">
-deer | glass bowl | post | Dan Radel | light fixture cover
+Carter | MORE | investigation expose | benefit | country at peace
 </td>
 </tr>
 <tr>
@@ -465,7 +477,7 @@ deer | glass bowl | post | Dan Radel | light fixture cover
 3
 </td>
 <td style="text-align:left;">
-event | child | tradition | South Lawn | egg
+good legal help | Mueller | Trump | storm | Moscow
 </td>
 </tr>
 <tr>
@@ -473,7 +485,7 @@ event | child | tradition | South Lawn | egg
 4
 </td>
 <td style="text-align:left;">
-account | Hogg | David Hogg | show | Ingraham
+Esty | Baker | congresswoman | top staffer | Congresswoman Esty
 </td>
 </tr>
 <tr>
@@ -481,7 +493,7 @@ account | Hogg | David Hogg | show | Ingraham
 5
 </td>
 <td style="text-align:left;">
-Esty | Baker | Congresswoman Esty | top staffer | Connecticut Post
+Diazx xx Delgado | Thompson | murder | kidnapping | Trentonian
 </td>
 </tr>
 <tr>
@@ -489,7 +501,7 @@ Esty | Baker | Congresswoman Esty | top staffer | Connecticut Post
 6
 </td>
 <td style="text-align:left;">
-Constable | Montgomery County Precinct | Office | Gamezx x x Nava | vehicle
+Hogg | Ingraham | apology | advertiser | bully
 </td>
 </tr>
 </tbody>
