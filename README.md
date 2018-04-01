@@ -1,11 +1,22 @@
 corpuslingr
 ===========
 
-The main function of this library is to enable complex search of an annotated corpus akin to search functionality made available via `RegexpParser` in Python's Natural Language Toolkit (NLTK). While regex-based, search syntax has been simplified, and modeled after the more intuitive syntax used in the online BYU suite of corpora.
+The main function of this library is to streamline in-context corpus search of grammatical constructions and complex lexical patterns, ie, patterns comprised of:
 
-Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Functions also allow users to specify how search results are aggregated. Importantly, search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
+-   different types of elements (eg, form, lemma, or part-of-speech),
+-   contiguous/non-contiguous elements,
+-   positionally fixed and free (ie, optional) elements,
+-   or any combination thereof.
 
-The collection of functions presented here is ideal for usage-based linguists and digital humanists interested in fine-grained search of moderately-sized corpora.
+Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function in Python's Natural Language Toolkit (NLTK).
+
+Regex syntax is simplified (or, more accurately, supplemented) with an in-house "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
+
+Summary functions allow users to aggregate search results by text & token frequency, view search results in context (kwic), and create word embeddings/co-occurrence vectors for each search term. Summary functions also allow users to specify how search results are aggregated. Importantly, both search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
+
+Functions included in the library dovetail nicely with existing R packages geared towards text/corpus analysis (eg, `quanteda`, `spacyr`, `udpipe`, `coreNLP`, `qdap`). These packages are beasts (!); `corpuslingr` just fills a few gaps with the needs of the corpus linguist in mind, enabling finer-grained, more qualitative analysis of language use and variation in context.
+
+While still in development (ie, feedback!), the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search functionality when working with (moderately-sized) personal corpora.
 
 ``` r
 library(tidyverse)
@@ -94,7 +105,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     54      45442     7219     2024
+## 1:     48      37328     6621     1629
 ```
 
 -   **By genre:**
@@ -102,9 +113,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     16      16068     3870      678
-## 2:  topic_world     19      12273     3129      581
-## 3: topic_sports     19      17101     2710      854
+## 1: topic_nation     15      13440     3140      567
+## 2:  topic_world     16      11835     3002      509
+## 3: topic_sports     17      12053     2735      612
 ```
 
 -   **By text:**
@@ -112,12 +123,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        379      174       16
-## 2:      2        346      184       18
-## 3:      3        623      270       29
-## 4:      4       1071      462       39
-## 5:      5       1260      460       58
-## 6:      6       2505      871       84
+## 1:      1        443      222       18
+## 2:      2        284      147       15
+## 3:      3       1028      412       46
+## 4:      4        736      319       33
+## 5:      5        599      279       27
+## 6:      6        292      150       15
 ```
 
 ------------------------------------------------------------------------
@@ -308,18 +319,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token           tag    lemma         
-##    <chr>  <chr>           <chr>  <chr>         
-##  1 1      acknowledged in VBD IN acknowledge in
-##  2 1      accused of      VBN IN accuse of     
-##  3 1      wrote in        VBD IN write in      
-##  4 1      lie to          VB IN  lie to        
-##  5 1      retire from     VB IN  retire from   
-##  6 1      based on        VBN IN base on       
-##  7 1      fired for       VBN IN fire for      
-##  8 1      spoke to        VBD IN speak to      
-##  9 1      speak to        VB IN  speak to      
-## 10 1      published in    VBN IN published in
+##    doc_id token          tag    lemma         
+##    <chr>  <chr>          <chr>  <chr>         
+##  1 1      dined with     VBD IN dine with     
+##  2 1      said during    VBD IN say during    
+##  3 1      dig up         VB RP  dig up        
+##  4 1      scared to      VBN IN scared to     
+##  5 1      be in          VB IN  be in         
+##  6 1      deal with      VB IN  deal with     
+##  7 1      come as        VBP IN come as       
+##  8 1      testify before VB IN  testify before
+##  9 1      came after     VBD IN come after    
+## 10 1      resigned amid  VBD IN resign amid
 ```
 
 ------------------------------------------------------------------------
@@ -342,13 +353,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                     token txtf docf
-## 1:  PRESIDENTIAL ELECTION    6    4
-## 2:    PRESIDENTIAL PALACE    4    2
-## 3: PRESIDENTIAL ELECTIONS    3    1
-## 4:  PRESIDENTIAL CAMPAIGN    2    2
-## 5:      INITIAL AGGRESSOR    1    1
-## 6:         MARTIAL ARTIST    1    1
+##                       token txtf docf
+## 1:   PRESIDENTIAL PERSONNEL    8    1
+## 2:    PRESIDENTIAL SCHOLARS    3    1
+## 3:   CONFIDENTIAL ASSISTANT    1    1
+## 4:       CONFIDENTIAL CALLS    1    1
+## 5:       INFLUENTIAL DONORS    1    1
+## 6: POTENTIAL ADMINISTRATION    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -390,13 +401,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma     lemma   pos cofreq
-## 1: WHITE HOUSE     COVER  VERB      3
-## 2: WHITE HOUSE INTERVIEW  NOUN      3
-## 3: WHITE HOUSE     FIRST   ADJ      2
-## 4: WHITE HOUSE   FLORIDA PROPN      2
-## 5: WHITE HOUSE      JOIN  VERB      2
-## 6: WHITE HOUSE      LADY  NOUN      2
+##    searchLemma    lemma   pos cofreq
+## 1: WHITE HOUSE      SAY  VERB     15
+## 2: WHITE HOUSE   EASTER PROPN     12
+## 3: WHITE HOUSE OFFICIAL  NOUN     10
+## 4: WHITE HOUSE      EGG PROPN      9
+## 5: WHITE HOUSE    HOUSE PROPN      9
+## 6: WHITE HOUSE     ROLL  NOUN      9
 ```
 
 ------------------------------------------------------------------------
@@ -438,7 +449,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-McCabe | lack of candor | FBI | investigator | press
+good legal help | Mueller | Trump | storm | Castellanos
 </td>
 </tr>
 <tr>
@@ -446,7 +457,7 @@ McCabe | lack of candor | FBI | investigator | press
 2
 </td>
 <td style="text-align:left;">
-customer | altercation | sandwich | video | owner
+deer | glass bowl | post | Dan Radel | light fixture cover
 </td>
 </tr>
 <tr>
@@ -454,7 +465,7 @@ customer | altercation | sandwich | video | owner
 3
 </td>
 <td style="text-align:left;">
-office | family | gas connection | suicide | room
+event | child | tradition | South Lawn | egg
 </td>
 </tr>
 <tr>
@@ -462,7 +473,7 @@ office | family | gas connection | suicide | room
 4
 </td>
 <td style="text-align:left;">
-Fiedler | teacher | Heyward | student | change
+account | Hogg | David Hogg | show | Ingraham
 </td>
 </tr>
 <tr>
@@ -470,7 +481,7 @@ Fiedler | teacher | Heyward | student | change
 5
 </td>
 <td style="text-align:left;">
-Mr. Busch | Busch | son | boy | police
+Esty | Baker | Congresswoman Esty | top staffer | Connecticut Post
 </td>
 </tr>
 <tr>
@@ -478,7 +489,7 @@ Mr. Busch | Busch | son | boy | police
 6
 </td>
 <td style="text-align:left;">
-report | Anderson | book | gender dysphoria | study
+Constable | Montgomery County Precinct | Office | Gamezx x x Nava | vehicle
 </td>
 </tr>
 </tbody>
