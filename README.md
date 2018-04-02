@@ -6,7 +6,9 @@ A library of functions that streamlines two sets of common text-corpus tasks:
 -   annotated corpus search of grammatical constructions and complex lexical patterns in context, and
 -   detailed summary and aggregation of corpus search results.
 
-**Grammatical constructions and complex lexical patterns** are formalized here (in terms of an annotated corpus) as patterns comprised of:
+### search
+
+Grammatical constructions and complex lexical patterns are formalized here (in terms of an annotated corpus) as patterns comprised of:
 
 -   different types of elements (eg, form, lemma, or part-of-speech),
 -   contiguous and/or non-contiguous elements,
@@ -15,7 +17,9 @@ A library of functions that streamlines two sets of common text-corpus tasks:
 
 Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function in Python's Natural Language Toolkit (NLTK). Regex syntax is supplemented with a simple "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
 
-**Summary functions** allow users to:
+### summary
+
+Summary functions allow users to:
 
 -   aggregate search results by text & token frequency,
 -   view search results in context (kwic),
@@ -113,7 +117,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     48      40531     7417     1888
+## 1:     49      41435     7525     1908
 ```
 
 -   **By genre:**
@@ -121,9 +125,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     16      13320     3416      623
-## 2:  topic_world     15      13971     3542      628
-## 3: topic_sports     17      13240     3084      695
+## 1: topic_nation     15      12296     3108      570
+## 2:  topic_world     16      14573     3700      630
+## 3: topic_sports     18      14566     3411      737
 ```
 
 -   **By text:**
@@ -131,12 +135,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        499      250       22
-## 2:      2        364      186       14
-## 3:      3       1000      529       59
+## 1:      1       1168      430       53
+## 2:      2        529      261       24
+## 3:      3        363      184       14
 ## 4:      4        385      198       22
-## 5:      5        110       72        7
-## 6:      6        277      152       14
+## 5:      5        955      350       47
+## 6:      6       1232      527       55
 ```
 
 ------------------------------------------------------------------------
@@ -327,18 +331,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token           tag    lemma         
-##    <chr>  <chr>           <chr>  <chr>         
-##  1 1      released from   VBN IN release from  
-##  2 1      released from   VBN IN release from  
-##  3 1      released from   VBN IN release from  
-##  4 1      sentenced to    VBN IN sentence to   
-##  5 1      associated with VBN IN associate with
-##  6 1      imposed by      VBN IN impose by     
-##  7 1      said in         VBD IN say in        
-##  8 1      focus on        VB IN  focus on      
-##  9 1      sentenced to    VBN IN sentence to   
-## 10 1      show up         VB RP  show up
+##    doc_id token             tag       lemma            
+##    <chr>  <chr>             <chr>     <chr>            
+##  1 1      tweeted that      VBD IN    tweet that       
+##  2 1      Interested in     VBD IN    interested in    
+##  3 1      stay up           VB IN     stay up          
+##  4 1      according to      VBG IN    accord to        
+##  5 1      conclude at       VB IN     conclude at      
+##  6 1      depending on      VBG IN    depend on        
+##  7 1      heard from        VBN IN    hear from        
+##  8 1      peel off          VB RP     peel off         
+##  9 1      detained for      VBN IN    detain for       
+## 10 1      accompany them to VB PRP IN accompany they to
 ```
 
 ------------------------------------------------------------------------
@@ -361,13 +365,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                      token txtf docf
-## 1:   PRESIDENTIAL ELECTION    4    3
-## 2:     POTENTIAL INVESTORS    3    1
-## 3:  PRESIDENTIAL CANDIDATE    3    1
-## 4:  POTENTIAL ONE-AND-DONE    1    1
-## 5:        POTENTIAL SOURCE    1    1
-## 6: PRESIDENTIAL ABSOLUTION    1    1
+##                     token txtf docf
+## 1:    POTENTIAL INVESTORS    2    1
+## 2: POTENTIAL ONE-AND-DONE    1    1
+## 3:       POTENTIAL SOURCE    1    1
+## 4:   PRESIDENTIAL ADVISER    1    1
+## 5: PRESIDENTIAL CANDIDATE    1    1
+## 6:  PRESIDENTIAL ELECTION    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -409,13 +413,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma   lemma   pos cofreq
-## 1: WHITE HOUSE KUSHNER PROPN     11
-## 2: WHITE HOUSE   TRUMP PROPN      9
-## 3: WHITE HOUSE SHULKIN PROPN      8
-## 4: WHITE HOUSE    YEAR  NOUN      8
-## 5: WHITE HOUSE     EGG PROPN      7
-## 6: WHITE HOUSE   HOUSE PROPN      7
+##    searchLemma      lemma   pos cofreq
+## 1: WHITE HOUSE      TRUMP PROPN      9
+## 2: WHITE HOUSE        SAY  VERB      8
+## 3: WHITE HOUSE    SHULKIN PROPN      8
+## 4: WHITE HOUSE     MONDAY PROPN      4
+## 5: WHITE HOUSE CONNECTION  NOUN      3
+## 6: WHITE HOUSE     FAMILY  NOUN      3
 ```
 
 ------------------------------------------------------------------------
@@ -457,7 +461,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-Couch | term | probation | apprehension | Ethan
+Mensing | Mexico | caravan | asylum | march
 </td>
 </tr>
 <tr>
@@ -465,7 +469,7 @@ Couch | term | probation | apprehension | Ethan
 2
 </td>
 <td style="text-align:left;">
-boy | fire department | Los Angeles Fire Department | KABC | Los Angeles River
+Couch | Affluenza | term | Affluenza teen | Ethan
 </td>
 </tr>
 <tr>
@@ -473,7 +477,7 @@ boy | fire department | Los Angeles Fire Department | KABC | Los Angeles River
 3
 </td>
 <td style="text-align:left;">
-Carwile | % | woman | unit | Fortune
+boy | fire department | Los Angeles Fire Department | KABC | Los Angeles River
 </td>
 </tr>
 <tr>
@@ -481,7 +485,7 @@ Carwile | % | woman | unit | Fortune
 4
 </td>
 <td style="text-align:left;">
-Aubrey | Vanessa | Donald | ex | family time on Easter
+Aubrey | Vanessa | ex | Donald | affair with Aubrey O'Day
 </td>
 </tr>
 <tr>
@@ -489,7 +493,7 @@ Aubrey | Vanessa | Donald | ex | family time on Easter
 5
 </td>
 <td style="text-align:left;">
-place | Met Office Wet | temperature | showery weather | windy with snow
+short white coat | resident | coat | hospital | white coat
 </td>
 </tr>
 <tr>
@@ -497,7 +501,7 @@ place | Met Office Wet | temperature | showery weather | windy with snow
 6
 </td>
 <td style="text-align:left;">
-post | apology | Alamosa County Republicans | poverty | author
+station | WJAR | Trump | company | country
 </td>
 </tr>
 </tbody>
