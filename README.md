@@ -1,7 +1,7 @@
-corpuslingr: corpus linguistics in r
-------------------------------------
+corpuslingr: some corpus linguistics in r
+-----------------------------------------
 
-This library of functions streamlines two sets of tasks useful to the corpus linguist:
+A library of functions that streamlines two sets of tasks useful to the corpus linguist:
 
 -   corpus search of grammatical constructions and complex lexical patterns in context, and
 -   detailed summary and aggregation of corpus search results.
@@ -19,7 +19,7 @@ Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function
 
 Regex syntax is simplified (or, more accurately, supplemented) with an in-house "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
 
-### Summary
+### Summary functions
 
 Summary functions allow users to:
 
@@ -30,11 +30,13 @@ Summary functions allow users to:
 
 Importantly, both search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
 
-------------------------------------------------------------------------
-
 Functions included in the library dovetail nicely with existing R packages geared towards text/corpus analysis (eg, `quanteda`, `spacyr`, `udpipe`, `coreNLP`, `qdap`). These packages are beasts (!); `corpuslingr` simply fills a few gaps with the needs of the corpus linguist in mind, enabling finer-grained, more qualitative analysis of language use and variation in context.
 
 While still in development (ie, feedback!), the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search functionality when working with (moderately-sized) personal corpora.
+
+------------------------------------------------------------------------
+
+Here, we walk through a simple workflow from corpus creation using `quicknews`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.
 
 ``` r
 library(tidyverse)
@@ -43,8 +45,6 @@ library(corpuslingr) #devtools::install_github("jaytimm/corpuslingr")
 library(quicknews) #devtools::install_github("jaytimm/quicknews")
 library(DT)
 ```
-
-Here, we walk through a simple workflow from corpus creation using `quicknews`, corpus annotation using the `cleanNLP` package, and annotated corpus search using `corpuslingr`.
 
 ------------------------------------------------------------------------
 
@@ -121,7 +121,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     51      42977     7408     1981
+## 1:     52      41625     7323     1800
 ```
 
 -   **By genre:**
@@ -129,9 +129,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     18      15803     3557      649
-## 2:  topic_world     18      12385     3238      538
-## 3: topic_sports     15      14789     3076      849
+## 1: topic_nation     19      15306     3514      631
+## 2:  topic_world     18      15403     3763      672
+## 3: topic_sports     15      10916     2528      565
 ```
 
 -   **By text:**
@@ -140,11 +140,11 @@ summary$genre
 head(summary$text)
 ##    doc_id textLength textType textSent
 ## 1:      1        919      388       36
-## 2:      2        206      126       12
-## 3:      3       1446      519       59
-## 4:      4        201      116        9
-## 5:      5        443      222       18
-## 6:      6        599      279       27
+## 2:      2       1445      520       59
+## 3:      3        201      116        9
+## 4:      4        443      222       18
+## 5:      5        599      279       27
+## 6:      6        286      166       15
 ```
 
 ------------------------------------------------------------------------
@@ -369,13 +369,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                     token txtf docf
-## 1:   CONFIDENTIAL MASTERS    1    1
-## 2:     POTENTIAL BENEFITS    1    1
-## 3: POTENTIAL ONE-AND-DONE    1    1
-## 4:  PRESIDENTIAL ELECTION    1    1
-## 5:    PRESIDENTIAL FAMILY    1    1
-## 6:      PRESIDENTIAL SEAL    1    1
+##                      token txtf docf
+## 1:      POTENTIAL BENEFITS    1    1
+## 2:    PRESIDENTIAL ADVISER    1    1
+## 3:   PRESIDENTIAL ELECTION    1    1
+## 4:     PRESIDENTIAL FAMILY    1    1
+## 5:       PRESIDENTIAL SEAL    1    1
+## 6: PRESIDENTIAL STATEMENTS    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -417,13 +417,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma       lemma   pos cofreq
-## 1: WHITE HOUSE        YEAR  NOUN      5
-## 2: WHITE HOUSE         EGG  NOUN      4
-## 3: WHITE HOUSE       HOUSE PROPN      4
-## 4: WHITE HOUSE       SOUTH PROPN      4
-## 5: WHITE HOUSE       WHITE PROPN      4
-## 6: WHITE HOUSE ASSOCIATION PROPN      3
+##    searchLemma     lemma   pos cofreq
+## 1: WHITE HOUSE       EGG  NOUN      5
+## 2: WHITE HOUSE      YEAR  NOUN      5
+## 3: WHITE HOUSE     HOUSE PROPN      4
+## 4: WHITE HOUSE     PRESS  NOUN      4
+## 5: WHITE HOUSE      ROLL  NOUN      4
+## 6: WHITE HOUSE SECRETARY  NOUN      4
 ```
 
 ------------------------------------------------------------------------
@@ -473,7 +473,7 @@ Pruitt | condo | gift | lease | Christie
 2
 </td>
 <td style="text-align:left;">
-Kukio Beach | attack | shares | Saturday morning | popular tourist area
+teacher | bill | Frankfort | pension | Ky
 </td>
 </tr>
 <tr>
@@ -481,7 +481,7 @@ Kukio Beach | attack | shares | Saturday morning | popular tourist area
 3
 </td>
 <td style="text-align:left;">
-teacher | bill | Frankfort | Ky | raise
+Carter | human rights | Robert Swan Mueller Sasse | good job | former President Carter
 </td>
 </tr>
 <tr>
@@ -489,7 +489,7 @@ teacher | bill | Frankfort | Ky | raise
 4
 </td>
 <td style="text-align:left;">
-Carter | good president | former President Carter | new interview | Stephen Colbert
+good legal help | Mueller | Trump | storm | Castellanos
 </td>
 </tr>
 <tr>
@@ -497,7 +497,7 @@ Carter | good president | former President Carter | new interview | Stephen Colb
 5
 </td>
 <td style="text-align:left;">
-good legal help | Mueller | Trump | Moscow | Trump campaign
+Esty | Baker | Kain | top staffer | congresswoman
 </td>
 </tr>
 <tr>
@@ -505,7 +505,7 @@ good legal help | Mueller | Trump | Moscow | Trump campaign
 6
 </td>
 <td style="text-align:left;">
-Esty | Baker | Congresswoman Esty | Connecticut Post | top staffer
+Diazx xx Delgado | Thompson | Trentonian | kidnapping | connection
 </td>
 </tr>
 </tbody>
