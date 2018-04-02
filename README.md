@@ -1,10 +1,12 @@
-CORPUSLINGR: corpus linguistics in r
+corpuslingr: corpus linguistics in r
 ------------------------------------
 
 This library of functions streamlines two sets of tasks useful to the corpus linguist:
 
 -   corpus search of grammatical constructions and complex lexical patterns in context, and
 -   detailed summary and aggregation of corpus search results.
+
+------------------------------------------------------------------------
 
 Grammatical constructions and complex lexical patterns are formalized here (in terms of an annotated corpus) as patterns comprised of:
 
@@ -17,6 +19,8 @@ Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function
 
 Regex syntax is simplified (or, more accurately, supplemented) with an in-house "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
 
+------------------------------------------------------------------------
+
 Summary functions allow users to:
 
 -   aggregate search results by text & token frequency,
@@ -26,9 +30,11 @@ Summary functions allow users to:
 
 Importantly, both search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
 
+------------------------------------------------------------------------
+
 Functions included in the library dovetail nicely with existing R packages geared towards text/corpus analysis (eg, `quanteda`, `spacyr`, `udpipe`, `coreNLP`, `qdap`). These packages are beasts (!); `corpuslingr` fills a few gaps with the needs of the corpus linguist in mind, enabling finer-grained, more qualitative analysis of language use and variation in context.
 
-While still in development (ie, feedback!), the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search functionality when working with (moderately-sized) personal corpora. The package is available for download at [my github site](https://github.com/jaytimm).
+While still in development (ie, feedback!), the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search functionality when working with (moderately-sized) personal corpora.
 
 ``` r
 library(tidyverse)
@@ -117,7 +123,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     48      39304     6972     1707
+## 1:     49      37734     6724     1689
 ```
 
 -   **By genre:**
@@ -125,9 +131,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     17      14683     3353      576
-## 2:  topic_world     18      14408     3547      646
-## 3: topic_sports     13      10213     2449      506
+## 1: topic_nation     17      12977     3176      536
+## 2:  topic_world     18      14267     3518      611
+## 3: topic_sports     14      10490     2446      551
 ```
 
 -   **By text:**
@@ -136,11 +142,11 @@ summary$genre
 head(summary$text)
 ##    doc_id textLength textType textSent
 ## 1:      1        919      388       36
-## 2:      2        201      116        9
-## 3:      3        443      221       16
-## 4:      4        599      279       27
-## 5:      5        286      166       15
-## 6:      6        863      403       31
+## 2:      2        206      126       12
+## 3:      3        201      116        9
+## 4:      4        443      222       18
+## 5:      5        599      279       27
+## 6:      6        286      166       15
 ```
 
 ------------------------------------------------------------------------
@@ -365,13 +371,12 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                      token txtf docf
-## 1:           INITIAL STAGE    1    1
-## 2:  POTENTIAL ONE-AND-DONE    1    1
-## 3:    PRESIDENTIAL ADVISER    1    1
-## 4:   PRESIDENTIAL ELECTION    1    1
-## 5:     PRESIDENTIAL FAMILY    1    1
-## 6: PRESIDENTIAL STATEMENTS    1    1
+##                     token txtf docf
+## 1:    POTENTIAL INVESTORS    2    1
+## 2:     POTENTIAL BENEFITS    1    1
+## 3:     POTENTIAL LAWSUITS    1    1
+## 4: POTENTIAL ONE-AND-DONE    1    1
+## 5:  PRESIDENTIAL CAMPAIGN    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -413,13 +418,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma          lemma   pos cofreq
-## 1: WHITE HOUSE           TELL  VERB      4
-## 2: WHITE HOUSE       OFFICIAL  NOUN      3
-## 3: WHITE HOUSE ADMINISTRATION  NOUN      2
-## 4: WHITE HOUSE    ARRANGEMENT  NOUN      2
-## 5: WHITE HOUSE          CHIEF PROPN      2
-## 6: WHITE HOUSE            DAY  NOUN      2
+##    searchLemma         lemma   pos cofreq
+## 1: WHITE HOUSE          TELL  VERB      5
+## 2: WHITE HOUSE         HICKS PROPN      4
+## 3: WHITE HOUSE       SHULKIN PROPN      4
+## 4: WHITE HOUSE COMMUNICATION  NOUN      3
+## 5: WHITE HOUSE    CONNECTION  NOUN      3
+## 6: WHITE HOUSE        FAMILY  NOUN      3
 ```
 
 ------------------------------------------------------------------------
@@ -469,7 +474,7 @@ Pruitt | condo | gift | EPA | lease
 2
 </td>
 <td style="text-align:left;">
-Carter | MORE | investigation expose | benefit | country at peace
+Kukio Beach | attack | ABC News Network | tiger shark | popular tourist area
 </td>
 </tr>
 <tr>
@@ -477,7 +482,7 @@ Carter | MORE | investigation expose | benefit | country at peace
 3
 </td>
 <td style="text-align:left;">
-good legal help | Mueller | Trump | storm | Moscow
+Carter | former President Carter | new interview | doubt | pray for President Trump
 </td>
 </tr>
 <tr>
@@ -485,7 +490,7 @@ good legal help | Mueller | Trump | storm | Moscow
 4
 </td>
 <td style="text-align:left;">
-Esty | Baker | congresswoman | top staffer | Congresswoman Esty
+good legal help | Mueller | Trump | Trump campaign | storm
 </td>
 </tr>
 <tr>
@@ -493,7 +498,7 @@ Esty | Baker | congresswoman | top staffer | Congresswoman Esty
 5
 </td>
 <td style="text-align:left;">
-Diazx xx Delgado | Thompson | murder | kidnapping | Trentonian
+Esty | Baker | Elizabeth Esty | Kain | top staffer
 </td>
 </tr>
 <tr>
@@ -501,7 +506,7 @@ Diazx xx Delgado | Thompson | murder | kidnapping | Trentonian
 6
 </td>
 <td style="text-align:left;">
-Hogg | Ingraham | apology | advertiser | bully
+Diazx xx Delgado | Thompson | murder | Trentonian | kidnapping
 </td>
 </tr>
 </tbody>
