@@ -15,7 +15,9 @@ Grammatical constructions and complex lexical patterns are formalized here (in t
 -   positionally fixed and/or free (ie, optional) elements, or
 -   any combination thereof.
 
-Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function in Python's Natural Language Toolkit (NLTK). Regex syntax is supplemented with a simple "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
+Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function in Python's Natural Language Toolkit (NLTK). Regex syntax is supplemented with a simple "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of English corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
+
+At present, part-of-speech search is based on **English-specific** part-of-speech tags. In theory, search functionality could be made more language-generic by utilizing universal part-of-speech tags when building tuples. However, language-specific search will utlimately be more powerful/insightful.
 
 ### summary
 
@@ -52,7 +54,7 @@ Corpus preparation & annotation
 To demo the search functionality of `corpuslingr`, we first build a small corpus of current news articles using my `quicknews` package. We apply the `gnews_get_meta`/`gnews_scrape_web` functions across multiple Google News sections to build out the corpus some, and to add a genre-like dimension to the corpus.
 
 ``` r
-topics <- c('nation','world', 'sports')
+topics <- c('nation','world', 'sports', 'science')
 
 corpus <- lapply(topics, function (x) {
     quicknews::qnews_get_meta (language="en", country="us", type="topic", search=x)%>%
@@ -86,11 +88,7 @@ ann_corpus <- cleanNLP::cnlp_annotate(corpus$text, as_strings = TRUE, doc_ids = 
 
 ### clr\_set\_corpus()
 
-This function prepares the annotated corpus for complex, tuple-based search. Tuples are created, taking the form `<token~lemma~pos>`; tuple onsets/offsets are also set.
-
-Annotation output is homogenized, including column names. Naming conventions established in the `spacyr` package are adopted here.
-
-Lastly, the function splits the corpus into a list of data frames by document. This is ultimately a search convenience.
+This function prepares the annotated corpus for complex search (as defined above) by building `<token~lemma~pos>` tuples and setting tuple onsets/offsets. Additionally, column names are homogenized using the naming conventions established in the `spacyr` package. Lastly, the function splits the corpus into a list of data frames by document. This is ultimately a search convenience.
 
 ``` r
 lingr_corpus <- ann_corpus$token %>%
@@ -101,6 +99,13 @@ lingr_corpus <- ann_corpus$token %>%
                   pos_var='upos',
                   sentence_var='sid',
                   meta = corpus[,c('doc_id','source','search')])
+```
+
+Some example tuple-ized text:
+
+``` r
+paste(lingr_corpus[[1]]$tup[100:150], collapse= " ")
+## [1] "<act~act~VB> <.~.~.> <\"~\"~''> <DACA~DACa~NN> <is~be~VBZ> <dead~dead~JJ> <because~because~IN> <the~the~DT> <Democrats~Democrats~NNPS> <did~do~VBD> <n't~not~RB> <care~care~VB> <or~or~CC> <act~act~NN> <,~,~,> <and~and~CC> <now~now~RB> <everyone~everyone~NN> <wants~want~VBZ> <to~to~TO> <get~get~VB> <onto~onto~IN> <the~the~DT> <DACA~DACa~NN> <bandwagon~bandwagon~NN> <...~...~.> <No~no~RB> <longer~longer~RBR> <works~work~VBZ> <.~.~.> <Must~must~MD> <build~build~VB> <Wall~Wall~NNP> <and~and~CC> <secure~secure~VB> <our~we~PRP$> <borders~border~NNS> <with~with~IN> <proper~proper~JJ> <Border~border~NN> <legislation~legislation~NN> <.~.~.> <Democrats~Democrats~NNPS> <want~want~VBP> <No~no~DT> <Borders~border~NNS> <,~,~,> <hence~hence~RB> <drugs~drug~NNS> <and~and~CC> <crime~crime~NN>"
 ```
 
 ------------------------------------------------------------------------
@@ -119,17 +124,18 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     49      38960     7190     1749
+## 1:     62      56344     9126     2392
 ```
 
 -   **By genre:**
 
 ``` r
 summary$genre
-##          search n_docs textLength textType textSent
-## 1: topic_nation     16      13492     3257      614
-## 2:  topic_world     17      14849     3682      665
-## 3: topic_sports     16      10619     2757      501
+##           search n_docs textLength textType textSent
+## 1:  topic_nation     14      14706     3546      621
+## 2:   topic_world     17      17420     4251      741
+## 3:  topic_sports     16      10123     2573      560
+## 4: topic_science     15      14095     3199      568
 ```
 
 -   **By text:**
@@ -137,12 +143,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1       1168      430       53
-## 2:      2        485      220       21
-## 3:      3        385      198       22
-## 4:      4        429      192       19
-## 5:      5        955      350       47
-## 6:      6        893      406       35
+## 1:      1       1710      689       78
+## 2:      2        479      243       16
+## 3:      3        710      328       31
+## 4:      4        618      310       28
+## 5:      5        672      340       23
+## 6:      6        508      227       32
 ```
 
 ------------------------------------------------------------------------
@@ -335,16 +341,16 @@ lingr_corpus %>%
 ## # A tibble: 10 x 4
 ##    doc_id token             tag       lemma            
 ##    <chr>  <chr>             <chr>     <chr>            
-##  1 1      tweeted that      VBD IN    tweet that       
-##  2 1      Interested in     VBD IN    interested in    
-##  3 1      stay up           VB IN     stay up          
-##  4 1      according to      VBG IN    accord to        
-##  5 1      conclude at       VB IN     conclude at      
-##  6 1      depending on      VBG IN    depend on        
-##  7 1      heard from        VBN IN    hear from        
-##  8 1      peel off          VB RP     peel off         
-##  9 1      detained for      VBN IN    detain for       
-## 10 1      accompany them to VB PRP IN accompany they to
+##  1 1      muscle it through VB PRP IN muscle it through
+##  2 1      tweeted that      VBD IN    tweet that       
+##  3 1      argued that       VBD IN    argue that       
+##  4 1      said that         VBD IN    say that         
+##  5 1      get onto          VB IN     get onto         
+##  6 1      called for        VBN IN    call for         
+##  7 1      return to         VBP IN    return to        
+##  8 1      tweeting over     VBG IN    tweet over       
+##  9 1      pull out          VB IN     pull out         
+## 10 1      crossing into     VBG IN    cross into
 ```
 
 ------------------------------------------------------------------------
@@ -368,12 +374,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                    token txtf docf
-## 1:   POTENTIAL INVESTORS    2    1
-## 2: PRESIDENTIAL ELECTION    2    2
-## 3:       INITIAL REPORTS    1    1
-## 4:      POTENTIAL SOURCE    1    1
-## 5:  PRESIDENTIAL ADVISER    1    1
-## 6: PRESIDENTIAL CAMPAIGN    1    1
+## 1: PRESIDENTIAL CAMPAIGN    4    3
+## 2: PRESIDENTIAL ELECTION    4    2
+## 3:        INITIAL CARBON    2    2
+## 4:     SUBSTANTIAL INPUT    2    2
+## 5:   ESSENTIAL INDICATOR    1    1
+## 6:  INFLUENTIAL MILITARY    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -401,7 +407,7 @@ found_egs %>%
   DT::datatable(selection="none",class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
 ```
 
-![](README-unnamed-chunk-16-1.png)
+![](README-unnamed-chunk-17-1.png)
 
 ------------------------------------------------------------------------
 
@@ -415,13 +421,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma      lemma   pos cofreq
-## 1: WHITE HOUSE        SAY  VERB      7
-## 2: WHITE HOUSE      TRUMP PROPN      6
-## 3: WHITE HOUSE CONNECTION  NOUN      3
-## 4: WHITE HOUSE     FAMILY  NOUN      3
-## 5: WHITE HOUSE    KUSHNER PROPN      3
-## 6: WHITE HOUSE     LEAKER  NOUN      3
+##    searchLemma  lemma   pos cofreq
+## 1: WHITE HOUSE EASTER PROPN      7
+## 2: WHITE HOUSE    EGG PROPN      6
+## 3: WHITE HOUSE   ROLL  NOUN      4
+## 4: WHITE HOUSE  TRUMP PROPN      4
+## 5: WHITE HOUSE ANNUAL   ADJ      3
+## 6: WHITE HOUSE MONDAY PROPN      3
 ```
 
 ------------------------------------------------------------------------
@@ -463,7 +469,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-Mexico | Mensing | caravan | asylum | march
+Trump | Mexico | Democrats | Jeon | U.S.
 </td>
 </tr>
 <tr>
@@ -471,7 +477,7 @@ Mexico | Mensing | caravan | asylum | march
 2
 </td>
 <td style="text-align:left;">
-fire department | Los Angeles Fire Department | boy | Jesse | camera
+teaching | Holland | home | contact | member
 </td>
 </tr>
 <tr>
@@ -479,7 +485,7 @@ fire department | Los Angeles Fire Department | boy | Jesse | camera
 3
 </td>
 <td style="text-align:left;">
-Aubrey | Vanessa | ex | Donald | affair with Aubrey O'Day
+Trump Jr. | kid | Kai | Vanessa | Tristan
 </td>
 </tr>
 <tr>
@@ -487,7 +493,7 @@ Aubrey | Vanessa | ex | Donald | affair with Aubrey O'Day
 4
 </td>
 <td style="text-align:left;">
-Pruitt | cabinet member | real trouble | Jones | Doug Jones
+California | lawsuit | Justice Department | judge | administration
 </td>
 </tr>
 <tr>
@@ -495,7 +501,7 @@ Pruitt | cabinet member | real trouble | Jones | Doug Jones
 5
 </td>
 <td style="text-align:left;">
-short white coat | coat | hospital | resident | Anderson
+advertiser | Ingraham | Ingraham Angle | program | boycott
 </td>
 </tr>
 <tr>
@@ -503,7 +509,7 @@ short white coat | coat | hospital | resident | Anderson
 6
 </td>
 <td style="text-align:left;">
-Times | statue | city | monument | Arcata
+snow | storm | inch snow | Grand Rapids | storm center
 </td>
 </tr>
 </tbody>
