@@ -3,12 +3,12 @@ corpuslingr: some corpus linguistics in r
 
 A library of functions that streamlines two sets of tasks useful to the corpus linguist:
 
--   corpus search of grammatical constructions and complex lexical patterns in context, and
+-   aanotated corpus search of grammatical constructions and complex lexical patterns in context, and
 -   detailed summary and aggregation of corpus search results.
 
-### Search
+BYU corpora. as model.
 
-Grammatical constructions and complex lexical patterns are formalized here (in terms of an annotated corpus) as patterns comprised of:
+**Grammatical constructions and complex lexical patterns** are formalized here (in terms of an annotated corpus) as patterns comprised of:
 
 -   different types of elements (eg, form, lemma, or part-of-speech),
 -   contiguous and/or non-contiguous elements,
@@ -19,9 +19,7 @@ Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function
 
 Regex syntax is simplified (or, more accurately, supplemented) with an in-house "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
 
-### Summary functions
-
-Summary functions allow users to:
+**Summary functions** allow users to:
 
 -   aggregate search results by text & token frequency,
 -   view search results in context (kwic),
@@ -121,7 +119,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     52      41625     7323     1800
+## 1:     49      36185     6555     1539
 ```
 
 -   **By genre:**
@@ -129,9 +127,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     19      15306     3514      631
-## 2:  topic_world     18      15403     3763      672
-## 3: topic_sports     15      10916     2528      565
+## 1: topic_nation     17      12722     3206      500
+## 2:  topic_world     16      11148     2929      495
+## 3: topic_sports     16      12315     2545      589
 ```
 
 -   **By text:**
@@ -140,10 +138,10 @@ summary$genre
 head(summary$text)
 ##    doc_id textLength textType textSent
 ## 1:      1        919      388       36
-## 2:      2       1445      520       59
-## 3:      3        201      116        9
-## 4:      4        443      222       18
-## 5:      5        599      279       27
+## 2:      2        679      348       33
+## 3:      3        443      222       18
+## 4:      4        599      279       27
+## 5:      5        264      159       15
 ## 6:      6        286      166       15
 ```
 
@@ -369,13 +367,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                      token txtf docf
-## 1:      POTENTIAL BENEFITS    1    1
-## 2:    PRESIDENTIAL ADVISER    1    1
-## 3:   PRESIDENTIAL ELECTION    1    1
-## 4:     PRESIDENTIAL FAMILY    1    1
-## 5:       PRESIDENTIAL SEAL    1    1
-## 6: PRESIDENTIAL STATEMENTS    1    1
+##                     token txtf docf
+## 1:   INTERSTITIAL GALLERY    4    1
+## 2:      PRESIDENTIAL RACE    2    1
+## 3:         ESSENTIAL ROLE    1    1
+## 4:          INITIAL ROUND    1    1
+## 5:          INITIAL STAGE    1    1
+## 6: PRESIDENTIAL CANDIDATE    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -401,9 +399,13 @@ found_egs %>%
   corpuslingr::clr_context_kwic()%>% #Add genre.
   select(doc_id,kwic)%>%
   DT::datatable(selection="none",class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
+## PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
 ```
 
-![](README-unnamed-chunk-16-1.png)
+<!--html_preserve-->
+
+<script type="application/json" data-for="htmlwidget-9e36688dab3f0b7796a7">{"x":{"filter":"none","data":[["1","1","3","3","6","13","13","13","13","13","16","16","16","16","17","19","19","20","20","23","23","23","25","26","34","37","39","41","41","41","41","44","44","45","45","45","46"],["appeared on \" This Week \" echoed the view that Pruitt faces problems . \" <mark> I think <\/mark> he 's in real trouble , \" Alabama Sen. Doug Jones told Stephanopoulos . \"","'s in real trouble , \" Alabama Sen. Doug Jones told Stephanopoulos . \" And <mark> I think <\/mark> it seems that he may be on his way out . \" \" The perception","Castellanos has in the past been critical of Trump . Last year , he said <mark> he believes <\/mark> \" we 're closer to impeachment now than we think . \"","Last year , he said he believes \" we 're closer to impeachment now than <mark> we think <\/mark> . \"","that was advertised on social media when he disappeared . According to the Trentonian , <mark> investigators believe <\/mark> Thompson tortured Diazx xx Delgado in an attempt to extract more money from him .","important to follow the process , which is to do a proper vetting , and <mark> I do n't think <\/mark> there should be shortcuts in that . But I do believe that the President needs","vetting , and I do n't think there should be shortcuts in that . But <mark> I do believe <\/mark> that the President needs somebody that he has confidence in to get this job done","difficulty of the task at hand for an incoming VA secretary . Read More \" <mark> I believe <\/mark> in Dr. Jackson 's values , \" Shulkin said . \" I think that 's","More \" I believe in Dr. Jackson 's values , \" Shulkin said . \" <mark> I think <\/mark> that 's important . I know that he cares a lot about veterans , and","that 's important . I know that he cares a lot about veterans , and <mark> I believe <\/mark> that he will work well with the President . \" But this is a big","summoned the assistance of the state attorney general 's office to investigate it . \" <mark> I think <\/mark> that the mayor along with the police chief [ of Sacramento ] did something in","said they encountered Clark while responding to a complaint about vehicle break-ins . Officers said <mark> they thought <\/mark> Clark had a gun when they shot him in his grandmother 's back yard ,","the police sergeant , credited Sacramento officers for their calm in high-stress situations . \" <mark> I think <\/mark> our officers have faced some very hostile crowds , \" he said . \" We","job . \" Les Simmons , a pastor from the south Sacramento area , said <mark> he believes <\/mark> the police department thus far has done a better job of handling protests than the","window . DeKalb said the teenager , who was missing some front teeth and who <mark> he thought <\/mark> was only 7 years old , was \" rattled to the bone . \" Maureen","celebrate the holiday referred to as \" Resurrection Sunday \" by Christians , marking what <mark> they believe <\/mark> occurred three days after Jesus was crucified on the cross . \" The important feast","of New Life Covenant Church gathered for four services to mark the occasion . \" <mark> We believe <\/mark> that he came to earth , died for our sins , \" said Pastor John","told reporters last month , according to CNN . \" It sounds to me like <mark> they believe <\/mark> it was Russia and I would certainly take that finding as fact . \" Trump","Putin about Russia 's interference in the 2016 US election . Trump said last year <mark> he believed <\/mark> Putin when he told him Russia did not interfere in the election , in contradiction","Bus catches fire in Jerusalem Washington ( CNN ) Senator Bernie Sanders said <mark> he does n't believe <\/mark> the official response from Israeli authorities , who say that deadly clashes in Gaza this","tens and tens of thousands of people who are engaged in a nonviolent protest . <mark> I believe <\/mark> now 15 or 20 people , Palestinians , have been killed and many , many","Palestinians , have been killed and many , many others have been wounded . So <mark> I think <\/mark> it 's a difficult situation , but my assessment is that Israel overreacted on that","the early findings of the inquiry . This theory suggests that an assassin , who <mark> Britain believes <\/mark> was working on behalf of the Russian government , walked up to the door of","Israeli military \" did what had to be done . \" He added , \" <mark> I think <\/mark> that all of our troops deserve a medal . \" President Recep Tayyip Erdogan of","2018 ? WE CURSE YOU , MERCILESS MMA GODS . THIS IS THE LAST TIME <mark> WE BELIEVE <\/mark> YOU AND YOUR EMPTY PROMISES . Bargaining OK , sorry we got a little carried","'ve been striving toward that . A national championship is the ultimate goal , when <mark> you think <\/mark> about it . We have guys that have been able to win conference championships before","had other offers , including the potential to compete for a starting job , but <mark> he thought <\/mark> the opportunity to play for the Giants -- and behind Manning -- would be a","Nets CAPTION Spoelstra explains last minute loss to Nets Spoelstra explains last minute loss to <mark> Nets CAPTION Dragic thinks <\/mark> the Heat will be ok after loss Dragic thinks the Heat will be ok after","explains last minute loss to Nets CAPTION Dragic thinks the Heat will be ok after <mark> loss Dragic thinks <\/mark> the Heat will be ok after loss CAPTION Banged up Wade thought he was fouled","ok after loss Dragic thinks the Heat will be ok after loss CAPTION Banged up <mark> Wade thought <\/mark> he was fouled on final play Banged up Wade thought he was fouled on final","after loss CAPTION Banged up Wade thought he was fouled on final play Banged up <mark> Wade thought <\/mark> he was fouled on final play CAPTION Erik Spoelstra on the meaning of clinching a","said . \" We do n't have to be the most talented team , but <mark> I think <\/mark> we 're together . \" Loyola ( 32 - 6 ) set a program record","the game because we know what they 're going to throw at us . And <mark> I think <\/mark> the way that he 's done that has really propelled us and helped us in","really young team , \" White Sox catcher Welington Castillo said . \" Aggressive and <mark> I think <\/mark> , it says a lot . We just go out and compete and have fun","postseason after reaching the American League Championship Series in the two previous seasons . \" <mark> I think <\/mark> it 's big , \" Blue Jays manager John Gibbons said . \" We won","not particularly want a day off . \" Any sports team , especially baseball , <mark> I think <\/mark> you just want to play , \" White Sox manager Rick Renteria said . \"","the adjustments he 's made at the plate when he 's swinging the bat . <mark> I think <\/mark> that 's going to be one of his strengths moving on . \" The Angels"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>kwic<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<!--/html_preserve-->
 
 ------------------------------------------------------------------------
 
@@ -417,13 +419,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma     lemma   pos cofreq
-## 1: WHITE HOUSE       EGG  NOUN      5
-## 2: WHITE HOUSE      YEAR  NOUN      5
-## 3: WHITE HOUSE     HOUSE PROPN      4
-## 4: WHITE HOUSE     PRESS  NOUN      4
-## 5: WHITE HOUSE      ROLL  NOUN      4
-## 6: WHITE HOUSE SECRETARY  NOUN      4
+##    searchLemma       lemma   pos cofreq
+## 1: WHITE HOUSE        YEAR  NOUN      5
+## 2: WHITE HOUSE         EGG  NOUN      4
+## 3: WHITE HOUSE       HOUSE PROPN      4
+## 4: WHITE HOUSE       SOUTH PROPN      4
+## 5: WHITE HOUSE       WHITE PROPN      4
+## 6: WHITE HOUSE ASSOCIATION PROPN      3
 ```
 
 ------------------------------------------------------------------------
@@ -473,7 +475,7 @@ Pruitt | condo | gift | lease | Christie
 2
 </td>
 <td style="text-align:left;">
-teacher | bill | Frankfort | pension | Ky
+pair | Trump Jr. | Vanessa | Marx x xa | kid
 </td>
 </tr>
 <tr>
@@ -481,7 +483,7 @@ teacher | bill | Frankfort | pension | Ky
 3
 </td>
 <td style="text-align:left;">
-Carter | human rights | Robert Swan Mueller Sasse | good job | former President Carter
+Trump | good legal help | Mueller | campaign | storm
 </td>
 </tr>
 <tr>
@@ -489,7 +491,7 @@ Carter | human rights | Robert Swan Mueller Sasse | good job | former President 
 4
 </td>
 <td style="text-align:left;">
-good legal help | Mueller | Trump | storm | Castellanos
+Esty | Baker | office | Connecticut Post | Congresswoman Esty
 </td>
 </tr>
 <tr>
@@ -497,7 +499,7 @@ good legal help | Mueller | Trump | storm | Castellanos
 5
 </td>
 <td style="text-align:left;">
-Esty | Baker | Kain | top staffer | congresswoman
+Holland | Lillian Barnes | newspaper | couple | month
 </td>
 </tr>
 <tr>
@@ -505,7 +507,7 @@ Esty | Baker | Kain | top staffer | congresswoman
 6
 </td>
 <td style="text-align:left;">
-Diazx xx Delgado | Thompson | Trentonian | kidnapping | connection
+Diazx xx Delgado | Thompson | kidnapping | Trentonian | connection
 </td>
 </tr>
 </tbody>
