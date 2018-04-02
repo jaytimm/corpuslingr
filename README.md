@@ -28,6 +28,8 @@ Summary functions allow users to:
 
 Importantly, both search and aggregation functions can be easily applied to multiple (ie, any number of) search queries.
 
+### utility
+
 While still in development, the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search & summary functionality when working with (moderately-sized) personal corpora, as well as researchers interested in performing finer-grained, more qualitative analyses of language use and variation in context.
 
 ------------------------------------------------------------------------
@@ -117,7 +119,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     49      41435     7525     1908
+## 1:     49      38960     7190     1749
 ```
 
 -   **By genre:**
@@ -125,9 +127,9 @@ summary$corpus
 ``` r
 summary$genre
 ##          search n_docs textLength textType textSent
-## 1: topic_nation     15      12296     3108      570
-## 2:  topic_world     16      14573     3700      630
-## 3: topic_sports     18      14566     3411      737
+## 1: topic_nation     16      13492     3257      614
+## 2:  topic_world     17      14849     3682      665
+## 3: topic_sports     16      10619     2757      501
 ```
 
 -   **By text:**
@@ -136,11 +138,11 @@ summary$genre
 head(summary$text)
 ##    doc_id textLength textType textSent
 ## 1:      1       1168      430       53
-## 2:      2        529      261       24
-## 3:      3        363      184       14
-## 4:      4        385      198       22
+## 2:      2        485      220       21
+## 3:      3        385      198       22
+## 4:      4        429      192       19
 ## 5:      5        955      350       47
-## 6:      6       1232      527       55
+## 6:      6        893      406       35
 ```
 
 ------------------------------------------------------------------------
@@ -365,13 +367,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
-##                     token txtf docf
-## 1:    POTENTIAL INVESTORS    2    1
-## 2: POTENTIAL ONE-AND-DONE    1    1
-## 3:       POTENTIAL SOURCE    1    1
-## 4:   PRESIDENTIAL ADVISER    1    1
-## 5: PRESIDENTIAL CANDIDATE    1    1
-## 6:  PRESIDENTIAL ELECTION    1    1
+##                    token txtf docf
+## 1:   POTENTIAL INVESTORS    2    1
+## 2: PRESIDENTIAL ELECTION    2    2
+## 3:       INITIAL REPORTS    1    1
+## 4:      POTENTIAL SOURCE    1    1
+## 5:  PRESIDENTIAL ADVISER    1    1
+## 6: PRESIDENTIAL CAMPAIGN    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -414,12 +416,12 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
 ##    searchLemma      lemma   pos cofreq
-## 1: WHITE HOUSE      TRUMP PROPN      9
-## 2: WHITE HOUSE        SAY  VERB      8
-## 3: WHITE HOUSE    SHULKIN PROPN      8
-## 4: WHITE HOUSE     MONDAY PROPN      4
-## 5: WHITE HOUSE CONNECTION  NOUN      3
-## 6: WHITE HOUSE     FAMILY  NOUN      3
+## 1: WHITE HOUSE        SAY  VERB      7
+## 2: WHITE HOUSE      TRUMP PROPN      6
+## 3: WHITE HOUSE CONNECTION  NOUN      3
+## 4: WHITE HOUSE     FAMILY  NOUN      3
+## 5: WHITE HOUSE    KUSHNER PROPN      3
+## 6: WHITE HOUSE     LEAKER  NOUN      3
 ```
 
 ------------------------------------------------------------------------
@@ -461,7 +463,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-Mensing | Mexico | caravan | asylum | march
+Mexico | Mensing | caravan | asylum | march
 </td>
 </tr>
 <tr>
@@ -469,7 +471,7 @@ Mensing | Mexico | caravan | asylum | march
 2
 </td>
 <td style="text-align:left;">
-Couch | Affluenza | term | Affluenza teen | Ethan
+fire department | Los Angeles Fire Department | boy | Jesse | camera
 </td>
 </tr>
 <tr>
@@ -477,7 +479,7 @@ Couch | Affluenza | term | Affluenza teen | Ethan
 3
 </td>
 <td style="text-align:left;">
-boy | fire department | Los Angeles Fire Department | KABC | Los Angeles River
+Aubrey | Vanessa | ex | Donald | affair with Aubrey O'Day
 </td>
 </tr>
 <tr>
@@ -485,7 +487,7 @@ boy | fire department | Los Angeles Fire Department | KABC | Los Angeles River
 4
 </td>
 <td style="text-align:left;">
-Aubrey | Vanessa | ex | Donald | affair with Aubrey O'Day
+Pruitt | cabinet member | real trouble | Jones | Doug Jones
 </td>
 </tr>
 <tr>
@@ -493,7 +495,7 @@ Aubrey | Vanessa | ex | Donald | affair with Aubrey O'Day
 5
 </td>
 <td style="text-align:left;">
-short white coat | resident | coat | hospital | white coat
+short white coat | coat | hospital | resident | Anderson
 </td>
 </tr>
 <tr>
@@ -501,7 +503,7 @@ short white coat | resident | coat | hospital | white coat
 6
 </td>
 <td style="text-align:left;">
-station | WJAR | Trump | company | country
+Times | statue | city | monument | Arcata
 </td>
 </tr>
 </tbody>
