@@ -104,8 +104,8 @@ lingr_corpus <- ann_corpus$token %>%
 Some example tuple-ized text:
 
 ``` r
-paste(lingr_corpus[[1]]$tup[100:150], collapse= " ")
-## [1] "<act~act~VB> <.~.~.> <\"~\"~''> <DACA~DACa~NN> <is~be~VBZ> <dead~dead~JJ> <because~because~IN> <the~the~DT> <Democrats~Democrats~NNPS> <did~do~VBD> <n't~not~RB> <care~care~VB> <or~or~CC> <act~act~NN> <,~,~,> <and~and~CC> <now~now~RB> <everyone~everyone~NN> <wants~want~VBZ> <to~to~TO> <get~get~VB> <onto~onto~IN> <the~the~DT> <DACA~DACa~NN> <bandwagon~bandwagon~NN> <...~...~.> <No~no~RB> <longer~longer~RBR> <works~work~VBZ> <.~.~.> <Must~must~MD> <build~build~VB> <Wall~Wall~NNP> <and~and~CC> <secure~secure~VB> <our~we~PRP$> <borders~border~NNS> <with~with~IN> <proper~proper~JJ> <Border~border~NN> <legislation~legislation~NN> <.~.~.> <Democrats~Democrats~NNPS> <want~want~VBP> <No~no~DT> <Borders~border~NNS> <,~,~,> <hence~hence~RB> <drugs~drug~NNS> <and~and~CC> <crime~crime~NN>"
+paste(lingr_corpus[[1]]$tup[200:206], collapse= " ")
+## [1] "<filibuster~filibuster~NN> <if~if~IN> <they~they~PRP> <return~return~VBP> <to~to~IN> <being~be~VBG> <the~the~DT>"
 ```
 
 ------------------------------------------------------------------------
@@ -124,7 +124,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     62      56344     9126     2392
+## 1:     61      52581     8552     2184
 ```
 
 -   **By genre:**
@@ -132,10 +132,10 @@ summary$corpus
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     14      14706     3546      621
-## 2:   topic_world     17      17420     4251      741
-## 3:  topic_sports     16      10123     2573      560
-## 4: topic_science     15      14095     3199      568
+## 1:  topic_nation     15      13203     3292      527
+## 2:   topic_world     17      16332     4010      685
+## 3:  topic_sports     14       9070     2261      503
+## 4: topic_science     15      13976     3196      569
 ```
 
 -   **By text:**
@@ -147,8 +147,8 @@ head(summary$text)
 ## 2:      2        479      243       16
 ## 3:      3        710      328       31
 ## 4:      4        618      310       28
-## 5:      5        672      340       23
-## 6:      6        508      227       32
+## 5:      5        947      432       46
+## 6:      6        672      340       23
 ```
 
 ------------------------------------------------------------------------
@@ -374,12 +374,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                    token txtf docf
-## 1: PRESIDENTIAL CAMPAIGN    4    3
-## 2: PRESIDENTIAL ELECTION    4    2
-## 3:        INITIAL CARBON    2    2
-## 4:     SUBSTANTIAL INPUT    2    2
-## 5:   ESSENTIAL INDICATOR    1    1
-## 6:  INFLUENTIAL MILITARY    1    1
+## 1: PRESIDENTIAL ELECTION    5    3
+## 2:   ESSENTIAL INDICATOR    1    1
+## 3:  INFLUENTIAL MILITARY    1    1
+## 4:   INITIAL BRIGHTENING    1    1
+## 5:      INITIAL ESTIMATE    1    1
+## 6:       INITIAL MEASURE    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -422,12 +422,12 @@ corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
 ##    searchLemma  lemma   pos cofreq
-## 1: WHITE HOUSE EASTER PROPN      7
-## 2: WHITE HOUSE    EGG PROPN      6
-## 3: WHITE HOUSE   ROLL  NOUN      4
-## 4: WHITE HOUSE  TRUMP PROPN      4
-## 5: WHITE HOUSE ANNUAL   ADJ      3
-## 6: WHITE HOUSE MONDAY PROPN      3
+## 1: WHITE HOUSE  TRUMP PROPN      8
+## 2: WHITE HOUSE EASTER PROPN      6
+## 3: WHITE HOUSE    EGG PROPN      5
+## 4: WHITE HOUSE    MR. PROPN      5
+## 5: WHITE HOUSE   ROLL  NOUN      4
+## 6: WHITE HOUSE LEADER  NOUN      3
 ```
 
 ------------------------------------------------------------------------
@@ -485,7 +485,7 @@ teaching | Holland | home | contact | member
 3
 </td>
 <td style="text-align:left;">
-Trump Jr. | kid | Kai | Vanessa | Tristan
+Trump Jr. | kid | Kai | Tristan | Vanessa
 </td>
 </tr>
 <tr>
@@ -493,7 +493,7 @@ Trump Jr. | kid | Kai | Vanessa | Tristan
 4
 </td>
 <td style="text-align:left;">
-California | lawsuit | Justice Department | judge | administration
+California | lawsuit | Justice Department | judge | law
 </td>
 </tr>
 <tr>
@@ -501,7 +501,7 @@ California | lawsuit | Justice Department | judge | administration
 5
 </td>
 <td style="text-align:left;">
-advertiser | Ingraham | Ingraham Angle | program | boycott
+clear backpack | student | backpack | school | lanyard
 </td>
 </tr>
 <tr>
@@ -509,7 +509,7 @@ advertiser | Ingraham | Ingraham Angle | program | boycott
 6
 </td>
 <td style="text-align:left;">
-snow | storm | inch snow | Grand Rapids | storm center
+advertiser | Ingraham | Ingraham Angle | program | situation
 </td>
 </tr>
 </tbody>
