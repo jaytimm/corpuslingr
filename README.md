@@ -15,7 +15,7 @@ Grammatical constructions and complex lexical patterns are formalized here (in t
 -   positionally fixed and/or free (ie, optional) elements, or
 -   any combination thereof.
 
-Under the hood, search is regex/tuple-based, akin to the `RegexpParser` function in Python's Natural Language Toolkit (NLTK). Regex syntax is supplemented with a simple "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of English corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
+Under the hood, `corpuslingr` search is regex-based & tuple-based --- akin to the `RegexpParser` function in Python's Natural Language Toolkit (NLTK). Regex character matching is streamlined with a simple "corpus querying language" modeled after the more intuitive and transparent syntax used in the online BYU suite of English corpora. This allows for convenient specification of search patterns comprised of form, lemma, & pos, with all of the functionality of regex metacharacters and repetition quantifiers.
 
 At present, part-of-speech search is based on **English-specific** part-of-speech tags. In theory, search functionality could be made more language-generic by utilizing universal part-of-speech tags when building tuples. However, language-specific search will utlimately be more powerful/insightful.
 
@@ -104,8 +104,8 @@ lingr_corpus <- ann_corpus$token %>%
 Some example tuple-ized text:
 
 ``` r
-paste(lingr_corpus[[1]]$tup[200:206], collapse= " ")
-## [1] "<filibuster~filibuster~NN> <if~if~IN> <they~they~PRP> <return~return~VBP> <to~to~IN> <being~be~VBG> <the~the~DT>"
+paste(lingr_corpus[[1]]$tup[200:204], collapse= " ")
+## [1] "<and~and~CC> <an~a~DT> <accidental~accidental~JJ> <politician~politician~NN> <-~-~,>"
 ```
 
 ------------------------------------------------------------------------
@@ -124,7 +124,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     61      52581     8552     2184
+## 1:     60      56988     9336     2348
 ```
 
 -   **By genre:**
@@ -132,10 +132,10 @@ summary$corpus
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     15      13203     3292      527
-## 2:   topic_world     17      16332     4010      685
-## 3:  topic_sports     14       9070     2261      503
-## 4: topic_science     15      13976     3196      569
+## 1:  topic_nation     14      14942     3548      599
+## 2:   topic_world     15      13769     3476      521
+## 3:  topic_sports     16      16539     3643      776
+## 4: topic_science     15      11738     2963      514
 ```
 
 -   **By text:**
@@ -143,12 +143,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1       1710      689       78
-## 2:      2        479      243       16
-## 3:      3        710      328       31
-## 4:      4        618      310       28
-## 5:      5        947      432       46
-## 6:      6        672      340       23
+## 1:      1       1168      477       52
+## 2:      2        940      388       38
+## 3:      3        294      144       15
+## 4:      4        457      242       21
+## 5:      5        773      364       31
+## 6:      6        625      323       25
 ```
 
 ------------------------------------------------------------------------
@@ -339,18 +339,18 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1)%>%
   slice(1:10)
 ## # A tibble: 10 x 4
-##    doc_id token             tag       lemma            
-##    <chr>  <chr>             <chr>     <chr>            
-##  1 1      muscle it through VB PRP IN muscle it through
-##  2 1      tweeted that      VBD IN    tweet that       
-##  3 1      argued that       VBD IN    argue that       
-##  4 1      said that         VBD IN    say that         
-##  5 1      get onto          VB IN     get onto         
-##  6 1      called for        VBN IN    call for         
-##  7 1      return to         VBP IN    return to        
-##  8 1      tweeting over     VBG IN    tweet over       
-##  9 1      pull out          VB IN     pull out         
-## 10 1      crossing into     VBG IN    cross into
+##    doc_id token        tag    lemma       
+##    <chr>  <chr>        <chr>  <chr>       
+##  1 1      spoken out   VBN RP speak out   
+##  2 1      made against VBN IN make against
+##  3 1      wrote in     VBD IN write in    
+##  4 1      published in VBN IN publish in  
+##  5 1      know that    VB IN  know that   
+##  6 1      based on     VBN IN base on     
+##  7 1      said that    VBD IN say that    
+##  8 1      run for      VB IN  run for     
+##  9 1      ended up     VBD RP end up      
+## 10 1      soars past   VBZ IN soar past
 ```
 
 ------------------------------------------------------------------------
@@ -374,12 +374,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = 'token', toupper=TRUE)%>%
   head()
 ##                    token txtf docf
-## 1: PRESIDENTIAL ELECTION    5    3
-## 2:   ESSENTIAL INDICATOR    1    1
-## 3:  INFLUENTIAL MILITARY    1    1
-## 4:   INITIAL BRIGHTENING    1    1
-## 5:      INITIAL ESTIMATE    1    1
-## 6:       INITIAL MEASURE    1    1
+## 1:      CELESTIAL PALACE    1    1
+## 2:    CONFIDENTIAL COURT    1    1
+## 3:      EXPONENTIAL RATE    1    1
+## 4:  INTERSTITIAL GALLERY    1    1
+## 5:      POTENTIAL BUYOUT    1    1
+## 6: POTENTIAL REPLACEMENT    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -421,13 +421,13 @@ search3 <- "White House"
 corpuslingr::clr_search_context(search=search3,corp=lingr_corpus,LW=10, RW = 10)%>%
   corpuslingr::clr_context_bow(content_only=TRUE,agg_var=c('searchLemma','lemma','pos'))%>%
   head()
-##    searchLemma  lemma   pos cofreq
-## 1: WHITE HOUSE  TRUMP PROPN      8
-## 2: WHITE HOUSE EASTER PROPN      6
-## 3: WHITE HOUSE    EGG PROPN      5
-## 4: WHITE HOUSE    MR. PROPN      5
-## 5: WHITE HOUSE   ROLL  NOUN      4
-## 6: WHITE HOUSE LEADER  NOUN      3
+##    searchLemma     lemma   pos cofreq
+## 1: WHITE HOUSE     TRUMP PROPN      7
+## 2: WHITE HOUSE      LAST   ADJ      3
+## 3: WHITE HOUSE PRESIDENT PROPN      3
+## 4: WHITE HOUSE      YEAR  NOUN      3
+## 5: WHITE HOUSE  APPROVAL  NOUN      2
+## 6: WHITE HOUSE      CALL  VERB      2
 ```
 
 ------------------------------------------------------------------------
@@ -469,7 +469,7 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-Trump | Mexico | Democrats | Jeon | U.S.
+McCabe | husband | FBI | Jill McCabe | campaign
 </td>
 </tr>
 <tr>
@@ -477,7 +477,7 @@ Trump | Mexico | Democrats | Jeon | U.S.
 2
 </td>
 <td style="text-align:left;">
-teaching | Holland | home | contact | member
+Trump | border | Mexico | caravan | US
 </td>
 </tr>
 <tr>
@@ -485,7 +485,7 @@ teaching | Holland | home | contact | member
 3
 </td>
 <td style="text-align:left;">
-Trump Jr. | kid | Kai | Tristan | Vanessa
+woman | police | suspect | DC police | victim
 </td>
 </tr>
 <tr>
@@ -493,7 +493,7 @@ Trump Jr. | kid | Kai | Tristan | Vanessa
 4
 </td>
 <td style="text-align:left;">
-California | lawsuit | Justice Department | judge | law
+GWU | white privilege | inclusion | student | American Christians
 </td>
 </tr>
 <tr>
@@ -501,7 +501,7 @@ California | lawsuit | Justice Department | judge | law
 5
 </td>
 <td style="text-align:left;">
-clear backpack | student | backpack | school | lanyard
+family | SUV | authority | Hart family | California Highway Patrol
 </td>
 </tr>
 <tr>
@@ -509,7 +509,7 @@ clear backpack | student | backpack | school | lanyard
 6
 </td>
 <td style="text-align:left;">
-advertiser | Ingraham | Ingraham Angle | program | situation
+student | campus | entry point | id badge | memo to parent
 </td>
 </tr>
 </tbody>
