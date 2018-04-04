@@ -27,12 +27,12 @@ clr_build_search <- function(x){
     stp <- gsub("([^A-Za-z~_$-]+)","",x)
 
   #Swap out search syntax with regex:
-    if (stp %in% clr_ref_pos_syntax$pos) {
-      pos <- clr_ref_pos_syntax$regex[match(stp,clr_ref_pos_codes$pos)]}
+    if (stp %in% clr_ref_pos_codes$pos) {
+      pos <- clr_ref_pos_codes$regex[match(stp,clr_ref_pos_codes$pos)]}
 
   #LEMMA~POS
     if (length(grep("~", x)==1)) {
-      pos <- clr_ref_pos_syntax$regex[match(sub(".*~","",stp),clr_ref_pos_codes$pos)]
+      pos <- clr_ref_pos_codes$regex[match(sub(".*~","",stp),clr_ref_pos_codes$pos)]
       stp <- gsub("~.*$","",stp)}
 
   #Assign ALLCAPS/NON-POS to lemma
