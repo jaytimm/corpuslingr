@@ -28,18 +28,18 @@ clr_build_search <- function(x){
 
   #Swap out search syntax with regex:
     if (stp %in% clr_ref_pos_syntax$pos) {
-      pos <- clr_ref_pos_syntax$regex[match(stp,clr_ref_pos_syntax$pos)]}
+      pos <- clr_ref_pos_syntax$regex[match(stp,clr_ref_pos_codes$pos)]}
 
   #LEMMA~POS
     if (length(grep("~", x)==1)) {
-      pos <- clr_ref_pos_syntax$regex[match(sub(".*~","",stp),clr_ref_pos_syntax$pos)]
+      pos <- clr_ref_pos_syntax$regex[match(sub(".*~","",stp),clr_ref_pos_codes$pos)]
       stp <- gsub("~.*$","",stp)}
 
   #Assign ALLCAPS/NON-POS to lemma
-    if (stp == toupper(stp) & !stp %in% clr_ref_pos_syntax$pos) {lemma <- stp}
+    if (stp == toupper(stp) & !stp %in% clr_ref_pos_codes$pos) {lemma <- stp}
 
   #Assign noncaps/non-pos to form
-    if (stp != toupper(stp) & !stp %in% clr_ref_pos_syntax$pos) {form <- stp}
+    if (stp != toupper(stp) & !stp %in% clr_ref_pos_codes$pos) {form <- stp}
 
   #Add regex to prefix/suffix/infix
     form <- gsub("XWILD","[a-z-]*",form)
