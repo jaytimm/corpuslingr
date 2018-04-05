@@ -17,8 +17,8 @@ clr_build_search <- function(x){
     pos <- "\\\\S+"; form <- "\\\\S+"; lemma <- "\\\\S+"
 
   #Prefixes, suffixes, 'infixes' -- kill non-regex *:
-    x <- gsub ('\\*([A-Za-z-])', 'XWILD\\1',x) #NO!
-    x <- gsub ('([A-Za-z-])\\*', '\\1XWILD',x)
+    x <- gsub ('\\*([A-Za-z_-])', 'XWILD\\1',x) #NO!
+    x <- gsub ('([A-Za-z_-])\\*', '\\1XWILD',x)
 
   #Bracket off search from potential regex:
     framed <- gsub("([A-Za-z~_$-]+)","<\\1>",x)
