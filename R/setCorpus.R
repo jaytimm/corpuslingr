@@ -52,7 +52,8 @@ clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='l
   x <- x[!(x$tag=='SP'| x$tag=='NFP' | x$pos == 'SPACE' | x$token =="" | x$token==" "),]
 
   if (ent_as_tag == TRUE) {
-  x$tag = ifelse(x$tag=="ENTITY",paste0("NN",x$entity_type),x$tag)}
+  x$tag = ifelse(x$tag=="ENTITY",paste0("NN",x$entity_type),x$tag)
+  x <- subset(x, select = -entity_type) }
 
 
   x$tup <- paste("<",x$token,"~",x$lemma,"~",x$tag,">",sep="")
