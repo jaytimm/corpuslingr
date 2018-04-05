@@ -42,8 +42,8 @@ clr_build_search <- function(x){
     if (stp != toupper(stp) & !stp %in% clr_ref_pos_codes$pos) {form <- stp}
 
   #Add regex to prefix/suffix/infix
-    form <- gsub("XWILD","[a-z-]*",form)
-    lemma <- gsub("XWILD","[a-z-]*",lemma)
+    form <- gsub("XWILD","[a-z_-]*",form)
+    lemma <- gsub("XWILD","[a-z_-]*",lemma)
 
   #Negation.
     if (stp == 'NEG') {
