@@ -34,7 +34,9 @@ clr_set_tuple <- function(x){
 
 #' @export
 #' @rdname setCorpus
-clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', NER_as_tag = FALSE, meta= NULL) { #demarc_var - ?
+clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', ent_as_tag = FALSE) { #demarc_var - ?
+
+  x <- copy(y)
 
   setnames(x, old = c(doc_var,token_var,lemma_var,tag_var, pos_var,sentence_var), new = c('doc_id', 'token','lemma','tag','pos','sentence_id'))
   #x$doc_id <- gsub('\\D+','text',x$doc_id)
@@ -49,22 +51,14 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
 
   x <- x[!(x$tag=='SP'| x$tag=='NFP' | x$pos == 'SPACE' | x$token =="" | x$token==" "),]
 
-  if (NER_as_tag == TRUE) {}
-  #x$tag = ifelse(x$tag=="ENTITY",paste("NN",x$entity_type,sep=""),x$tag)
-  #x$tag = ifelse(x$tag=="ENTITY",x$entity_type,x$tag)
+  if (NER_as_tag == TRUE) {
+  x$tag = ifelse(x$tag=="ENTITY",paste0("NN",x$entity_type),x$tag)}
+
 
   x$tup <- paste("<",x$token,"~",x$lemma,"~",x$tag,">",sep="")
-
-  if (is.data.frame(meta)) {
-    temp <- colnames(x)[2:ncol(x)]
-    setDT(x,key='doc_id')
-    setDT(meta,key='doc_id')
-    x <- meta[x]
-    x <- x[,c(colnames(meta), temp), with = FALSE]}
 
   list_dfs <- split(x, f = x$doc_id)
   list_dfs <- lapply(list_dfs,clr_set_tuple)
   list_dfs[order(as.numeric(names(list_dfs)))]
 }
 
-#Also - entity_consolidate() issue. Would occur previous to SetSearchCorpus().
