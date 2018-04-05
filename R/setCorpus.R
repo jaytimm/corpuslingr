@@ -18,7 +18,7 @@ clr_prep_corpus <- function (x, text_var = 'text',hyphenate=TRUE) {
   x$text <- gsub("([[:alpha:]])(--)","\\1 \\2",x$text, perl=TRUE)
 
   if (hyphenate==TRUE) {
-    x$text <- gsub("([[:alpha:]])-([[:alpha:]])",'\\1xxx\\2',x$text, perl=TRUE)}
+    x$text <- gsub("([[:alpha:]])-([[:alpha:]])",'\\1qq\\2',x$text, perl=TRUE)}
   return(x)}
 
 
@@ -44,8 +44,8 @@ clr_set_corpus <- function (x, doc_var='doc_id', token_var='token', lemma_var='l
 
   x$lemma <- ifelse(x$pos=="PROPN"|x$pos=="ENTITY"|x$lemma=="-PRON-",x$token,x$lemma)
 
-  x$lemma <- gsub("xxx", "-", x$lemma)
-  x$token <- gsub("xxx", "-", x$token)
+  x$lemma <- gsub("qq", "-", x$lemma)
+  x$token <- gsub("qq", "-", x$token)
 
   x <- x[!(x$tag=='SP'| x$tag=='NFP' | x$pos == 'SPACE' | x$token =="" | x$token==" "),]
 
