@@ -43,7 +43,7 @@ return(df_locs)
 #' @rdname queryCorpus
 clr_search_gramx <- function(search,corp){
 
-searchTerms <- unlist(lapply(search, clr_cql_regex))
+searchTerms <-  clr_cql_regex(search)
 
 #Will need to split dataframe.
 found <- lapply(corp, function(z) {
