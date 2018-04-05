@@ -34,7 +34,7 @@ clr_set_tuple <- function(x){
 
 #' @export
 #' @rdname setCorpus
-clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', ent_as_tag = FALSE) { #demarc_var - ?
+clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', ent_as_tag = FALSE) {
 
   x <- copy(y)
 
@@ -51,7 +51,7 @@ clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='l
 
   x <- x[!(x$tag=='SP'| x$tag=='NFP' | x$pos == 'SPACE' | x$token =="" | x$token==" "),]
 
-  if (NER_as_tag == TRUE) {
+  if (ent_as_tag == TRUE) {
   x$tag = ifelse(x$tag=="ENTITY",paste0("NN",x$entity_type),x$tag)}
 
 
