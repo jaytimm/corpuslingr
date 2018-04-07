@@ -10,10 +10,9 @@
 #' @rdname describeCorpus
 clr_desc_corpus <- function (corp, doc ='id',sent='sid', tok='word',upos='upos',genre=NULL) {
 
-  if ("meta" %in% names(corp)) x <- corp$corpus
   x <- corp
+  if ("meta" %in% names(x)) x <- x$corpus
   if (!is.data.frame(x)) {x <- rbindlist(x)}
-  x <- as.data.table(x)
 
   byText <- x[upos!="PUNCT", list(textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(get(sent)))), by=doc]
 
