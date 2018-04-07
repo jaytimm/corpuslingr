@@ -44,11 +44,13 @@ return(df_locs)
 #' @rdname queryCorpus
 clr_search_gramx <- function(search,corp, include_meta=FALSE){
 
-if ("meta" %in% names(corp)) corp <- corp$corpus
+  x <- corp
+
+if ("meta" %in% names(x)) x <- x$corpus
 
 searchTerms <-  clr_cql_regex(search)
 
-found <- lapply(corp, function(z) {
+found <- lapply(x, function(z) {
   y <- paste(z$tup, collapse=" ")
 
   locations <- gregexpr(pattern= searchTerms, y, ignore.case=TRUE)
@@ -72,9 +74,7 @@ found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
 if (include_meta == FALSE) {return(found)} else {
 
-  found <- found[corp$meta, on=c("doc_id"), nomatch=0]
-  return(found)
-  }
+  found[corp$meta, on=c("doc_id"), nomatch=0]}
 
 }
 
