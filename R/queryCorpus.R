@@ -72,7 +72,9 @@ found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
 if (include_meta == FALSE) {return(found)} else {
 
-found[corp$meta, on=c("doc_id"), nomatch=0]}
+  found <- found[corp$meta, on=c("doc_id"), nomatch=0]
+  return(found)
+  }
 
 }
 
