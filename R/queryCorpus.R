@@ -42,7 +42,7 @@ return(df_locs)
 
 #' @export
 #' @rdname queryCorpus
-clr_search_gramx <- function(search,corp){
+clr_search_gramx <- function(search,corp, include_meta=FALSE){
 
 if ("meta" %in% names(corp)) corp <- corp$corpus
 
@@ -69,7 +69,10 @@ found$tag <- gsub("<\\S+~(\\S+)>","\\1",found$eg)
 found$lemma <- gsub("\\S+~(\\S+)~\\S+","\\1",found$eg)
 
 found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
-return(found)
+
+if (include_meta == FALSE) {return(found)} else {
+
+found[corp$meta, on=c("doc_id"), nomatch=0]
 
 } else
 {"SEARCH TERM(S) NOT FOUND IN CORPUS"}  ##THIS NEEDS TO
@@ -78,20 +81,21 @@ return(found)
 
 #' @export
 #' @rdname queryCorpus
-clr_search_context <- function(search,corp,LW,RW){
+clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
 
-  if ("meta" %in% names(corp)) corp <- corp$corpus
+  x <- corp
+  if ("meta" %in% names(x)) x <- x$corpus
 
   searchTerms <-  clr_cql_regex(search)
 
-  found <- lapply(corp,clr_extract_context,search=searchTerms,LW,RW)
+  found <- lapply(x,clr_extract_context,search=searchTerms,LW,RW)
   found <- Filter(length,found)
 
   if (length(found) >0 ) {
 
   found <- rbindlist(found,idcol='doc_id') #found locations. Joined to single df corpus.
 
-  BOW <- rbindlist(corp)
+  BOW <- rbindlist(x)
   BOW <- BOW[, rw := rowid(doc_id)]  #Add row number
   BOW <- BOW[found, on=c("doc_id","rw"), nomatch=0]
 
@@ -106,7 +110,10 @@ clr_search_context <- function(search,corp,LW,RW){
 
   BOW <- tmp[BOW]
 
-  out <- list("BOW" = BOW, "KWIC" = KWIC)
+  if (include_meta == FALSE) {
+  out <- list("BOW" = BOW, "KWIC" = KWIC)} else {
+    out <- list("BOW" = BOW, "KWIC" = KWIC, "meta" = corp$meta)}
+
   return(out)
 
      } else
@@ -116,8 +123,9 @@ clr_search_context <- function(search,corp,LW,RW){
 
 #' @export
 #' @rdname queryCorpus
-clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE,remove_nums = TRUE) {
+clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jitter=TRUE, remove_nums = TRUE) { #add agg_var.
 
+  #This function could be more generic.  ~keyness.
    x <- corp
   if ("meta" %in% names(x)) x <- x$corpus
 

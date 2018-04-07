@@ -20,16 +20,20 @@ clr_flatten_contexts <- function(x) {
   }
 
 
+
+
 #' @export
 #' @rdname summarizeSearch
 clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
-  if(!is.data.frame(x)){x <- x$KWIC}
 
-  freqs <- as.data.table(x)
+  freqs <- as.data.table(x$KWIC)
 
   if (toupper==TRUE){
     freqs$lemma <- toupper(freqs$lemma)
     freqs$token <- toupper(freqs$token)}
+
+  if (!setequal(intersect(agg_var, colnames(freqs)), agg_var)) {
+    freqs <- freqs[x$meta, on=c("doc_id"), nomatch=0]}
 
   if ('doc_id' %in% agg_var){
     agg_var2 <- agg_var[agg_var != "doc_id"]
@@ -53,30 +57,41 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
     }
 
 
+
+
 #' @export
 #' @rdname summarizeSearch
-clr_context_kwic <- function (x,include=c('doc_id','lemma')) {
-  if(!is.data.frame(x)){x <- x$KWIC}
+clr_context_kwic <- function (x,include=c('doc_id','lemma')) {#meta parameter
 
-  kwic_table <- as.data.table(x)
+  kwic_table <- as.data.table(x$KWIC)
   kwic_table <- kwic_table[, list(kwic = paste(aContext, "<mark>", token, "</mark>", zContext, collapse=" ")), by=list(doc_id,eg,token,lemma)]
 
   kwic_table <- kwic_table[order(as.numeric(doc_id))]
+
+  if (!setequal(intersect(include, colnames(kwic_table)), include)) {
+    kwic_table <- kwic_table[x$meta, on=c("doc_id"), nomatch=0]}
+
   kwic_table[, c(include,'kwic'), with = FALSE]
   }
+
+
 
 
 #' @export
 #' @rdname summarizeSearch
 clr_context_bow <- function (x,content_only=TRUE, agg_var=c('lemma','pos')) {
-  if(!is.data.frame(x)){x <- x$BOW}
+
+  bow <- x$BOW
 
   if (content_only==TRUE) {
-    x <- x[x$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") & !x$lemma %in% corpuslingr::clr_ref_stops, ]}
+    bow <- bow[bow$pos %in% c("ADJ","NOUN","VERB","ADV","PROPN","ENTITY") & !bow$lemma %in% corpuslingr::clr_ref_stops, ]}
 
-  x[,c('lemma','token','searchLemma','searchToken')] <- lapply(x[,c('lemma','token','searchLemma','searchToken')], toupper)
+  bow[,c('lemma','token','searchLemma','searchToken')] <- lapply(bow[,c('lemma','token','searchLemma','searchToken')], toupper)
 
-  x <- x[place!='token', list(cofreq=.N), by=agg_var]
-  x <- setorderv(x,c('cofreq',agg_var),c(-1,rep(1,length(agg_var))))
+  if (!setequal(intersect(agg_var, colnames(bow)), agg_var)) {
+    bow <- bow[x$meta, on=c("doc_id"), nomatch=0]}
 
-  return(x)}
+  bow <- bow[place!='token', list(cofreq=.N), by=agg_var]
+  bow <- setorderv(bow,c('cofreq',agg_var),c(-1,rep(1,length(agg_var))))
+
+  return(bow)}
