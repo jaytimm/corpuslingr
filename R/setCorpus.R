@@ -34,7 +34,7 @@ clr_set_tuple <- function(x){
 
 #' @export
 #' @rdname setCorpus
-clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', ent_as_tag = FALSE) {
+clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', meta = NULL, ent_as_tag = FALSE) {
 
   x <- copy(y)
 
@@ -55,11 +55,15 @@ clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='l
   x$tag = ifelse(x$tag=="ENTITY",paste0("NN",x$entity_type),x$tag)
   x <- subset(x, select = -entity_type) }
 
-
   x$tup <- paste("<",x$token,"~",x$lemma,"~",x$tag,">",sep="")
 
   list_dfs <- split(x, f = x$doc_id)
   list_dfs <- lapply(list_dfs,clr_set_tuple)
-  list_dfs[order(as.numeric(names(list_dfs)))]
+  list_dfs <- list_dfs[order(as.numeric(names(list_dfs)))]
+
+  if(is.data.frame(meta) {
+    full <- list("corpus"=list_dfs, "meta" = meta)
+    return(full)} else {
+      return(list_dfs)}
 }
 
