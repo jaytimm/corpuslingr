@@ -8,8 +8,10 @@
 #'
 #' @export
 #' @rdname describeCorpus
-clr_desc_corpus <- function (x,doc ='id',sent='sid', tok='word',upos='upos',genre=NULL) {
+clr_desc_corpus <- function (corp, doc ='id',sent='sid', tok='word',upos='upos',genre=NULL) {
 
+  if ("meta" %in% names(corp)) x <- corp$corpus
+  x <- corp
   if (!is.data.frame(x)) {x <- rbindlist(x)}
   x <- as.data.table(x)
 
@@ -20,6 +22,8 @@ clr_desc_corpus <- function (x,doc ='id',sent='sid', tok='word',upos='upos',genr
   corpus <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep=""))))]
 
   if (is.null(genre) == FALSE){
+  x <- x[corp$meta, on=c("doc_id"), nomatch=0]
+
   byGenre <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep="")))), by=genre]
 
   out <- list("text" = byText, "corpus" = corpus, "genre" = byGenre)

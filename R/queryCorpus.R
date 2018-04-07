@@ -15,6 +15,7 @@
 #' @export
 #' @rdname queryCorpus
 clr_extract_context <- function(x,search,LW,RW) {
+
   locations <- gregexpr(pattern= search, paste(x$tup, collapse=" "), ignore.case=TRUE)
   tupBeg <- unlist(as.vector(locations[[1]]))
   tupEnd <- tupBeg + attr(locations[[1]],"match.length") -1
@@ -43,9 +44,10 @@ return(df_locs)
 #' @rdname queryCorpus
 clr_search_gramx <- function(search,corp){
 
+if ("meta" %in% names(corp)) corp <- corp$corpus
+
 searchTerms <-  clr_cql_regex(search)
 
-#Will need to split dataframe.
 found <- lapply(corp, function(z) {
   y <- paste(z$tup, collapse=" ")
 
@@ -77,6 +79,8 @@ return(found)
 #' @export
 #' @rdname queryCorpus
 clr_search_context <- function(search,corp,LW,RW){
+
+  if ("meta" %in% names(corp)) corp <- corp$corpus
 
   searchTerms <-  clr_cql_regex(search)
 
@@ -112,15 +116,18 @@ clr_search_context <- function(search,corp,LW,RW){
 
 #' @export
 #' @rdname queryCorpus
-clr_search_keyphrases <- function (x,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE,remove_nums = TRUE) {
+clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE,remove_nums = TRUE) {
+
+   x <- corp
+  if ("meta" %in% names(x)) x <- x$corpus
 
   keys <- corpuslingr::clr_search_gramx(x,search= clr_ref_keyphrase)
 
   doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
   txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
 
-  corp <- rbindlist(x)
-  freqs <-  corp[, list(textLength=length(key_var)),by=doc_id]
+  fcorp <- rbindlist(x)
+  freqs <-  fcorp[, list(textLength=length(key_var)),by=doc_id]
   setkeyv(doc,key_var)
   setkeyv(txt,key_var)
 
