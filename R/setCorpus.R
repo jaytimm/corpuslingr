@@ -61,7 +61,7 @@ clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='l
   list_dfs <- lapply(list_dfs,clr_set_tuple)
   list_dfs <- list_dfs[order(as.numeric(names(list_dfs)))]
 
-  if(is.data.frame(meta) {
+  if(is.data.frame(meta)) {
     full <- list("corpus"=list_dfs, "meta" = meta)
     return(full)} else {
       return(list_dfs)}
