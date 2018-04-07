@@ -58,7 +58,7 @@ found <- lapply(corp, function(z) {
 
 found <- Filter(length,found)
 
-if(length(found)>0) {
+#if(length(found)>0) {
 
 found <- rbindlist(found, idcol='doc_id')
 colnames(found)[2] <- 'eg'
@@ -72,10 +72,8 @@ found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
 if (include_meta == FALSE) {return(found)} else {
 
-found[corp$meta, on=c("doc_id"), nomatch=0]
+found[corp$meta, on=c("doc_id"), nomatch=0]}
 
-} else
-{"SEARCH TERM(S) NOT FOUND IN CORPUS"}  ##THIS NEEDS TO
 }
 
 
@@ -91,7 +89,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
   found <- lapply(x,clr_extract_context,search=searchTerms,LW,RW)
   found <- Filter(length,found)
 
-  if (length(found) >0 ) {
+  #if (length(found) >0 ) {
 
   found <- rbindlist(found,idcol='doc_id') #found locations. Joined to single df corpus.
 
@@ -115,9 +113,6 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
     out <- list("BOW" = BOW, "KWIC" = KWIC, "meta" = corp$meta)}
 
   return(out)
-
-     } else
-      {return("SEARCH TERM(S) NOT FOUND IN CORPUS")}
 }
 
 
