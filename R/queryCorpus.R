@@ -60,7 +60,7 @@ found <- lapply(x, function(z) {
 
 found <- Filter(length,found)
 
-if (length(found)>0) stop("Search term(s) not found.")
+if (length(found)==0) stop("Search term(s) not found.")
 
 found <- rbindlist(found, idcol='doc_id')
 colnames(found)[2] <- 'eg'
