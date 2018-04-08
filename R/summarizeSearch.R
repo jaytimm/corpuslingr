@@ -32,9 +32,6 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
     freqs$lemma <- toupper(freqs$lemma)
     freqs$token <- toupper(freqs$token)}
 
-  if (!setequal(intersect(agg_var, colnames(freqs)), agg_var)) {
-    freqs <- freqs[x$meta, on=c("doc_id"), nomatch=0]}
-
   if ('doc_id' %in% agg_var){
     agg_var2 <- agg_var[agg_var != "doc_id"]
 
@@ -48,11 +45,10 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
 
     } else{
 
-    freqs <-  freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]
-
-    }
+    freqs <-  freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]}
 
   freqs <- setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
+
   return(freqs)
     }
 
