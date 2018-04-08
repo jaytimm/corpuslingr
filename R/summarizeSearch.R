@@ -37,7 +37,8 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
     txt <-  freqs[, list(txtf=.N),by=agg_var]
 
     freqs <- doc[txt, on=c(agg_var2), nomatch=0]
-    freqs <- freqs[, c(agg_var,'txtf','docf'), with = FALSE]
+    setcolorder (freqs, c(agg_var,'txtf','docf'))
+    #freqs <- freqs[, c(agg_var,'txtf','docf'), with = FALSE]
 
     } else{
 

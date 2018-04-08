@@ -44,7 +44,7 @@ return(df_locs)
 #' @rdname queryCorpus
 clr_search_gramx <- function(search,corp, include_meta=FALSE){
 
-  x <- corp
+x <- corp
 
 if ("meta" %in% names(x)) x <- x$corpus
 
@@ -65,17 +65,14 @@ found <- Filter(length,found)
 found <- rbindlist(found, idcol='doc_id')
 colnames(found)[2] <- 'eg'
 
-#found$eg <- gsub(" $","",found$eg)
-#found$token <- gsub("<(\\S+)~\\S+~\\S+>","\\1",found$eg)
-#found$tag <- gsub("<\\S+~(\\S+)>","\\1",found$eg)
-#found$lemma <- gsub("\\S+~(\\S+)~\\S+","\\1",found$eg)
-
 found[, eg := gsub(" $","",eg)]
 found[, token := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
 found[, tag := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
 found[, lemma := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
 
-found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
+#found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
+
+setcolorder(found, c('doc_id','token','tag','lemma'))
 
 if (include_meta == FALSE) {return(found)} else {
 
@@ -124,8 +121,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
 #' @rdname queryCorpus
 clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jitter=TRUE, remove_nums = TRUE) { #add agg_var.
 
-  #This function could be more generic.  ~keyness.
-   x <- corp
+  x <- corp
   if ("meta" %in% names(x)) x <- x$corpus
 
   keys <- corpuslingr::clr_search_gramx(x,search= clr_ref_keyphrase)
@@ -133,18 +129,19 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
   doc <-  keys[, list(docf=length(unique(doc_id))),by=key_var]
   txt <-  keys[, list(txtf=length(tag)),by=c('doc_id',key_var)]
 
-  fcorp <- rbindlist(x)
-  freqs <-  fcorp[, list(textLength=length(key_var)),by=doc_id]
+  freqs <- rbindlist(x)
+  freqs <- freqs[, list(textLength=length(get(key_var))),by=doc_id]
 
-  k1 <- doc[txt, on=key_var, nomatch=0]
-  k1 <- freqs[k1, on=doc_id, nomatch=0]
+  k1 <- doc[txt, on = key_var]
+
+  setkey(k1,doc_id); setkey(freqs, doc_id)
+  k1 <- freqs[k1]
 
   k1[, docsInCorpus := nrow(freqs)]
 
   if (remove_nums==TRUE) {
     k1 <- k1[grepl("[0-9]",k1[[key_var]])==FALSE,]}
 
-  #k1$tf_idf <- (k1$txtf/k1$textLength)*log(k1$docsInCorpus/(k1$docf+1))
 
   k1[, tf_idf := (txtf/textLength)*log(docsInCorpus/(docf+1))]
 
@@ -159,5 +156,6 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
     k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]
   }
 
-  setorderv(freqs,as.numeric(doc_id))[]
+  k1[order(as.numeric(doc_id))]
+
 }

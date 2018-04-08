@@ -35,4 +35,3 @@ clr_desc_corpus <- function (corp, doc ='id',sent='sid', tok='word',upos='upos',
 }
 
 
-#While we are here, we could add ++descriptives; namely, baayen lexical richness stuff.
