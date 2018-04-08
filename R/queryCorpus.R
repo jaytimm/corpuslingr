@@ -60,7 +60,7 @@ found <- lapply(x, function(z) {
 
 found <- Filter(length,found)
 
-if (length(found)==0) stop("Search term(s) not found.")
+if (length(found)==0) stop("SEARCH TERM(S) NOT FOUND.  See corpuslingr::clr_search_egs for example CQL & syntax.")
 
 found <- rbindlist(found, idcol='doc_id')
 colnames(found)[2] <- 'eg'
@@ -91,7 +91,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
   found <- lapply(x,clr_extract_context,search=searchTerms,LW,RW)
   found <- Filter(length,found)
 
-  if (length(found)==0) stop("Search term(s) not found.")
+  if (length(found)==0) stop("SEARCH TERM(S) NOT FOUND.  See corpuslingr::clr_search_egs for example CQL & syntax.")
 
   found <- rbindlist(found, idcol='doc_id') #found locations. Joined to single df corpus.
 
