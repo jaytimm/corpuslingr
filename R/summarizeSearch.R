@@ -24,27 +24,27 @@ clr_flatten_contexts <- function(x) {
 clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
 
   if (!is.data.frame(x)) x <- x$KWIC
-    freqs <- as.data.table(x)
+    setDT(x)
 
   if (toupper==TRUE){
-    freqs$lemma <- toupper(freqs$lemma)
-    freqs$token <- toupper(freqs$token)}
+    x[, lemma := toupper(lemma)]
+    x[, token := toupper(token)]}
+
 
   if ('doc_id' %in% agg_var){
     agg_var2 <- agg_var[agg_var != "doc_id"]
 
-    doc <-  freqs[, list(docf=length(unique(doc_id))),by=agg_var2]
-    txt <-  freqs[, list(txtf=.N),by=agg_var]
+    doc <-  x[, list(docf=length(unique(doc_id))),by=agg_var2]
+    x <-  x[, list(txtf=.N),by=agg_var]
 
-    freqs <- doc[txt, on=c(agg_var2), nomatch=0]
-    #setcolorder (freqs, c(agg_var,'txtf','docf'))
-    freqs <- freqs[, c(agg_var,'txtf','docf'), with = FALSE]
+    x[doc, ('docf') := mget('docf'), on = agg_var2]
+    setcolorder (x, c(agg_var,'txtf','docf'))
 
     } else{
 
-      freqs <- freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]}
+      x <- x[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]}
 
-  setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))[]
+  setorderv(x,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))[]
 }
 
 
@@ -65,6 +65,7 @@ clr_context_kwic <- function (x,include=c('doc_id','lemma')) {#meta parameter
   }
 
 
+#txt[doc, (include) := mget('docf'), on = agg_var2]
 
 
 #' @export

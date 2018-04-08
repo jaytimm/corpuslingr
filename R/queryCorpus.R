@@ -93,7 +93,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
 
   #if (length(found) >0 ) {
 
-  found <- rbindlist(found,idcol='doc_id') #found locations. Joined to single df corpus.
+  found <- rbindlist(found, idcol='doc_id') #found locations. Joined to single df corpus.
 
   BOW <- rbindlist(x)
   BOW[, rw := rowid(doc_id)]  #Add row number
@@ -132,14 +132,12 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
 
   k1 <- doc[txt, on = key_var]
 
-  setkey(k1,doc_id); setkey(freqs, doc_id)
-  k1 <- freqs[k1]
+  k1[freqs, ('textLength') := mget('textLength'), on = doc_id]
 
   k1[, docsInCorpus := nrow(freqs)]
 
   if (remove_nums==TRUE) {
-    k1 <- k1[grepl("[0-9]",k1[[key_var]])==FALSE,]}
-
+    k1 <- k1[grepl("[0-9]", k1[[key_var]])==FALSE,]}
 
   k1[, tf_idf := (txtf/textLength)*log(docsInCorpus/(docf+1))]
 
