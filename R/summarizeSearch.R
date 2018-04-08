@@ -14,13 +14,15 @@ clr_flatten_contexts <- function(x) {
 
   out <- x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]
   out <- dcast.data.table(out, doc_id+eg ~ place, value.var = "context")
-  setkey(pats,doc_id,eg)
-  setkey(out,doc_id,eg)
-  pats[out]
+  #setkey(pats,doc_id,eg)
+  #setkey(out,doc_id,eg)
+  #pats[out]
+
+  pats[out, on=c("doc_id","eg"), nomatch=0]
   }
 
 
-
+#found[corp$meta, on=c("doc_id"), nomatch=0]
 
 #' @export
 #' @rdname summarizeSearch
@@ -39,18 +41,22 @@ clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
     doc <-  freqs[, list(docf=length(unique(doc_id))),by=agg_var2]
     txt <-  freqs[, list(txtf=.N),by=agg_var]
 
-    setkeyv(doc,agg_var2)
-    setkeyv(txt,agg_var2)
-    freqs <- doc[txt]
-    freqs <- freqs[, c(agg_var,'txtf','docf'), with = FALSE]
+    #setkeyv(doc,agg_var2)
+    #setkeyv(txt,agg_var2)
+    #freqs <- doc[txt]
+    #found[corp$meta, on=c("doc_id"), nomatch=0]
+    #freqs <-
+    freqs[, c(agg_var,'txtf','docf'), with = FALSE]
 
     } else{
 
-    freqs <-  freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]}
+    #freqs <-
+      freqs[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]}
 
-  freqs <- setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
+    #freqs <-
+    setorderv(freqs,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))
 
-  return(freqs)
+  #return(freqs)
     }
 
 
