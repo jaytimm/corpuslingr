@@ -89,6 +89,8 @@ ann_corpus <- cleanNLP::cnlp_annotate(corpus$text, as_strings = TRUE, doc_ids = 
 
 This function prepares the annotated corpus for complex search (as defined above) by building `<token~lemma~pos>` tuples and setting tuple onsets/offsets. Additionally, column names are homogenized using the naming conventions established in the `spacyr` package. Lastly, the function splits the corpus into a list of data frames by document. This is ultimately a search convenience.
 
+Including text metadata in the `meta` parameter enables access to (and aggregation by) text characteristics included in metadata in the process of corpus search.
+
 ``` r
 lingr_corpus <- ann_corpus$token %>%
   clr_set_corpus(doc_var='id', 
@@ -123,7 +125,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     60      43083     7767     1894
+## 1:     58      48546     8120     2105
 ```
 
 -   **By genre:**
@@ -131,10 +133,10 @@ summary$corpus
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     14       8239     2412      402
-## 2: topic_science     14       9884     2661      440
-## 3:  topic_sports     15      11980     2579      585
-## 4:   topic_world     17      12980     3412      554
+## 1:  topic_nation     13      13123     3303      591
+## 2: topic_science     14      10047     2678      445
+## 3:  topic_sports     14      11569     2489      569
+## 4:   topic_world     17      13807     3360      618
 ```
 
 -   **By text:**
@@ -143,11 +145,11 @@ summary$genre
 head(summary$text)
 ##    doc_id textLength textType textSent
 ## 1:      1        712      311       38
-## 2:      2        269      153       13
-## 3:      3       1176      502       59
-## 4:      4        686      333       33
-## 5:      5        184       97       11
-## 6:      6        807      353       48
+## 2:      2       1176      502       59
+## 3:      3        686      333       33
+## 4:      4        184       97       11
+## 5:      5        807      353       48
+## 6:      6        533      236       19
 ```
 
 ------------------------------------------------------------------------
@@ -340,21 +342,21 @@ lingr_corpus %>%
 ## # A tibble: 15 x 6
 ##    doc_id token                          tag           lemma source search
 ##    <chr>  <chr>                          <chr>         <chr> <chr>  <chr> 
-##  1 6      willing and able               JJ CC JJ      will~ mmaju~ topic~
-##  2 8      second and final               JJ CC JJ      seco~ profo~ topic~
-##  3 8      more and more clear            JJR CC RBR JJ more~ profo~ topic~
-##  4 9      digital and print              JJ CC JJ      digi~ canto~ topic~
-##  5 10     viable and imminent            JJ CC JJ      viab~ chica~ topic~
-##  6 11     dead and injured               JJ CC JJ      dead~ chica~ topic~
-##  7 12     flung and general              JJ CC JJ      flun~ chica~ topic~
-##  8 20     bad and ugly                   JJ CC JJ      bad ~ nj.com topic~
-##  9 20     determined and confident       JJ CC JJ      dete~ nj.com topic~
-## 10 20     plain and simple               JJ CC JJ      plai~ nj.com topic~
-## 11 23     productive and less prosperous JJ CC RBR JJ  prod~ busin~ topic~
-## 12 24     black and white                JJ CC JJ      blac~ citiz~ topic~
-## 13 33     large and spontaneous          JJ CC JJ      larg~ cfr.o~ topic~
-## 14 33     Saudi and Egyptian             JJ CC JJ      saud~ cfr.o~ topic~
-## 15 34     unconscious and unresponsive   JJ CC JJ      unco~ cnn.c~ topic~
+##  1 5      willing and able               JJ CC JJ      will~ mmaju~ topic~
+##  2 6      second and final               JJ CC JJ      seco~ profo~ topic~
+##  3 6      more and more clear            JJR CC RBR JJ more~ profo~ topic~
+##  4 7      digital and print              JJ CC JJ      digi~ canto~ topic~
+##  5 8      flung and general              JJ CC JJ      flun~ chica~ topic~
+##  6 13     bad and ugly                   JJ CC JJ      bad ~ nj.com topic~
+##  7 13     determined and confident       JJ CC JJ      dete~ nj.com topic~
+##  8 13     plain and simple               JJ CC JJ      plai~ nj.com topic~
+##  9 19     productive and less prosperous JJ CC RBR JJ  prod~ busin~ topic~
+## 10 20     black and white                JJ CC JJ      blac~ citiz~ topic~
+## 11 28     expensive and unnecessary      JJ CC JJ      expe~ cbsne~ topic~
+## 12 33     official and UN                JJ CC JJ      offi~ cnn.c~ topic~
+## 13 37     strong and bright              JJ CC JJ      stro~ i4u.c~ topic~
+## 14 37     consistent and detectable      JJ CC JJ      cons~ i4u.c~ topic~
+## 15 40     reliable and safe              JJ CC JJ      reli~ morni~ topic~
 ```
 
 ------------------------------------------------------------------------
@@ -372,11 +374,11 @@ lingr_corpus %>%
   head()
 ##           lemma txtf docf
 ## 1:  SPLASH INTO    3    2
-## 2:   DRIVE INTO    2    1
-## 3: RELEASE INTO    2    1
-## 4: CHANNEL INTO    1    1
-## 5:  CHARGE INTO    1    1
-## 6:    COME INTO    1    1
+## 2:   CRASH INTO    2    1
+## 3:     CUT INTO    2    2
+## 4:   DRIVE INTO    2    1
+## 5: RELEASE INTO    2    1
+## 6:    BELT INTO    1    1
 ```
 
 Setting `include_meta = TRUE` facilitates aggregation by variable(s) included in metadata:
@@ -389,11 +391,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = c('search','token','tag'), toupper=TRUE)%>%
   head()
 ##          search token tag txtf docf
-## 1: topic_sports  SHOT  NN    3    2
-## 2: topic_sports SHOTS NNS    2    2
+## 1: topic_nation SHOTS NNS    2    1
+## 2:  topic_world  SHOT  NN    2    2
 ## 3:  topic_world  SHOT VBD    2    1
-## 4: topic_nation SHOTS NNS    1    1
-## 5:  topic_world  SHOT  NN    1    1
+## 4:  topic_world SHOTS NNS    2    2
+## 5: topic_sports  SHOT  NN    1    1
+## 6: topic_sports SHOTS NNS    1    1
 ```
 
 ------------------------------------------------------------------------
@@ -433,7 +436,7 @@ found_egs %>%
 
 ### clr\_context\_bow()
 
-A function for accessing `BOW` object. The parameters `agg_var` and `content_only` can be used to specify how collocates are aggregated and whether only content words are included, respectively.
+A function for accessing/aggregating `BOW` object. The parameters `agg_var` and `content_only` can be used to specify how collocates are aggregated and whether only content words are included, respectively.
 
 ``` r
 search5 <- "White House"
@@ -442,12 +445,12 @@ corpuslingr::clr_search_context(search=search5,corp=lingr_corpus, LW=20, RW=20)%
   corpuslingr::clr_context_bow(content_only = TRUE, agg_var = c('searchLemma', 'lemma'))%>%
   head()
 ##    searchLemma          lemma cofreq
-## 1: WHITE HOUSE          TRUMP      7
+## 1: WHITE HOUSE          TRUMP      8
 ## 2: WHITE HOUSE          KELLY      5
-## 3: WHITE HOUSE ADMINISTRATION      3
-## 4: WHITE HOUSE           JOHN      3
-## 5: WHITE HOUSE            KIM      3
-## 6: WHITE HOUSE           MEET      3
+## 3: WHITE HOUSE       OFFICIAL      5
+## 4: WHITE HOUSE ADMINISTRATION      4
+## 5: WHITE HOUSE           JOHN      3
+## 6: WHITE HOUSE            KIM      3
 ```
 
 ------------------------------------------------------------------------
@@ -498,7 +501,7 @@ Arpaio | attorney | dog | kennel | Austin Flake
 2
 </td>
 <td style="text-align:left;">
-tourist | luxury space hotel | Aurora Station | deposit | Orion Span
+satellites | satellite | Earth | Iridium flare | sky
 </td>
 </tr>
 <tr>
@@ -506,7 +509,7 @@ tourist | luxury space hotel | Aurora Station | deposit | Orion Span
 3
 </td>
 <td style="text-align:left;">
-satellites | satellite | Earth | Iridium flare | telescope
+ISRO | China | space station | control | smaller satellite
 </td>
 </tr>
 <tr>
@@ -514,7 +517,7 @@ satellites | satellite | Earth | Iridium flare | telescope
 4
 </td>
 <td style="text-align:left;">
-ISRO | China | space station | smaller satellite | low-earth orbit
+cocaine | purse | windy day | Florida woman | police report
 </td>
 </tr>
 <tr>
@@ -522,7 +525,7 @@ ISRO | China | space station | smaller satellite | low-earth orbit
 5
 </td>
 <td style="text-align:left;">
-cocaine | purse | windy day | Florida woman | police report
+Nurmagomedov | man | UFC | Iaquinta | champion
 </td>
 </tr>
 <tr>
@@ -530,7 +533,7 @@ cocaine | purse | windy day | Florida woman | police report
 6
 </td>
 <td style="text-align:left;">
-Nurmagomedov | UFC | man | Iaquinta | champion
+Manziel | NFL | Spring League | game | effort
 </td>
 </tr>
 </tbody>
