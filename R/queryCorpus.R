@@ -70,9 +70,7 @@ found[, token := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
 found[, tag := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
 found[, lemma := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
 
-#found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
-
-setcolorder(found, c('doc_id','token','tag','lemma'))
+found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
 if (include_meta == FALSE) {return(found)} else {
 
@@ -98,7 +96,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
   found <- rbindlist(found,idcol='doc_id') #found locations. Joined to single df corpus.
 
   BOW <- rbindlist(x)
-  BOW <- BOW[, rw := rowid(doc_id)]  #Add row number
+  BOW[, rw := rowid(doc_id)]  #Add row number
   BOW <- BOW[found, on=c("doc_id","rw"), nomatch=0]
 
   KWIC <- clr_flatten_contexts(BOW)
