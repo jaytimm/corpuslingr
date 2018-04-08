@@ -26,7 +26,8 @@ clr_flatten_contexts <- function(x) {
 #' @rdname summarizeSearch
 clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
 
-  freqs <- as.data.table(x$KWIC)
+  if (!is.data.frame(x)) x <- x$KWIC
+    freqs <- as.data.table(x)
 
   if (toupper==TRUE){
     freqs$lemma <- toupper(freqs$lemma)
