@@ -64,11 +64,16 @@ found <- Filter(length,found)
 
 found <- rbindlist(found, idcol='doc_id')
 colnames(found)[2] <- 'eg'
-found$eg <- gsub(" $","",found$eg)
 
-found$token <- gsub("<(\\S+)~\\S+~\\S+>","\\1",found$eg)
-found$tag <- gsub("<\\S+~(\\S+)>","\\1",found$eg)
-found$lemma <- gsub("\\S+~(\\S+)~\\S+","\\1",found$eg)
+#found$eg <- gsub(" $","",found$eg)
+#found$token <- gsub("<(\\S+)~\\S+~\\S+>","\\1",found$eg)
+#found$tag <- gsub("<\\S+~(\\S+)>","\\1",found$eg)
+#found$lemma <- gsub("\\S+~(\\S+)~\\S+","\\1",found$eg)
+
+found[, eg := gsub(" $","",eg)]
+found[, token := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
+found[, tag := gsub("<(\\S+)~\\S+~\\S+>","\\1",tag)]
+found[, lemma := gsub("<(\\S+)~\\S+~\\S+>","\\1",lemma)]
 
 found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
@@ -105,10 +110,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
 
   setnames(tmp, old = c('token','lemma','tag','pos'), new = c('searchToken', 'searchLemma','searchTag','searchPos'))
 
-  setkey(tmp,doc_id,eg)
-  setkey(BOW,doc_id,eg)
-
-  BOW <- tmp[BOW]
+  BOW <- tmp[BOW, on=c("doc_id","eg"), nomatch=0]
 
   if (include_meta == FALSE) {
   out <- list("BOW" = BOW, "KWIC" = KWIC)} else {
@@ -133,25 +135,22 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
 
   fcorp <- rbindlist(x)
   freqs <-  fcorp[, list(textLength=length(key_var)),by=doc_id]
-  setkeyv(doc,key_var)
-  setkeyv(txt,key_var)
 
-  k1 <- doc[txt]
+  k1 <- doc[txt, on=key_var, nomatch=0]
+  k1 <- freqs[k1, on=doc_id, nomatch=0]
 
-  setkey(k1,doc_id)
-  setkey(freqs,doc_id)
-
-  k1 <- freqs[k1]
-  k1$docsInCorpus <- nrow(freqs)
+  k1[, docsInCorpus := nrow(freqs)]
 
   if (remove_nums==TRUE) {
     k1 <- k1[grepl("[0-9]",k1[[key_var]])==FALSE,]}
 
-  k1$tf_idf <- (k1$txtf/k1$textLength)*log(k1$docsInCorpus/(k1$docf+1))
+  #k1$tf_idf <- (k1$txtf/k1$textLength)*log(k1$docsInCorpus/(k1$docf+1))
+
+  k1[, tf_idf := (txtf/textLength)*log(docsInCorpus/(docf+1))]
 
   if (jitter==TRUE) {
     set.seed(99)
-    k1$tf_idf <- jitter(k1$tf_idf)}
+    k1[, tf_idf := jitter(tf_idf)]}
 
   k1 <- k1[,.SD[order(-tf_idf)[1:n]],by=doc_id]
   colnames(k1)[3] <- 'keyphrases'
@@ -160,7 +159,5 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
     k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]
   }
 
-  k1 <- k1[order(as.numeric(doc_id))]
-
-  return(k1)
+  setorderv(freqs,as.numeric(doc_id))[]
 }
