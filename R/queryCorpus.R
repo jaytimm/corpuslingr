@@ -91,7 +91,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
   found <- lapply(x,clr_extract_context,search=searchTerms,LW,RW)
   found <- Filter(length,found)
 
-  #if (length(found) >0 ) {
+  if (length(found)==0) stop("Search term(s) not found.")
 
   found <- rbindlist(found, idcol='doc_id') #found locations. Joined to single df corpus.
 
