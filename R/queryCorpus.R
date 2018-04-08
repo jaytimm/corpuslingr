@@ -132,10 +132,8 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
 
   k1 <- doc[txt, on = key_var]
 
-  setkey(k1, doc_id); setkey(freqs, doc_id)
-  #k1[freqs, ('textLength') := mget('textLength'), on = doc_id]
-  k1 <- k1[freqs, on = doc_id]
-
+  setkey(k1,doc_id); setkey(freqs, doc_id)
+  k1 <- freqs[k1]
 
   k1[, docsInCorpus := nrow(freqs)]
 
