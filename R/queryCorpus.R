@@ -67,8 +67,8 @@ colnames(found)[2] <- 'eg'
 
 found[, eg := gsub(" $","",eg)]
 found[, token := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
-found[, tag := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
-found[, lemma := gsub("<(\\S+)~\\S+~\\S+>","\\1",eg)]
+found[, tag := gsub("<\\S+~(\\S+)>","\\1",eg)]
+found[, lemma := gsub("\\S+~(\\S+)~\\S+","\\1",eg)]
 
 found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
