@@ -12,3 +12,4 @@ Optional search w/ parens and ?,MD (NEG)? HAVE been,"should have been, might not
 Multiple term search w parens and |,PRON (HOPE| WISH| DESIRE),"He hoped, they wish"
 Multiple term search w parens and |,House (Republicans| Democrats),"House Republicans, House Democrats"
 Indeterminate wildcard search w brackets and min/max,"NPHR BE \*{1,4} ADJ","He was very, very happy; I'm not sure"
+Multiple optional search,(President)? (Bill)? Clinton,
