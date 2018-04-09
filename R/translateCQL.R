@@ -9,7 +9,7 @@
 #' @rdname translateCQL
 clr_build_search <- function(x){
 
-  default <- '<\\S+~\\S+~\\S+>'
+  default <- '<\\\\S+~\\\\S+~\\\\S+>'
 
   #Simple wildcard:
   if (x=="*") default else {
