@@ -125,7 +125,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     63      43489     7618     2015
+## 1:     62      42968     7683     1975
 ```
 
 -   **By genre:**
@@ -133,10 +133,10 @@ summary$corpus
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     18      10644     2824      542
-## 2:  topic_sports     17       9620     2249      476
-## 3:   topic_world     16      14466     3414      687
-## 4: topic_science     12       8759     2484      365
+## 1:  topic_nation     18      10338     2773      516
+## 2:  topic_sports     17      11375     2638      574
+## 3: topic_science     11       8061     2330      319
+## 4:   topic_world     16      13194     3318      608
 ```
 
 -   **By text:**
@@ -145,9 +145,9 @@ summary$genre
 head(summary$text)
 ##    doc_id textLength textType textSent
 ## 1:      1        712      311       38
-## 2:      2        190      131       10
-## 3:      3        150       98        8
-## 4:      4        370      191       22
+## 2:      2        331      197       16
+## 3:      3        274      177       12
+## 4:      4        150       98        8
 ## 5:      5        686      333       33
 ## 6:      6       1682      457      117
 ```
@@ -338,26 +338,26 @@ search1 <- "ADJ and (ADV)? ADJ"
 
 lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search1, include_meta=TRUE)%>%
-  select(doc_id, source, token, tag)%>% 
+  select(doc_id, search, token, tag)%>% 
   slice(1:15)
 ## # A tibble: 15 x 4
-##    doc_id source                        token                        tag  
-##    <chr>  <chr>                         <chr>                        <chr>
-##  1 4      fox6now.com                   used and uncapped            JJ C~
-##  2 8      profootballtalk.nbcsports.com second and final             JJ C~
-##  3 8      profootballtalk.nbcsports.com more and more clear          JJR ~
-##  4 9      arabnews.com                  cognitive and emotional      JJ C~
-##  5 10     cantonrep.com                 digital and print            JJ C~
-##  6 11     ecns.cn                       racial and ethnic            JJ C~
-##  7 12     espn.com                      official and unofficial      JJ C~
-##  8 14     espn.com                      healthy and strong           JJ C~
-##  9 15     espn.com                      loud and cranky              JJ C~
-## 10 18     foxnews.com                   daily and multiple           JJ C~
-## 11 21     latimes.com                   secure and less vulnerable   JJ C~
-## 12 21     latimes.com                   secure and cheap             JJ C~
-## 13 21     latimes.com                   difficult and time-consuming JJ C~
-## 14 23     njherald.com                  affordable and non-invasive  JJ C~
-## 15 25     timesfreepress.com            armed and dangerous          JJ C~
+##    doc_id search        token                          tag          
+##    <chr>  <chr>         <chr>                          <chr>        
+##  1 7      topic_sports  willing and able               JJ CC JJ     
+##  2 8      topic_world   muscular and punitive          JJ CC JJ     
+##  3 9      topic_sports  second and final               JJ CC JJ     
+##  4 9      topic_sports  more and more clear            JJR CC RBR JJ
+##  5 10     topic_science cognitive and emotional        JJ CC JJ     
+##  6 12     topic_science digital and print              JJ CC JJ     
+##  7 13     topic_sports  official and unofficial        JJ CC JJ     
+##  8 15     topic_sports  healthy and strong             JJ CC JJ     
+##  9 17     topic_nation  daily and multiple             JJ CC JJ     
+## 10 23     topic_world   secure and less vulnerable     JJ CC RBR JJ 
+## 11 23     topic_world   secure and cheap               JJ CC JJ     
+## 12 23     topic_world   difficult and time-consuming   JJ CC JJ     
+## 13 27     topic_science affordable and non-invasive    JJ CC JJ     
+## 14 28     topic_science wasteful and burdensome        JJ CC JJ     
+## 15 31     topic_science productive and less prosperous JJ CC RBR JJ
 ```
 
 ------------------------------------------------------------------------
@@ -375,11 +375,11 @@ lingr_corpus %>%
   head()
 ##           lemma txtf docf
 ## 1:   CRASH INTO   12    2
-## 2:      GO INTO    4    3
-## 3:    COME INTO    2    2
-## 4: RELEASE INTO    2    1
-## 5:  SPLASH INTO    2    1
-## 6:   BRING INTO    1    1
+## 2:      GO INTO    2    2
+## 3: RELEASE INTO    2    1
+## 4:  SPLASH INTO    2    1
+## 5: CONVERT INTO    1    1
+## 6: CRASHED INTO    1    1
 ```
 
 Setting `include_meta = TRUE` facilitates aggregation by variable(s) included in metadata:
@@ -392,23 +392,23 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = c('search','token','tag'), toupper=TRUE)%>%
   slice(1:15)
 ## # A tibble: 15 x 5
-##    search       token   tag    txtf  docf
-##    <chr>        <chr>   <chr> <int> <int>
-##  1 topic_sports PLAY    VB        9     5
-##  2 topic_sports SHOT    NN        9     2
-##  3 topic_sports PLAYED  VBD       6     5
-##  4 topic_sports SHOTS   NNS       5     1
-##  5 topic_nation SHOT    NN        4     1
-##  6 topic_sports BALL    NN        4     3
-##  7 topic_sports PLAYING VBG       4     3
-##  8 topic_sports PLAYED  VBN       3     3
-##  9 topic_nation PLAYING VBG       2     1
-## 10 topic_nation SHOTS   NNS       2     1
-## 11 topic_sports PLAY    VBP       2     1
-## 12 topic_sports PLAYS   VBZ       2     2
-## 13 topic_world  SHOT    NN        2     2
-## 14 topic_nation PLAY    VB        1     1
-## 15 topic_nation PLAYS   VBZ       1     1
+##    search        token   tag    txtf  docf
+##    <chr>         <chr>   <chr> <int> <int>
+##  1 topic_sports  PLAY    VB       10     7
+##  2 topic_sports  BALL    NN        6     4
+##  3 topic_sports  PLAYING VBG       6     4
+##  4 topic_sports  SHOT    NN        6     2
+##  5 topic_sports  SHOTS   NNS       5     1
+##  6 topic_sports  PLAYED  VBD       4     3
+##  7 topic_nation  PLAYING VBG       3     2
+##  8 topic_nation  SHOTS   NNS       2     1
+##  9 topic_sports  PLAY    VBP       2     1
+## 10 topic_sports  PLAYED  VBN       2     2
+## 11 topic_sports  PLAYS   VBZ       2     2
+## 12 topic_world   SHOT    NN        2     2
+## 13 topic_nation  PLAY    VB        1     1
+## 14 topic_nation  PLAYS   VBZ       1     1
+## 15 topic_science BALL    NN        1     1
 ```
 
 ------------------------------------------------------------------------
@@ -457,11 +457,11 @@ corpuslingr::clr_search_context(search=search5,corp=lingr_corpus, LW=20, RW=20)%
   corpuslingr::clr_context_bow(content_only = TRUE, agg_var = c('searchLemma', 'lemma'))%>%
   head()
 ##    searchLemma     lemma cofreq
-## 1: WHITE HOUSE     TRUMP      6
+## 1: WHITE HOUSE     TRUMP      7
 ## 2: WHITE HOUSE     KELLY      5
-## 3: WHITE HOUSE      POST      3
-## 4: WHITE HOUSE PRESIDENT      3
-## 5: WHITE HOUSE       SAY      3
+## 3: WHITE HOUSE       SAY      5
+## 4: WHITE HOUSE PRESIDENT      4
+## 5: WHITE HOUSE   INCLUDE      3
 ## 6: WHITE HOUSE    SUNDAY      3
 ```
 
@@ -513,7 +513,7 @@ Arpaio | attorney | dog | kennel | Austin Flake
 2
 </td>
 <td style="text-align:left;">
-twin boy | Getty Images Sarah Ryan | rest Jan | Comment Bubble Icon Patrick Smith | Falcons practice Jan
+Logan | ability | run | team | significant impact
 </td>
 </tr>
 <tr>
@@ -521,7 +521,7 @@ twin boy | Getty Images Sarah Ryan | rest Jan | Comment Bubble Icon Patrick Smit
 3
 </td>
 <td style="text-align:left;">
-male suspect | news | incident | scene | outside agency
+Cook | point | percent | season | Warriors
 </td>
 </tr>
 <tr>
@@ -529,7 +529,7 @@ male suspect | news | incident | scene | outside agency
 4
 </td>
 <td style="text-align:left;">
-baby | street | police | boyfriend | old food
+male suspect | news | incident | scene | story as more detail emerge
 </td>
 </tr>
 <tr>
@@ -537,7 +537,7 @@ baby | street | police | boyfriend | old food
 5
 </td>
 <td style="text-align:left;">
-ISRO | China | space station | control | low-earth orbit
+China | ISRO | space station | control | reusable launch vehicle
 </td>
 </tr>
 <tr>
@@ -545,7 +545,7 @@ ISRO | China | space station | control | low-earth orbit
 6
 </td>
 <td style="text-align:left;">
-GMT | pm | tree | police | car
+GMT | police | pm | tree | am
 </td>
 </tr>
 </tbody>
