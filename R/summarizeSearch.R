@@ -23,28 +23,28 @@ clr_flatten_contexts <- function(x) {
 #' @rdname summarizeSearch
 clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
 
-  if (!is.data.frame(x)) x <- x$KWIC
-    setDT(x)
+   y <- copy (x$KWIC)
+    setDT(y)
 
   if (toupper==TRUE){
-    x[, lemma := toupper(lemma)]
-    x[, token := toupper(token)]}
+    y[, lemma := toupper(lemma)]
+    y[, token := toupper(token)]}
 
 
   if ('doc_id' %in% agg_var){
     agg_var2 <- agg_var[agg_var != "doc_id"]
 
-    doc <-  x[, list(docf=length(unique(doc_id))),by=agg_var2]
-    x <-  x[, list(txtf=.N),by=agg_var]
+    doc <-  y[, list(docf=length(unique(doc_id))),by=agg_var2]
+    y <-  y[, list(txtf=.N),by=agg_var]
 
-    x[doc, ('docf') := mget('docf'), on = agg_var2]
-    setcolorder (x, c(agg_var,'txtf','docf'))
+    y[doc, ('docf') := mget('docf'), on = agg_var2]
+    setcolorder (y, c(agg_var,'txtf','docf'))
 
     } else{
 
-      x <- x[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]}
+      y <- y[, list(txtf=.N,docf=length(unique(doc_id))),by=agg_var]}
 
-  setorderv(x,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))[]
+  setorderv(y,c('txtf',agg_var),c(-1,rep(1,length(agg_var))))[]
 }
 
 
