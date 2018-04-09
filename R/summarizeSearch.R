@@ -14,6 +14,7 @@ clr_flatten_contexts <- function(x) {
 
   out <- x[, list(context=paste(token, collapse=" ")), by=list(doc_id,eg,place)]
   out <- dcast.data.table(out, doc_id+eg ~ place, value.var = "context")
+  out[is.na(out)] <- ""
   pats[out, on=c("doc_id","eg"), nomatch=0]
   }
 
