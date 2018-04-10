@@ -148,6 +148,8 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
   k1 <- k1[,.SD[order(-tf_idf)[1:n]],by=doc_id]
   colnames(k1)[3] <- 'keyphrases'
 
+  k1 <- k1[order(as.numeric(doc_id))]
+
   if (flatten == TRUE) {
     k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]}
 
@@ -156,7 +158,4 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
     k1 <- k1[corp$meta, on=c("doc_id"), nomatch=0]}
 
   k1 <- k1[, c(include,'keyphrases'), with = FALSE]
-
-  k1[order(as.numeric(doc_id))]
-
 }
