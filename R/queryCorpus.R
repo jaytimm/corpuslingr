@@ -73,7 +73,7 @@ found[, lemma := gsub("\\S+~(\\S+)~\\S+","\\1",eg)]
 found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
 if (!"meta" %in% names(corp)) {return(found)} else {
-
+  setDT (corp$meta)
   found[corp$meta, on=c("doc_id"), nomatch=0]}
 }
 

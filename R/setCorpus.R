@@ -36,10 +36,16 @@ clr_set_tuple <- function(x){
 
 #' @export
 #' @rdname setCorpus
-clr_set_corpus <- function (y, doc_var='doc_id', token_var='token', lemma_var='lemma', tag_var='tag', pos_var='pos',sentence_var='sentence_id', meta = NULL, ent_as_tag = FALSE) {
+clr_set_corpus <- function (y, doc_var='doc_id',
+                               token_var='token',
+                               lemma_var='lemma',
+                               tag_var='tag',
+                               pos_var='pos',
+                               sentence_var='sentence_id',
+                               meta = NULL,
+                               ent_as_tag = FALSE) {
 
-  x <- copy(y)
-  setDT(x)
+  x <- as.data.table(y)
 
   setnames(x, old = c(doc_var,token_var,lemma_var,tag_var, pos_var,sentence_var), new = c('doc_id', 'token','lemma','tag','pos','sentence_id'))
 
