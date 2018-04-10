@@ -34,6 +34,8 @@ Importantly, both search and aggregation functions can be easily applied to mult
 
 While still in development, the package should be useful to linguists and digital humanists interested in having [BYU corpora](https://corpus.byu.edu/)-like search & summary functionality when working with (moderately-sized) personal corpora, as well as researchers interested in performing finer-grained, more qualitative analyses of language use and variation in context.
 
+A simple shiny demo of search & summary functionaity is available [here](https://jasontimm.shinyapps.io/corpusQuery/)
+
 ------------------------------------------------------------------------
 
 Here, we walk through a simple workflow from corpus creation using `quicknews`, corpus annotation using the `cleanNLP` package, and annotated corpus search & summary using `corpuslingr`.
@@ -89,7 +91,7 @@ ann_corpus <- cleanNLP::cnlp_annotate(corpus$text, as_strings = TRUE, doc_ids = 
 
 This function prepares the annotated corpus for complex search (as defined above) by building `<token~lemma~pos>` tuples and setting tuple onsets/offsets. Additionally, column names are homogenized using the naming conventions established in the `spacyr` package. Lastly, the function splits the corpus into a list of data frames by document. This is ultimately a search convenience.
 
-Including text metadata in the `meta` parameter enables access to (and aggregation by) text characteristics included in metadata in the process of corpus search.
+Including text metadata in the `meta` parameter enables access to text characteristics when aggregating search results.
 
 ``` r
 lingr_corpus <- ann_corpus$token %>%
@@ -106,7 +108,7 @@ Some example tuple-ized text:
 
 ``` r
 paste(lingr_corpus$corpus[[1]]$tup[200:204], collapse= " ")
-## [1] "<against~against~IN> <him~he~PRP> <in~in~IN> <the~the~DT> <deaths~death~NNS>"
+## [1] "<I~I~PRP> <will~will~MD> <make~make~VB> <it~it~PRP> <even~even~RB>"
 ```
 
 ------------------------------------------------------------------------
@@ -125,7 +127,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     62      42968     7683     1975
+## 1:     54      42974     7808     1846
 ```
 
 -   **By genre:**
@@ -133,10 +135,10 @@ summary$corpus
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation     18      10338     2773      516
-## 2:  topic_sports     17      11375     2638      574
-## 3: topic_science     11       8061     2330      319
-## 4:   topic_world     16      13194     3318      608
+## 1:  topic_nation      8       6149     1758      264
+## 2:  topic_sports     17      12354     2927      622
+## 3:   topic_world     16      13516     3516      578
+## 4: topic_science     13      10955     2924      526
 ```
 
 -   **By text:**
@@ -144,12 +146,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        712      311       38
-## 2:      2        331      197       16
-## 3:      3        274      177       12
-## 4:      4        150       98        8
-## 5:      5        686      333       33
-## 6:      6       1682      457      117
+## 1:      1       1026      405       47
+## 2:      2        232      116        9
+## 3:      3       1262      502       75
+## 4:      4        723      354       27
+## 5:      5       1759      673       52
+## 6:      6        345      178       16
 ```
 
 ------------------------------------------------------------------------
@@ -324,6 +326,17 @@ NPHR BE \*{1,4} ADJ
 He was very, very happy; I'm not sure
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+Multiple optional search
+</td>
+<td style="text-align:left;">
+(President)? (Bill)? Clinton
+</td>
+<td style="text-align:left;">
+Clinton, President Clinton, Bill Clinton
+</td>
+</tr>
 </tbody>
 </table>
 
@@ -331,33 +344,33 @@ He was very, very happy; I'm not sure
 
 ### clr\_search\_gramx()
 
-Search for all instantiations of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search. By setting `include_meta = TRUE`, search results can be viewed with text metadata.
+Search for all instantiations of a particular lexical pattern/grammatical construction devoid of context. This function enables fairly quick search.
 
 ``` r
 search1 <- "ADJ and (ADV)? ADJ"
 
 lingr_corpus %>%
-  corpuslingr::clr_search_gramx(search=search1, include_meta=TRUE)%>%
+  corpuslingr::clr_search_gramx(search=search1)%>%
   select(doc_id, search, token, tag)%>% 
   slice(1:15)
 ## # A tibble: 15 x 4
-##    doc_id search        token                          tag          
-##    <chr>  <chr>         <chr>                          <chr>        
-##  1 7      topic_sports  willing and able               JJ CC JJ     
-##  2 8      topic_world   muscular and punitive          JJ CC JJ     
-##  3 9      topic_sports  second and final               JJ CC JJ     
-##  4 9      topic_sports  more and more clear            JJR CC RBR JJ
-##  5 10     topic_science cognitive and emotional        JJ CC JJ     
-##  6 12     topic_science digital and print              JJ CC JJ     
-##  7 13     topic_sports  official and unofficial        JJ CC JJ     
-##  8 15     topic_sports  healthy and strong             JJ CC JJ     
-##  9 17     topic_nation  daily and multiple             JJ CC JJ     
-## 10 23     topic_world   secure and less vulnerable     JJ CC RBR JJ 
-## 11 23     topic_world   secure and cheap               JJ CC JJ     
-## 12 23     topic_world   difficult and time-consuming   JJ CC JJ     
-## 13 27     topic_science affordable and non-invasive    JJ CC JJ     
-## 14 28     topic_science wasteful and burdensome        JJ CC JJ     
-## 15 31     topic_science productive and less prosperous JJ CC RBR JJ
+##    doc_id search        token                      tag      
+##    <chr>  <chr>         <chr>                      <chr>    
+##  1 1      topic_nation  disrespectful and rude     JJ CC JJ 
+##  2 1      topic_nation  successful and happy       JJ CC JJ 
+##  3 5      topic_nation  social and cultural        JJ CC JJ 
+##  4 15     topic_nation  geese and other            JJ CC JJ 
+##  5 19     topic_science unexpected and unwelcome   JJ CC JJ 
+##  6 19     topic_science Cultural and political     JJ CC JJ 
+##  7 20     topic_world   Western and Asian          JJ CC JJ 
+##  8 20     topic_world   smaller and poorer         JJR CC JJ
+##  9 24     topic_world   known-probiotic and immune JJ CC JJ 
+## 10 24     topic_world   homey and smoky            JJ CC JJ 
+## 11 25     topic_sports  academic and compliance    JJ CC JJ 
+## 12 29     topic_world   political and religious    JJ CC JJ 
+## 13 30     topic_science horizontal and vertical    JJ CC JJ 
+## 14 32     topic_world   awake and aware            JJ CC JJ 
+## 15 35     topic_science irritable and impulsive    JJ CC JJ
 ```
 
 ------------------------------------------------------------------------
@@ -373,13 +386,13 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = c('lemma'), toupper=TRUE)%>%
   head()
-##           lemma txtf docf
-## 1:   CRASH INTO   12    2
-## 2:      GO INTO    2    2
-## 3: RELEASE INTO    2    1
-## 4:  SPLASH INTO    2    1
-## 5: CONVERT INTO    1    1
-## 6: CRASHED INTO    1    1
+##          lemma txtf docf
+## 1:   COME INTO    2    2
+## 2:   TUNE INTO    2    1
+## 3: ASCEND INTO    1    1
+## 4:  BREAK INTO    1    1
+## 5:  BRING INTO    1    1
+## 6: CREEPE INTO    1    1
 ```
 
 Setting `include_meta = TRUE` facilitates aggregation by variable(s) included in metadata:
@@ -388,27 +401,25 @@ Setting `include_meta = TRUE` facilitates aggregation by variable(s) included in
 search3 <- "SHOT~NOUN| BALL~NOUN| PLAY~VERB"
 
 lingr_corpus %>%
-  corpuslingr::clr_search_gramx(search=search3, include_meta=TRUE)%>%
+  corpuslingr::clr_search_gramx(search=search3)%>%
   corpuslingr::clr_get_freq(agg_var = c('search','token','tag'), toupper=TRUE)%>%
   slice(1:15)
-## # A tibble: 15 x 5
-##    search        token   tag    txtf  docf
-##    <chr>         <chr>   <chr> <int> <int>
-##  1 topic_sports  PLAY    VB       10     7
-##  2 topic_sports  BALL    NN        6     4
-##  3 topic_sports  PLAYING VBG       6     4
-##  4 topic_sports  SHOT    NN        6     2
-##  5 topic_sports  SHOTS   NNS       5     1
-##  6 topic_sports  PLAYED  VBD       4     3
-##  7 topic_nation  PLAYING VBG       3     2
-##  8 topic_nation  SHOTS   NNS       2     1
-##  9 topic_sports  PLAY    VBP       2     1
-## 10 topic_sports  PLAYED  VBN       2     2
-## 11 topic_sports  PLAYS   VBZ       2     2
-## 12 topic_world   SHOT    NN        2     2
-## 13 topic_nation  PLAY    VB        1     1
-## 14 topic_nation  PLAYS   VBZ       1     1
-## 15 topic_science BALL    NN        1     1
+## # A tibble: 13 x 5
+##    search       token   tag    txtf  docf
+##    <chr>        <chr>   <chr> <int> <int>
+##  1 topic_sports BALL    NN       17     4
+##  2 topic_sports PLAY    VB       10     7
+##  3 topic_sports PLAYING VBG       6     4
+##  4 topic_sports BALLS   NNS       3     3
+##  5 topic_sports PLAYED  VBN       3     3
+##  6 topic_sports SHOT    NN        3     3
+##  7 topic_sports PLAYED  VBD       2     1
+##  8 topic_world  PLAY    VB        2     2
+##  9 topic_world  PLAYED  VBD       2     1
+## 10 topic_nation PLAYED  VBD       1     1
+## 11 topic_sports PLAYS   VBZ       1     1
+## 12 topic_world  BALL    NN        1     1
+## 13 topic_world  PLAYING VBG       1     1
 ```
 
 ------------------------------------------------------------------------
@@ -417,7 +428,7 @@ lingr_corpus %>%
 
 A function that returns search terms with user-specified left and right contexts (`LW` and `RW`). Output includes a list of two data frames: a `BOW` (bag-of-words) data frame object and a `KWIC` (keyword in context) data frame object.
 
-Note that generic noun phrases can be include as a search term (regex below), and can be specified in the query using `NPHR`.
+Note that generic noun phrases can be included as a search term (regex below), and can be specified in the query using `NPHR`.
 
 ``` r
 clr_ref_nounphrase
@@ -427,7 +438,7 @@ clr_ref_nounphrase
 ``` r
 search4 <- 'NPHR BE (NEG)? VBN'
 
-found_egs <- corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=15, RW = 15, include_meta = TRUE)
+found_egs <- corpuslingr::clr_search_context(search=search4,corp=lingr_corpus,LW=15, RW = 15)
 ```
 
 ------------------------------------------------------------------------
@@ -438,7 +449,7 @@ Access `KWIC` object:
 
 ``` r
 found_egs %>%
-  corpuslingr::clr_context_kwic(include=c('search', 'source'))%>% #Add genre.
+  corpuslingr::clr_context_kwic(include=c('search', 'source'))%>% 
   DT::datatable(selection="none",class = 'cell-border stripe', rownames = FALSE,width="100%", escape=FALSE)
 ```
 
@@ -457,12 +468,12 @@ corpuslingr::clr_search_context(search=search5,corp=lingr_corpus, LW=20, RW=20)%
   corpuslingr::clr_context_bow(content_only = TRUE, agg_var = c('searchLemma', 'lemma'))%>%
   head()
 ##    searchLemma     lemma cofreq
-## 1: WHITE HOUSE     TRUMP      7
-## 2: WHITE HOUSE     KELLY      5
-## 3: WHITE HOUSE       SAY      5
-## 4: WHITE HOUSE PRESIDENT      4
-## 5: WHITE HOUSE   INCLUDE      3
-## 6: WHITE HOUSE    SUNDAY      3
+## 1: WHITE HOUSE     TRUMP      8
+## 2: WHITE HOUSE PRESIDENT      7
+## 3: WHITE HOUSE       MR.      5
+## 4: WHITE HOUSE     PRESS      4
+## 5: WHITE HOUSE   TUESDAY      4
+## 6: WHITE HOUSE        XI      4
 ```
 
 ------------------------------------------------------------------------
@@ -483,8 +494,8 @@ The user can specify the number of key phrases to extract, how to aggregate key 
 ``` r
 library(knitr)
 lingr_corpus %>%
-  corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE,jitter=TRUE)%>%
-  head()%>%
+  corpuslingr::clr_search_keyphrases(n=5, key_var ='lemma', flatten=TRUE, jitter=TRUE , include = c('doc_id','search','source'))%>%
+  slice(1:10) %>%
   kable(escape=FALSE, format = "html")
 ```
 
@@ -493,6 +504,12 @@ lingr_corpus %>%
 <tr>
 <th style="text-align:left;">
 doc\_id
+</th>
+<th style="text-align:left;">
+search
+</th>
+<th style="text-align:left;">
+source
 </th>
 <th style="text-align:left;">
 keyphrases
@@ -505,7 +522,13 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-Arpaio | attorney | dog | kennel | Austin Flake
+topic\_nation
+</td>
+<td style="text-align:left;">
+abcnews.go.com
+</td>
+<td style="text-align:left;">
+Marburger | teacher | parent | child | kid
 </td>
 </tr>
 <tr>
@@ -513,7 +536,13 @@ Arpaio | attorney | dog | kennel | Austin Flake
 2
 </td>
 <td style="text-align:left;">
-Logan | ability | run | team | significant impact
+topic\_nation
+</td>
+<td style="text-align:left;">
+abcnews.go.com
+</td>
+<td style="text-align:left;">
+body | Joseph Daniels | TBI | boy | authority
 </td>
 </tr>
 <tr>
@@ -521,7 +550,13 @@ Logan | ability | run | team | significant impact
 3
 </td>
 <td style="text-align:left;">
-Cook | point | percent | season | Warriors
+topic\_sports
+</td>
+<td style="text-align:left;">
+bleacherreport.com
+</td>
+<td style="text-align:left;">
+James | Zero Dark Thirty | season | Nance | NBA Finals
 </td>
 </tr>
 <tr>
@@ -529,7 +564,13 @@ Cook | point | percent | season | Warriors
 4
 </td>
 <td style="text-align:left;">
-male suspect | news | incident | scene | story as more detail emerge
+topic\_sports
+</td>
+<td style="text-align:left;">
+bleacherreport.com
+</td>
+<td style="text-align:left;">
+week | draft | brown | Baker Mayfield | first round
 </td>
 </tr>
 <tr>
@@ -537,7 +578,13 @@ male suspect | news | incident | scene | story as more detail emerge
 5
 </td>
 <td style="text-align:left;">
-China | ISRO | space station | control | reusable launch vehicle
+topic\_nation
+</td>
+<td style="text-align:left;">
+time.com
+</td>
+<td style="text-align:left;">
+woman | job | man | myth | pin money
 </td>
 </tr>
 <tr>
@@ -545,7 +592,69 @@ China | ISRO | space station | control | reusable launch vehicle
 6
 </td>
 <td style="text-align:left;">
-GMT | police | pm | tree | am
+topic\_sports
+</td>
+<td style="text-align:left;">
+al.com
+</td>
+<td style="text-align:left;">
+Ole Miss | Patterson | rebel | Michigan | objection
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+topic\_sports
+</td>
+<td style="text-align:left;">
+chicagotribune.com
+</td>
+<td style="text-align:left;">
+Pirates | Baez | Cubs | seventh | Chatwood
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+topic\_sports
+</td>
+<td style="text-align:left;">
+espn.com
+</td>
+<td style="text-align:left;">
+Alabama | national title | Georgia | Trump | president
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+topic\_sports
+</td>
+<td style="text-align:left;">
+espn.com
+</td>
+<td style="text-align:left;">
+Rose | fight | RISE | whole time | choke
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+topic\_sports
+</td>
+<td style="text-align:left;">
+espn.com
+</td>
+<td style="text-align:left;">
+Lovullo | Molina | suspension | catcher | Yadier Molina
 </td>
 </tr>
 </tbody>
