@@ -108,7 +108,7 @@ Some example tuple-ized text:
 
 ``` r
 paste(lingr_corpus$corpus[[1]]$tup[200:204], collapse= " ")
-## [1] "<Joseph~Joseph~NNP> <Daniels~Daniels~NNP> <,~,~,> <28~28~CD> <,~,~,>"
+## [1] "<that~that~IN> <he~he~PRP> <'s~be~VBZ> <above~above~IN> <the~the~DT>"
 ```
 
 ------------------------------------------------------------------------
@@ -127,7 +127,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     51      39408     7384     1759
+## 1:     56      41282     7702     1849
 ```
 
 -   **By genre:**
@@ -135,10 +135,10 @@ summary$corpus
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:  topic_nation      7       3287     1129      157
-## 2:  topic_sports     15      12188     2939      612
-## 3:   topic_world     16      12850     3346      537
-## 4: topic_science     13      11083     2891      533
+## 1:   topic_world     17      13666     3456      597
+## 2:  topic_nation     10       5232     1639      241
+## 3:  topic_sports     16      11891     3034      611
+## 4: topic_science     13      10493     2840      530
 ```
 
 -   **By text:**
@@ -146,12 +146,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1        232      116        9
-## 2:      2        518      235       21
-## 3:      3       1262      502       75
-## 4:      4        577      294       22
-## 5:      5        397      218       17
-## 6:      6        345      178       16
+## 1:      1       1151      426       66
+## 2:      2        232      116        9
+## 3:      3        518      235       21
+## 4:      4       1262      502       75
+## 5:      5        577      294       22
+## 6:      6        397      218       17
 ```
 
 ------------------------------------------------------------------------
@@ -354,23 +354,23 @@ lingr_corpus %>%
   select(doc_id, search, token, tag)%>% 
   slice(1:15)
 ## # A tibble: 15 x 4
-##    doc_id search        token                              tag        
-##    <chr>  <chr>         <chr>                              <chr>      
-##  1 4      topic_nation  higher and higher                  JJR CC JJR 
-##  2 17     topic_nation  geese and other                    JJ CC JJ   
-##  3 20     topic_science unexpected and unwelcome           JJ CC JJ   
-##  4 20     topic_science Cultural and political             JJ CC JJ   
-##  5 24     topic_world   known-probiotic and immune         JJ CC JJ   
-##  6 24     topic_world   homey and smoky                    JJ CC JJ   
-##  7 25     topic_sports  physical and mental                JJ CC JJ   
-##  8 28     topic_sports  academic and compliance            JJ CC JJ   
-##  9 32     topic_science horizontal and vertical            JJ CC JJ   
-## 10 39     topic_world   open and safe                      JJ CC JJ   
-## 11 39     topic_world   close and frequently uncomfortable JJ CC RB JJ
-## 12 43     topic_world   clear and consistent               JJ CC JJ   
-## 13 43     topic_world   wrong and terrible                 JJ CC JJ   
-## 14 43     topic_world   wrong and terrible                 JJ CC JJ   
-## 15 46     topic_science clearer and clearer                JJR CC JJR
+##    doc_id search        token                      tag       
+##    <chr>  <chr>         <chr>                      <chr>     
+##  1 5      topic_nation  higher and higher          JJR CC JJR
+##  2 15     topic_sports  humbling and emotional     JJ CC JJ  
+##  3 17     topic_nation  geese and other            JJ CC JJ  
+##  4 19     topic_sports  locked and loaded          JJ CC JJ  
+##  5 21     topic_science unexpected and unwelcome   JJ CC JJ  
+##  6 21     topic_science Cultural and political     JJ CC JJ  
+##  7 27     topic_world   known-probiotic and immune JJ CC JJ  
+##  8 27     topic_world   homey and smoky            JJ CC JJ  
+##  9 28     topic_sports  physical and mental        JJ CC JJ  
+## 10 30     topic_sports  academic and compliance    JJ CC JJ  
+## 11 35     topic_science horizontal and vertical    JJ CC JJ  
+## 12 40     topic_science irritable and impulsive    JJ CC JJ  
+## 13 40     topic_science observable and repeatable  JJ CC JJ  
+## 14 40     topic_science emotional and physical     JJ CC JJ  
+## 15 50     topic_science clearer and clearer        JJR CC JJR
 ```
 
 ------------------------------------------------------------------------
@@ -387,12 +387,12 @@ lingr_corpus %>%
   corpuslingr::clr_get_freq(agg_var = c('lemma'), toupper=TRUE)%>%
   head()
 ##          lemma txtf docf
-## 1:   COME INTO    2    2
-## 2:    GET INTO    2    2
-## 3:     GO INTO    2    1
-## 4: ASCEND INTO    1    1
-## 5:     BE INTO    1    1
-## 6:  BRING INTO    1    1
+## 1:     GO INTO    3    2
+## 2:   COME INTO    2    2
+## 3:  CRASH INTO    2    1
+## 4:   TUNE INTO    2    1
+## 5: ASCEND INTO    1    1
+## 6:     BE INTO    1    1
 ```
 
 Setting `include_meta = TRUE` facilitates aggregation by variable(s) included in metadata:
@@ -404,23 +404,22 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search3)%>%
   corpuslingr::clr_get_freq(agg_var = c('search','token','tag'), toupper=TRUE)%>%
   slice(1:15)
-## # A tibble: 14 x 5
+## # A tibble: 13 x 5
 ##    search       token   tag    txtf  docf
 ##    <chr>        <chr>   <chr> <int> <int>
-##  1 topic_sports PLAY    VB        8     6
-##  2 topic_sports BALL    NN        6     3
-##  3 topic_sports PLAYING VBG       5     4
-##  4 topic_sports SHOT    NN        5     3
-##  5 topic_world  PLAY    VB        4     2
-##  6 topic_sports PLAYED  VBD       3     2
-##  7 topic_sports PLAYED  VBN       3     3
-##  8 topic_sports BALLS   NNS       2     2
-##  9 topic_world  PLAYED  VBD       2     1
-## 10 topic_nation PLAY    VB        1     1
-## 11 topic_nation PLAYING VBG       1     1
-## 12 topic_sports PLAYS   VBZ       1     1
-## 13 topic_world  BALL    NN        1     1
-## 14 topic_world  PLAYING VBG       1     1
+##  1 topic_sports BALL    NN        6     3
+##  2 topic_sports PLAY    VB        6     6
+##  3 topic_sports PLAYING VBG       4     3
+##  4 topic_sports SHOT    NN        4     2
+##  5 topic_sports PLAYED  VBN       2     2
+##  6 topic_world  PLAY    VB        2     2
+##  7 topic_world  PLAYED  VBD       2     1
+##  8 topic_nation PLAY    VB        1     1
+##  9 topic_nation PLAYING VBG       1     1
+## 10 topic_sports BALLS   NNS       1     1
+## 11 topic_sports PLAYED  VBD       1     1
+## 12 topic_world  BALL    NN        1     1
+## 13 topic_world  PLAYING VBG       1     1
 ```
 
 ------------------------------------------------------------------------
@@ -468,13 +467,13 @@ search5 <- "White House"
 corpuslingr::clr_search_context(search=search5,corp=lingr_corpus, LW=20, RW=20)%>%
   corpuslingr::clr_context_bow(content_only = TRUE, agg_var = c('searchLemma', 'lemma'))%>%
   head()
-##    searchLemma    lemma cofreq
-## 1: WHITE HOUSE    PRESS      6
-## 2: WHITE HOUSE    TRUMP      5
-## 3: WHITE HOUSE    COHEN      4
-## 4: WHITE HOUSE  MICHAEL      4
-## 5: WHITE HOUSE REPORTER      4
-## 6: WHITE HOUSE  SANDERS      4
+##    searchLemma     lemma cofreq
+## 1: WHITE HOUSE     TRUMP     14
+## 2: WHITE HOUSE PRESIDENT      9
+## 3: WHITE HOUSE     PRESS      7
+## 4: WHITE HOUSE   SANDERS      6
+## 5: WHITE HOUSE      FIRE      5
+## 6: WHITE HOUSE  REPORTER      5
 ```
 
 ------------------------------------------------------------------------
@@ -501,18 +500,166 @@ lingr_corpus %>%
                                      jitter=TRUE, 
                                      include = c('doc_id','search','source')) %>%
   slice(1:10) %>%
-  kable()
+  kable(escape=FALSE, format = "html")
 ```
 
-| doc\_id | search        | source             | keyphrases                                                                                   |
-|:--------|:--------------|:-------------------|:---------------------------------------------------------------------------------------------|
-| 1       | topic\_nation | abcnews.go.com     | body | TBI | Joseph Daniels | boy | parent                                                   |
-| 2       | topic\_nation | abcnews.go.com     | Chalarka | good Samaritan | incident | police | man                                          |
-| 3       | topic\_sports | bleacherreport.com | James | Zero Dark Thirty | season | NBA Finals | Nance                                       |
-| 4       | topic\_nation | fortune.com        | paper | child | woman | equation | birth                                                     |
-| 5       | topic\_world  | fox4kc.com         | Fedyaeva | RT | formalin | Abdullov | hospital                                               |
-| 6       | topic\_sports | al.com             | Ole Miss | Patterson | rebel | Michigan | objection                                          |
-| 7       | topic\_world  | bbc.com            | Cambridge Analytica | data | Facebook | app | small number of people                         |
-| 8       | topic\_world  | bbc.com            | Vanuatu | China | Beijing | nation | South Pacific                                           |
-| 9       | topic\_sports | bostonherald.com   | point | rebound | AP | assist | Detroit                                                      |
-| 10      | topic\_sports | chicagotribune.com | Baez | Pirates | Cubs | seventh | Mark Gonzales Contact reporter Chicago Tribune Javier Baez |
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+doc\_id
+</th>
+<th style="text-align:left;">
+search
+</th>
+<th style="text-align:left;">
+source
+</th>
+<th style="text-align:left;">
+keyphrases
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+topic\_world
+</td>
+<td style="text-align:left;">
+abcnews.go.com
+</td>
+<td style="text-align:left;">
+Albright | Trump | Syria | strategy | woman
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+topic\_nation
+</td>
+<td style="text-align:left;">
+abcnews.go.com
+</td>
+<td style="text-align:left;">
+body | Joseph Daniels | boy | TBI | parent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+topic\_nation
+</td>
+<td style="text-align:left;">
+abcnews.go.com
+</td>
+<td style="text-align:left;">
+Chalarka | good Samaritan | man | police | incident
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+topic\_sports
+</td>
+<td style="text-align:left;">
+bleacherreport.com
+</td>
+<td style="text-align:left;">
+James | Zero Dark Thirty | season | game | Nance
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+topic\_nation
+</td>
+<td style="text-align:left;">
+fortune.com
+</td>
+<td style="text-align:left;">
+paper | child | woman | spousal wage gap | birth
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+topic\_world
+</td>
+<td style="text-align:left;">
+fox4kc.com
+</td>
+<td style="text-align:left;">
+Fedyaeva | RT | formalin | Thursday | Abdullov
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+topic\_nation
+</td>
+<td style="text-align:left;">
+people.com
+</td>
+<td style="text-align:left;">
+ABC | canola seed | overpass | driver | incident
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+topic\_world
+</td>
+<td style="text-align:left;">
+bbc.com
+</td>
+<td style="text-align:left;">
+Cambridge Analytica | Facebook | data | small number of people | app
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+topic\_sports
+</td>
+<td style="text-align:left;">
+chicagotribune.com
+</td>
+<td style="text-align:left;">
+Baez | seventh | Pirates | Cubs | Wrigley Field
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+topic\_sports
+</td>
+<td style="text-align:left;">
+espn.com
+</td>
+<td style="text-align:left;">
+Alabama | Trump | national title | Georgia | player
+</td>
+</tr>
+</tbody>
+</table>
