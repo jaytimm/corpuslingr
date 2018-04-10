@@ -152,6 +152,7 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
     k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]}
 
   if (!setequal(intersect(include, colnames(k1)), include)) {
+    setDT (corp$meta)
     k1 <- k1[corp$meta, on=c("doc_id"), nomatch=0]}
 
   k1 <- k1[, c(include,'keyphrases'), with = FALSE]
