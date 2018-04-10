@@ -42,7 +42,7 @@ return(df_locs)
 
 #' @export
 #' @rdname queryCorpus
-clr_search_gramx <- function(search,corp, include_meta=FALSE){
+clr_search_gramx <- function(search,corp){
 
 x <- corp
 
@@ -72,16 +72,15 @@ found[, lemma := gsub("\\S+~(\\S+)~\\S+","\\1",eg)]
 
 found <- found[, c('doc_id','token','tag','lemma'), with = FALSE]
 
-if (include_meta == FALSE) {return(found)} else {
+if (!"meta" %in% names(corp)) {return(found)} else {
 
   found[corp$meta, on=c("doc_id"), nomatch=0]}
-
 }
 
 
 #' @export
 #' @rdname queryCorpus
-clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
+clr_search_context <- function(search,corp,LW,RW){
 
   x <- corp
   if ("meta" %in% names(x)) x <- x$corpus
@@ -107,7 +106,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
 
   BOW <- tmp[BOW, on=c("doc_id","eg"), nomatch=0]
 
-  if (include_meta == FALSE) {
+  if (!"meta" %in% names(corp)) {
   out <- list("BOW" = BOW, "KWIC" = KWIC)} else {
     out <- list("BOW" = BOW, "KWIC" = KWIC, "meta" = corp$meta)}
 
@@ -117,7 +116,7 @@ clr_search_context <- function(search,corp,LW,RW, include_meta=FALSE){
 
 #' @export
 #' @rdname queryCorpus
-clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jitter=TRUE, remove_nums = TRUE) { #add agg_var.
+clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jitter=TRUE, remove_nums = TRUE, include='doc_id') { #add agg_var.
 
   x <- corp
   if ("meta" %in% names(x)) x <- x$corpus
@@ -150,8 +149,12 @@ clr_search_keyphrases <- function (corp,n=5, key_var ='lemma', flatten=TRUE, jit
   colnames(k1)[3] <- 'keyphrases'
 
   if (flatten == TRUE) {
-    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]
-  }
+    k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]}
+
+  if (!setequal(intersect(include, colnames(k1)), include)) {
+    k1 <- k1[corp$meta, on=c("doc_id"), nomatch=0]}
+
+  k1 <- k1[, c(include,'keyphrases'), with = FALSE]
 
   k1[order(as.numeric(doc_id))]
 
