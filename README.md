@@ -108,7 +108,7 @@ Some example tuple-ized text:
 
 ``` r
 paste(lingr_corpus$corpus[[1]]$tup[200:204], collapse= " ")
-## [1] "<that~that~IN> <he~he~PRP> <'s~be~VBZ> <above~above~IN> <the~the~DT>"
+## [1] "<campus~campus~NN> <.~.~.> <Facebook~Facebook~VB> <via~via~IN> <AP~AP~NNP>"
 ```
 
 ------------------------------------------------------------------------
@@ -127,7 +127,7 @@ summary <- corpuslingr::clr_desc_corpus(lingr_corpus,doc="doc_id",
 ``` r
 summary$corpus
 ##    n_docs textLength textType textSent
-## 1:     56      41282     7702     1849
+## 1:     56      39738     7129     1832
 ```
 
 -   **By genre:**
@@ -135,10 +135,10 @@ summary$corpus
 ``` r
 summary$genre
 ##           search n_docs textLength textType textSent
-## 1:   topic_world     17      13666     3456      597
-## 2:  topic_nation     10       5232     1639      241
-## 3:  topic_sports     16      11891     3034      611
-## 4: topic_science     13      10493     2840      530
+## 1:  topic_nation     13       7422     2204      347
+## 2: topic_science     17      12301     3217      543
+## 3:  topic_sports     16      15268     2985      834
+## 4:   topic_world     10       4747     1654      194
 ```
 
 -   **By text:**
@@ -146,12 +146,12 @@ summary$genre
 ``` r
 head(summary$text)
 ##    doc_id textLength textType textSent
-## 1:      1       1151      426       66
-## 2:      2        232      116        9
-## 3:      3        518      235       21
-## 4:      4       1262      502       75
-## 5:      5        577      294       22
-## 6:      6        397      218       17
+## 1:      1        462      243       22
+## 2:      2        373      182       22
+## 3:      3       1462      571       68
+## 4:      4        965      364       31
+## 5:      5        258      128       13
+## 6:      6       1081      431       65
 ```
 
 ------------------------------------------------------------------------
@@ -354,23 +354,23 @@ lingr_corpus %>%
   select(doc_id, search, token, tag)%>% 
   slice(1:15)
 ## # A tibble: 15 x 4
-##    doc_id search        token                      tag       
-##    <chr>  <chr>         <chr>                      <chr>     
-##  1 5      topic_nation  higher and higher          JJR CC JJR
-##  2 15     topic_sports  humbling and emotional     JJ CC JJ  
-##  3 17     topic_nation  geese and other            JJ CC JJ  
-##  4 19     topic_sports  locked and loaded          JJ CC JJ  
-##  5 21     topic_science unexpected and unwelcome   JJ CC JJ  
-##  6 21     topic_science Cultural and political     JJ CC JJ  
-##  7 27     topic_world   known-probiotic and immune JJ CC JJ  
-##  8 27     topic_world   homey and smoky            JJ CC JJ  
-##  9 28     topic_sports  physical and mental        JJ CC JJ  
-## 10 30     topic_sports  academic and compliance    JJ CC JJ  
-## 11 35     topic_science horizontal and vertical    JJ CC JJ  
-## 12 40     topic_science irritable and impulsive    JJ CC JJ  
-## 13 40     topic_science observable and repeatable  JJ CC JJ  
-## 14 40     topic_science emotional and physical     JJ CC JJ  
-## 15 50     topic_science clearer and clearer        JJR CC JJR
+##    doc_id search        token                           tag          
+##    <chr>  <chr>         <chr>                           <chr>        
+##  1 3      topic_science brighter and closer             JJR CC JJR   
+##  2 4      topic_science thicker and more frequent       JJR CC RBR JJ
+##  3 8      topic_sports  diverse and able                JJ CC JJ     
+##  4 9      topic_sports  healthy and appear              JJ CC JJ     
+##  5 14     topic_nation  deadly and possibly intentional JJ CC RB JJ  
+##  6 24     topic_science informative and useful          JJ CC JJ     
+##  7 27     topic_science Smaller And More Mobile         JJR CC RBR JJ
+##  8 27     topic_science smaller and more mobile         JJR CC RBR JJ
+##  9 27     topic_science mechanical and spatial          JJ CC JJ     
+## 10 28     topic_science shorter and harder              JJR CC JJR   
+## 11 29     topic_nation  massive and complex             JJ CC JJ     
+## 12 29     topic_nation  safe and engaged                JJ CC JJ     
+## 13 30     topic_science complex and extensive           JJ CC JJ     
+## 14 34     topic_world   political and military          JJ CC JJ     
+## 15 34     topic_world   religious and ethnic            JJ CC JJ
 ```
 
 ------------------------------------------------------------------------
@@ -386,16 +386,16 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search2)%>%
   corpuslingr::clr_get_freq(agg_var = c('lemma'), toupper=TRUE)%>%
   head()
-##          lemma txtf docf
-## 1:     GO INTO    3    2
-## 2:   COME INTO    2    2
-## 3:  CRASH INTO    2    1
-## 4:   TUNE INTO    2    1
-## 5: ASCEND INTO    1    1
-## 6:     BE INTO    1    1
+##         lemma txtf docf
+## 1:    GO INTO    6    3
+## 2:  FALL INTO    4    3
+## 3: DRIVE INTO    3    1
+## 4:  TAKE INTO    3    3
+## 5:   BUY INTO    2    1
+## 6: CRASH INTO    2    1
 ```
 
-Setting `include_meta = TRUE` facilitates aggregation by variable(s) included in metadata:
+Having included metadata in the call to `clr_set_corpus`, we can aggregate search results, eg, by Google News topic:
 
 ``` r
 search3 <- "SHOT~NOUN| BALL~NOUN| PLAY~VERB"
@@ -404,22 +404,21 @@ lingr_corpus %>%
   corpuslingr::clr_search_gramx(search=search3)%>%
   corpuslingr::clr_get_freq(agg_var = c('search','token','tag'), toupper=TRUE)%>%
   slice(1:15)
-## # A tibble: 13 x 5
-##    search       token   tag    txtf  docf
-##    <chr>        <chr>   <chr> <int> <int>
-##  1 topic_sports BALL    NN        6     3
-##  2 topic_sports PLAY    VB        6     6
-##  3 topic_sports PLAYING VBG       4     3
-##  4 topic_sports SHOT    NN        4     2
-##  5 topic_sports PLAYED  VBN       2     2
-##  6 topic_world  PLAY    VB        2     2
-##  7 topic_world  PLAYED  VBD       2     1
-##  8 topic_nation PLAY    VB        1     1
-##  9 topic_nation PLAYING VBG       1     1
-## 10 topic_sports BALLS   NNS       1     1
-## 11 topic_sports PLAYED  VBD       1     1
-## 12 topic_world  BALL    NN        1     1
-## 13 topic_world  PLAYING VBG       1     1
+## # A tibble: 12 x 5
+##    search        token   tag    txtf  docf
+##    <chr>         <chr>   <chr> <int> <int>
+##  1 topic_sports  PLAYING VBG      19     6
+##  2 topic_sports  PLAY    VB       14     6
+##  3 topic_sports  PLAYED  VBD       5     3
+##  4 topic_sports  PLAYED  VBN       5     3
+##  5 topic_sports  BALL    NN        3     3
+##  6 topic_sports  SHOT    NN        3     3
+##  7 topic_sports  SHOTS   NNS       3     2
+##  8 topic_science PLAY    VB        2     1
+##  9 topic_sports  PLAYS   VBZ       2     2
+## 10 topic_world   PLAY    VB        2     2
+## 11 topic_science PLAYED  VBN       1     1
+## 12 topic_science SHOT    NN        1     1
 ```
 
 ------------------------------------------------------------------------
@@ -468,12 +467,12 @@ corpuslingr::clr_search_context(search=search5,corp=lingr_corpus, LW=20, RW=20)%
   corpuslingr::clr_context_bow(content_only = TRUE, agg_var = c('searchLemma', 'lemma'))%>%
   head()
 ##    searchLemma     lemma cofreq
-## 1: WHITE HOUSE     TRUMP     14
-## 2: WHITE HOUSE PRESIDENT      9
-## 3: WHITE HOUSE     PRESS      7
-## 4: WHITE HOUSE   SANDERS      6
-## 5: WHITE HOUSE      FIRE      5
-## 6: WHITE HOUSE  REPORTER      5
+## 1: WHITE HOUSE     TRUMP      8
+## 2: WHITE HOUSE PRESIDENT      6
+## 3: WHITE HOUSE     PRESS      6
+## 4: WHITE HOUSE     COHEN      4
+## 5: WHITE HOUSE   MICHAEL      4
+## 6: WHITE HOUSE    PRUITT      4
 ```
 
 ------------------------------------------------------------------------
@@ -526,13 +525,13 @@ keyphrases
 1
 </td>
 <td style="text-align:left;">
-topic\_world
+topic\_nation
 </td>
 <td style="text-align:left;">
 abcnews.go.com
 </td>
 <td style="text-align:left;">
-Albright | Trump | Syria | strategy | woman
+school board | Parkland school | program | Fla. | count
 </td>
 </tr>
 <tr>
@@ -543,10 +542,10 @@ Albright | Trump | Syria | strategy | woman
 topic\_nation
 </td>
 <td style="text-align:left;">
-abcnews.go.com
+denver.cbslocal.com
 </td>
 <td style="text-align:left;">
-body | Joseph Daniels | boy | TBI | parent
+rock | CBS | credit | park | prize
 </td>
 </tr>
 <tr>
@@ -554,13 +553,13 @@ body | Joseph Daniels | boy | TBI | parent
 3
 </td>
 <td style="text-align:left;">
-topic\_nation
+topic\_science
 </td>
 <td style="text-align:left;">
-abcnews.go.com
+earthsky.org
 </td>
 <td style="text-align:left;">
-Chalarka | good Samaritan | man | police | incident
+Kepler | planets | solar system | star | image via NASA
 </td>
 </tr>
 <tr>
@@ -568,13 +567,13 @@ Chalarka | good Samaritan | man | police | incident
 4
 </td>
 <td style="text-align:left;">
-topic\_sports
+topic\_science
 </td>
 <td style="text-align:left;">
-bleacherreport.com
+environmentalresearchweb.org
 </td>
 <td style="text-align:left;">
-James | Zero Dark Thirty | season | game | Nance
+study | ice layer | Greenland | core | Greenland melt
 </td>
 </tr>
 <tr>
@@ -585,10 +584,10 @@ James | Zero Dark Thirty | season | game | Nance
 topic\_nation
 </td>
 <td style="text-align:left;">
-fortune.com
+bostonherald.com
 </td>
 <td style="text-align:left;">
-paper | child | woman | spousal wage gap | birth
+woman | girl | Enterprise | boy | authority
 </td>
 </tr>
 <tr>
@@ -596,13 +595,13 @@ paper | child | woman | spousal wage gap | birth
 6
 </td>
 <td style="text-align:left;">
-topic\_world
+topic\_sports
 </td>
 <td style="text-align:left;">
-fox4kc.com
+chicagotribune.com
 </td>
 <td style="text-align:left;">
-Fedyaeva | RT | formalin | Thursday | Abdullov
+change | dugout | Cubs | seat | Wrigley
 </td>
 </tr>
 <tr>
@@ -610,13 +609,13 @@ Fedyaeva | RT | formalin | Thursday | Abdullov
 7
 </td>
 <td style="text-align:left;">
-topic\_nation
+topic\_sports
 </td>
 <td style="text-align:left;">
-people.com
+espn.com
 </td>
 <td style="text-align:left;">
-ABC | canola seed | overpass | driver | incident
+payment | Gatto | indictment | player | unidentified Adidas consultant
 </td>
 </tr>
 <tr>
@@ -624,13 +623,13 @@ ABC | canola seed | overpass | driver | incident
 8
 </td>
 <td style="text-align:left;">
-topic\_world
+topic\_sports
 </td>
 <td style="text-align:left;">
-bbc.com
+espn.com
 </td>
 <td style="text-align:left;">
-Cambridge Analytica | Facebook | data | small number of people | app
+guy | game | rookie | league | high school
 </td>
 </tr>
 <tr>
@@ -641,10 +640,10 @@ Cambridge Analytica | Facebook | data | small number of people | app
 topic\_sports
 </td>
 <td style="text-align:left;">
-chicagotribune.com
+espn.com
 </td>
 <td style="text-align:left;">
-Baez | seventh | Pirates | Cubs | Wrigley Field
+season | bonus | contract | Holiday | All-NBA
 </td>
 </tr>
 <tr>
@@ -658,7 +657,7 @@ topic\_sports
 espn.com
 </td>
 <td style="text-align:left;">
-Alabama | Trump | national title | Georgia | player
+D' Antoni | game | play | stress | Chris
 </td>
 </tr>
 </tbody>
