@@ -1,19 +1,19 @@
 type,pos,regex,definition,examples
-clr_macro,ADJ,JJ[A-Z]*,Adjectives,"penntreebank = JJ, JJR, JJS"
-clr_macro,ADV,RB[A-Z]*,Adverbs,"penntreebank = RB, RBR, RBS"
-clr_macro,CONJ,CC,Conjunctions,penntreebank = CC
-clr_macro,DET,[P]*DT,Articles & determiners,"penntreebank = DT, PDT"
-clr_macro,ENTITY,"NN[A-Z]{3,}",Named entities,type = spacy_entity
-clr_macro,NAME,NN[^S]+,"Proper nouns, including named entities","penntreebank = NNP, NNPS, ENTITY"
-clr_macro,NEG,NEG,Negation,"not, n't"
-clr_macro,NOUN,NN[S]*,Common nouns,"penntreebank = NN, NNS"
-clr_macro,NOUNX,NN[A-Z]*,Common and proper nouns,"penntreebank = NN, NNS, NNP, NNPS, ENTITY"
-clr_macro,NUM,CD,Numbers,penntreebank = CD
-clr_macro,PREP,IN,Prepositions,penntreebank = IN
-clr_macro,PRON,PRP,Pronouns,penntreebank = PRP
-clr_macro,VERB,VB[A-Z]*,All verbs,"penntreebank = VB, VBD, VBG, VDN, VBP, VBZ"
-clr_phrasal,KPHR,KPHR,Key phrases,"traditional retailer, public broadcast, rate of inflation, Communist penetration of Cuba"
-clr_phrasal,NPHR,NPHR,Noun phrases,"Senate Republicans, he, The good people"
+clr_cql,ADJ,JJ[A-Z]*,Adjectives,"penntreebank = JJ, JJR, JJS"
+clr_cql,ADV,RB[A-Z]*,Adverbs,"penntreebank = RB, RBR, RBS"
+clr_cql,CONJ,CC,Conjunctions,penntreebank = CC
+clr_cql,DET,[P]*DT,Articles & determiners,"penntreebank = DT, PDT"
+clr_cql,ENTITY,"NN[A-Z]{3,}",Named entities,type = spacy_entity
+clr_cql,NAME,NN[^S]+,"Proper nouns, including named entities","penntreebank = NNP, NNPS, ENTITY"
+clr_cql,NEG,NEG,Negation,"not, n't"
+clr_cql,NOUN,NN[S]*,Common nouns,"penntreebank = NN, NNS"
+clr_cql,NOUNX,NN[A-Z]*,Common and proper nouns,"penntreebank = NN, NNS, NNP, NNPS, ENTITY"
+clr_cql,NUM,CD,Numbers,penntreebank = CD
+clr_cql,PREP,IN,Prepositions,penntreebank = IN
+clr_cql,PRON,PRP,Pronouns,penntreebank = PRP
+clr_cql,VERB,VB[A-Z]*,All verbs,"penntreebank = VB, VBD, VBG, VDN, VBP, VBZ"
+clr_cql,KPHR,KPHR,Key phrases,"traditional retailer, public broadcast, rate of inflation, Communist penetration of Cuba"
+clr_cql,NPHR,NPHR,Noun phrases,"Senate Republicans, he, The good people"
 penntreebank,CC,CC,Coordinating conjunction,"but, and"
 penntreebank,CD,CD,Cardinal number,"10-dimensional, one, 1970s"
 penntreebank,DT,DT,Determiner,"a, the, Another"
