@@ -22,6 +22,7 @@ clr_desc_corpus <- function (corp, doc ='id',sent='sid', tok='word',upos='upos',
   corpus <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep=""))))]
 
   if (is.null(genre) == FALSE){
+  setDT(corp$meta)
   x <- x[corp$meta, on=c("doc_id"), nomatch=0]
 
   byGenre <- x[upos!="PUNCT", list(n_docs=length(unique(get(doc))),textLength=.N,textType=length(unique(get(tok))),textSent=length(unique(paste(get(doc),get(sent), sep="")))), by=genre]
