@@ -1,12 +1,13 @@
 #' Translate user search input to regex
 #'
 #' These functions convert CQL search to regex.
-#' @name translateCQL
+#'
+#' @name translate_cql
 #' @param x Gram/lexical pattern to be searched for
 #' @return A list of character strings
 
 #' @export
-#' @rdname translateCQL
+#' @rdname translate_cql
 clr_build_search <- function(x){
 
   default <- '<\\\\S+~\\\\S+~\\\\S+>'
@@ -63,17 +64,17 @@ clr_build_search <- function(x){
 
 
 #' @export
-#' @rdname translateCQL
+#' @rdname translate_cql
 clr_ref_nounphrase <- "(?:(?:DET )?(?:ADJ )*)?(?:((NOUNX )+|PRON ))"
 
 
 #' @export
-#' @rdname translateCQL
+#' @rdname translate_cql
 clr_ref_keyphrase <- "(ADJ )*(NOUNX )+((PREP )(ADJ )*(NOUNX )+)?"
 
 
 #' @export
-#' @rdname translateCQL
+#' @rdname translate_cql
 clr_cql_regex <- function(x) {
 
   if (length(x) > 1) {x <- paste(x,collapse=" |")}

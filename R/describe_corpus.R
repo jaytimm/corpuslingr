@@ -1,13 +1,13 @@
-#' Summarize results of corpuslingr::GetContexts()
+#' Provides basic frequency stats for an annotated corpus.
 #'
-#' These functions aggregate search results by frequency, BOW, and KWIC.
-#' @name describeCorpus
+#' Function summarizes corpus, texts comprising corpus, and (optionally) genres ... by total tokens, unique tokens, and number of sentences.
+#' @name describe_corpus
 #' @return A dataframe
 #' @import data.table
 #'
 #'
 #' @export
-#' @rdname describeCorpus
+#' @rdname describe_corpus
 clr_desc_corpus <- function (corp, doc ='id',sent='sid', tok='word',upos='upos',genre=NULL) {
 
   x <- corp

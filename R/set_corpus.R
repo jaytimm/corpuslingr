@@ -1,26 +1,10 @@
 #' Modify text annotations for more robust corpus search
 #'
 #' These functions modify the output of `spacyr'
-#' @name setCorpus
+#' @name set_corpus
 #' @param x A list of dataframes
 #' @return A list of dataframes
 #' @import data.table
-
-
-#' @export
-#' @rdname setCorpus
-clr_prep_corpus <- function (x, hyphenate=TRUE) {
-  setDT(x)
-  x[, text := as.character(text)]
-  x[, text := gsub("^ *|(?<= ) | *$", "", text, perl = TRUE)]
-  x[, text := gsub("(--)([[:alpha:]])","\\1 \\2",text, perl=TRUE)]
-  x[, text := gsub("([[:alpha:]])(--)","\\1 \\2",text, perl=TRUE)]
-
-  if (hyphenate==TRUE) {
-    x[, text := gsub("([[:alpha:]])-([[:alpha:]])",'\\1qq\\2',text, perl=TRUE)]
-    }
-  return(x)}
-
 
 
 clr_set_tuple <- function(x){
@@ -35,7 +19,7 @@ clr_set_tuple <- function(x){
 
 
 #' @export
-#' @rdname setCorpus
+#' @rdname set_corpus
 clr_set_corpus <- function (y, doc_var='doc_id',
                                token_var='token',
                                lemma_var='lemma',
