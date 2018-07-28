@@ -47,11 +47,11 @@ clr_search_keyphrases <- function (corp,n=5,
     set.seed(99)
     k1[, tf_idf := jitter(tf_idf)]}
 
+  k1 <- subset(k1, docf >= min_docf)
   k1 <- k1[,.SD[order(-tf_idf)[1:n]],by=doc_id]
   colnames(k1)[3] <- 'keyphrases'
 
   k1 <- k1[order(as.numeric(doc_id))]
-  k1 <- subset(k1, docf >= min_docf)
 
   if (flatten == TRUE) {
     k1 <- k1[, list(keyphrases=paste(keyphrases, collapse=" | ")), by=list(doc_id)]}
