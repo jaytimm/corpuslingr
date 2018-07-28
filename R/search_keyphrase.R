@@ -17,8 +17,7 @@ clr_search_keyphrases <- function (corp,n=5,
                                    key_var ='lemma',
                                    flatten=TRUE, jitter=TRUE,
                                    remove_nums = TRUE,
-                                   include='doc_id',
-                                   min_docf = 0) { #add agg_var.
+                                   include='doc_id') { #add agg_var.
 
   x <- corp
   if ("meta" %in% names(x)) x <- x$corpus
