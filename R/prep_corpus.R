@@ -18,5 +18,6 @@ clr_prep_corpus <- function (x, hyphenate=TRUE) {
 
   if (hyphenate==TRUE) {
     x[, text := gsub("([[:alpha:]])-([[:alpha:]])",'\\1qq\\2',text, perl=TRUE)]
-    }
-  return(x)}
+  }
+
+  x}
