@@ -1,7 +1,7 @@
 #' Summarize results of corpuslingr::GetContexts()
 #'
 #' These functions aggregate search results by frequency, BOW, and KWIC.
-#' @name summarize_freq
+#' @name clr_get_freq
 #' @param charList A dataframe
 #' @return A dataframes
 #' @import data.table
@@ -9,8 +9,10 @@
 
 
 #' @export
-#' @rdname summarize_freq
-clr_get_freq <- function (x,agg_var=c('lemma','token'), toupper=FALSE) {
+#' @rdname clr_get_freq
+clr_get_freq <- function (x,
+                          agg_var=c('lemma','token'),
+                          toupper=FALSE) {
 
   if (is.data.frame(x)) {y <- as.data.table(x)} else {
    y <- as.data.table (x$KWIC)}

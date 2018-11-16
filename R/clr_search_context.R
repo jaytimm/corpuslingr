@@ -2,16 +2,19 @@
 #'
 #' Function(s) extract all instantiations of search pattern and NxN window of surrounding text from an annotated corpus.
 #'
-#' @name search_plus_context
+#' @name clr_search_context
 #' @param search Gram/lexical pattern to be searched for
 #' @param LW Size of context in number of words to left of the target
 #' @param RW Size of context in number of words to right of the target
 #' @param corp List of annotated texts to be searched
-#' @return A list of dataframes
+#' @return A list containing two dataframes
 #' @import data.table
 
 
-clr_extract_context <- function(x,search,LW,RW) {
+clr_extract_context <- function(x,
+                                search,
+                                LW,
+                                RW) {
 
   locations <- gregexpr(pattern= search, paste(x$tup, collapse=" "), ignore.case=TRUE)
   tupBeg <- unlist(as.vector(locations[[1]]))
@@ -50,7 +53,7 @@ clr_flatten_contexts <- function(x) {
 
 
 #' @export
-#' @rdname search_plus_context
+#' @rdname clr_search_context
 clr_search_context <- function(search,corp,LW,RW){
 
   x <- corp

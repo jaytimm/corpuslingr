@@ -1,7 +1,7 @@
 #' Extract key phrases from an annotated corpus.
 #'
 #' Function enable corpus search of gram constructions in context.
-#' @name search_keyphrase
+#' @name clr_search_keyphrases
 #' @param search Gram/lexical pattern to be searched for
 #' @param LW Size of context in number of words to left of the target
 #' @param RW Size of context in number of words to right of the target
@@ -12,7 +12,7 @@
 
 
 #' @export
-#' @rdname search_keyphrase
+#' @rdname clr_search_keyphrases
 clr_search_keyphrases <- function (corp,n=5,
                                    key_var ='lemma',
                                    flatten=TRUE, jitter=TRUE,

@@ -1,7 +1,7 @@
 #' Modify text annotations for more robust corpus search
 #'
 #' These functions modify the output of `spacyr'
-#' @name set_corpus
+#' @name clr_set_corpus
 #' @param x A list of dataframes
 #' @return A list of dataframes
 #' @import data.table

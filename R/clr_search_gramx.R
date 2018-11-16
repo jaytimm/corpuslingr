@@ -2,17 +2,18 @@
 #'
 #' These functions enable corpus search of gram constructions in context.
 #'
-#' @name search_simple
+#' @name clr_search_gramx
 #' @param search Gram/lexical pattern to be searched for
 #' @param corp List of annotated texts to be searched
-#' @return A list of dataframes
+#' @return A dataframe including instantiations of pattern search.
 #' @import data.table
 
 
 
 #' @export
-#' @rdname search_simple
-clr_search_gramx <- function(search,corp){
+#' @rdname clr_search_gramx
+clr_search_gramx <- function(search,
+                             corp) {
 
 x <- corp
 

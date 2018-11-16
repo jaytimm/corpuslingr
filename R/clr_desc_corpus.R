@@ -1,14 +1,19 @@
 #' Provides basic frequency stats for an annotated corpus.
 #'
-#' Function summarizes corpus, texts comprising corpus, and (optionally) genres ... by total tokens, unique tokens, and number of sentences.
-#' @name describe_corpus
+#' Summarizes token frequency, type frequency, # of sentences by corpus/text/(optionally) genre.
+#' @name clr_desc_corpus
 #' @return A dataframe
 #' @import data.table
 #'
 #'
 #' @export
-#' @rdname describe_corpus
-clr_desc_corpus <- function (corp, doc ='id',sent='sid', tok='word',upos='upos',genre=NULL) {
+#' @rdname clr_desc_corpus
+clr_desc_corpus <- function (corp,
+                             doc ='id',
+                             sent='sid',
+                             tok='word',
+                             upos='upos',
+                             genre=NULL) {
 
   x <- corp
   if ("meta" %in% names(x)) x <- x$corpus
