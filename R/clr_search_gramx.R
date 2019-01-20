@@ -23,6 +23,9 @@ searchTerms <-  clr_cql_regex(search)
 
 found <- lapply(x, function(z) {
   z$lemma <- iconv(z$lemma, "latin1", "ASCII", sub="") #Fix for funky tweets.
+  z$token <- iconv(z$token, "latin1", "ASCII", sub="")
+  z$tup <- iconv(z$tup, "latin1", "ASCII", sub="")
+
   z <- subset(z, lemma != '')
   y <- paste(z$tup, collapse=" ")
 
