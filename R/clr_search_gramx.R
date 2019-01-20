@@ -22,7 +22,8 @@ if ("meta" %in% names(x)) x <- x$corpus
 searchTerms <-  clr_cql_regex(search)
 
 found <- lapply(x, function(z) {
-  z <- subset(z, pos != 'SYM') #Fix for funky tweets.
+  z$lemma <- iconv(z$lemma, "latin1", "ASCII", sub="") #Fix for funky tweets.
+  z <- subset(z, lemma != '')
   y <- paste(z$tup, collapse=" ")
 
   locations <- gregexpr(pattern= searchTerms, y, ignore.case=TRUE)
